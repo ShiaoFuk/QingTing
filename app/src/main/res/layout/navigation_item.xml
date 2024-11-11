@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_weight="1"
     android:layout_height="wrap_content"
+    android:layout_weight="1"
     >
     <LinearLayout
+        android:id="@+id/navigation_layout"
         android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/navigation_icon_height"
-        android:gravity="center_horizontal"
+        android:layout_height="@dimen/navigation_layout_height"
+        android:gravity="center"
         android:layout_centerInParent="true"
         >
         <ImageView
+            android:padding="@dimen/img_padding"
             android:scaleType="centerCrop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/navigation_icon_height"
+            android:layout_height="@dimen/navigation_icon_height"
             android:adjustViewBounds="true"
             android:layout_weight="1"
             android:id="@+id/navigation_icon"
@@ -30,6 +31,7 @@
             android:gravity="center"
             android:layout_weight="0"
             android:text="标题"
+            android:textSize="@dimen/navigation_text_size"
             android:id="@+id/navigation_text"
             />
     </LinearLayout>

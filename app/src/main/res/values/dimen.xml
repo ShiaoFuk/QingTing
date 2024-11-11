@@ -3,8 +3,11 @@
     <dimen name="layout_margin">5dp</dimen>
     <dimen name="layout_padding">5dp</dimen>
     <dimen name="toast_icon_length">30dp</dimen>
+    <dimen name="img_padding">1dp</dimen>
     <!-- navigation_icon_height =  play_bar_bottom_margin - 2 * navigation_icon_padding_bottom-->
-    <dimen name="navigation_icon_height">45dp</dimen>
+    <dimen name="navigation_layout_height">45dp</dimen>
+    <dimen name="navigation_text_size">12dp</dimen>
+    <dimen name="navigation_icon_height">33dp</dimen>
     <dimen name="navigation_icon_padding_bottom">10dp</dimen>
     <dimen name="navigation_height">90dp</dimen>
     <!--bottom_margin = navigation_height - height / 2-->
@@ -19,5 +22,4 @@
     <dimen name="player_icon_margin_vertical">10dp</dimen>
     <dimen name="play_bar_horizonal_margin">10dp</dimen>
     <dimen name="play_bar_icon_horizonal_margin">20dp</dimen>
-
 </resources>
