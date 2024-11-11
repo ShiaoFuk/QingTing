@@ -3,9 +3,11 @@ package com.example.qingting.HomePage;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,7 +41,37 @@ public class MainActivity extends AppCompatActivity {
         initNavigation();
     }
 
-    private void initNavigation() {
 
+    /**
+     * 初始化底部导航栏
+     */
+    private void initNavigation() {
+        initHomePage();
+        initChatPage();
+        initUserPage();
+    }
+
+
+    private void initHomePage() {
+        View view = findViewById(R.id.home_page);
+        ImageView im = view.findViewById(R.id.navigation_icon);
+        TextView tv = view.findViewById(R.id.navigation_text);
+        im.setImageResource(R.drawable.home_page_icon);
+        tv.setText("首页");
+    }
+
+    private void initChatPage() {
+        View view = findViewById(R.id.chat_page);
+        ImageView im = view.findViewById(R.id.navigation_icon);
+        TextView tv = view.findViewById(R.id.navigation_text);
+        im.setImageResource(R.drawable.chat_page_icon);
+        tv.setText("聊天");
+    }
+    private void initUserPage() {
+        View view = findViewById(R.id.user_page);
+        ImageView im = view.findViewById(R.id.navigation_icon);
+        TextView tv = view.findViewById(R.id.navigation_text);
+        im.setImageResource(R.drawable.user_page_icon);
+        tv.setText("我的");
     }
 }

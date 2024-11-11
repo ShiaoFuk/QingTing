@@ -5,6 +5,7 @@
     <dimen name="toast_icon_length">30dp</dimen>
 
     <dimen name="navigation_height">80dp</dimen>
+    <dimen name="navigation_icon_height">45dp</dimen>
     <dimen name="play_bar_bottom_margin">55dp</dimen>
     <dimen name="play_bar_icon_bottom_margin">50dp</dimen>
     <!--navigation_height - bottom_marin = length / 2-->
