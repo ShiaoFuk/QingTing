@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:padding="20dp"
+    >
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="50dp"
+        app:cardBackgroundColor="#CDF09B"
+        android:layout_centerInParent="true"
+        app:cardElevation="0dp"
+        >
+        <LinearLayout
+            android:id="@+id/toast_layout"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/layout_padding"
+            android:gravity="center_vertical"
+            >
+            <ImageView
+                android:src="@drawable/app_icon"
+                android:layout_marginLeft="@dimen/layout_margin"
+                android:layout_width="@dimen/toast_icon_length"
+                android:layout_height="@dimen/toast_icon_length"/>
+            <TextView
+                android:id="@+id/toast_text"
+                android:layout_marginHorizontal="@dimen/layout_margin"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="left|center_vertical"
+                android:textColor="@color/black"
+                android:textSize="24dp"
+                android:text="示范文本"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
+
