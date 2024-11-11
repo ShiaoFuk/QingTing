@@ -68,7 +68,7 @@
         android:paddingBottom="@dimen/navigation_icon_padding_bottom"
         >
         <include layout="@layout/navigation_item"
-            android:id="@+id/home_page"/>
+            android:id="@+id/home_page" />
         <include layout="@layout/navigation_item"
             android:id="@+id/chat_page"/>
         <include layout="@layout/navigation_item"

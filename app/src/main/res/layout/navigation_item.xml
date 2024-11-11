@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_weight="1"
-    android:layout_height="@dimen/navigation_icon_height"
-    android:gravity="center_horizontal"
+    android:layout_height="wrap_content"
     >
-    <ImageView
-        android:scaleType="centerCrop"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:layout_weight="1"
-        android:id="@+id/navigation_icon"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_weight="0"
-        android:text="标题"
-        android:id="@+id/navigation_text"
-        />
-</LinearLayout>
+        android:layout_height="@dimen/navigation_icon_height"
+        android:gravity="center_horizontal"
+        android:layout_centerInParent="true"
+        >
+        <ImageView
+            android:scaleType="centerCrop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:layout_weight="1"
+            android:id="@+id/navigation_icon"
+            android:src="@drawable/home_page_icon"
+            app:tint="@android:color/darker_gray"
+            android:foregroundTintMode="src_atop"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="0"
+            android:text="标题"
+            android:id="@+id/navigation_text"
+            />
+    </LinearLayout>
+</RelativeLayout>
