@@ -1,5 +1,6 @@
 package com.example.qingting.HomePage;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,8 +15,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
+import com.example.qingting.ChatPage.ChatPageFragment;
 import com.example.qingting.R;
+import com.example.qingting.UserPage.UserPageFragment;
+import com.example.qingting.Utils.FragmentUtils;
 import com.example.qingting.Utils.TintUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -50,8 +57,7 @@ public class MainActivity extends AppCompatActivity {
      * 初始化底部导航栏
      */
     private void initNavigation() {
-        NavigationProvider.initNavigation(rootView);
-
+        NavigationProvider.initNavigation(this, rootView, frameLayout);
     }
 
 
@@ -63,8 +69,18 @@ class NavigationProvider {
 
     final static int SELECTED_COLOR = Color.rgb(118, 194, 175);
     final static int DEFAULT_COLOR = Color.GRAY;
-    private static View currentView = null;
-    static void initNavigation(View view) {
+    private static View currentView;
+    private static FrameLayout frameLayout;
+    private static MainActivity mainActivity;
+    private static HomePageFragment homePageFragment;
+    private static ChatPageFragment chatPageFragment;
+    private static UserPageFragment userPageFragments;
+    static void initNavigation(MainActivity mainActivity1, View view, FrameLayout frameLayout1) {
+        mainActivity = mainActivity1;
+        frameLayout = frameLayout1;
+        homePageFragment = HomePageFragment.newInstance();
+        chatPageFragment = ChatPageFragment.newInstance();
+        userPageFragments = UserPageFragment.newInstance();
         initHomePage(view);
         initChatPage(view);
         initUserPage(view);
@@ -76,12 +92,14 @@ class NavigationProvider {
         TextView tv = view.findViewById(R.id.navigation_text);
         im.setImageResource(R.drawable.home_page_icon);
         tv.setText("首页");
-
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setCurrentColor(currentView, view);
                 currentView = view;
+                if (homePageFragment.isAdded()) return;
+                FragmentUtils.addFragment(mainActivity, frameLayout, homePageFragment);
+                FragmentUtils.removeFragments(mainActivity, new Fragment[]{chatPageFragment, userPageFragments});
             }
         });
     }
@@ -98,6 +116,9 @@ class NavigationProvider {
             public void onClick(View v) {
                 setCurrentColor(currentView, view);
                 currentView = view;
+                if (chatPageFragment.isAdded()) return;
+                FragmentUtils.addFragment(mainActivity, frameLayout, chatPageFragment);
+                FragmentUtils.removeFragments(mainActivity, new Fragment[]{homePageFragment, userPageFragments});
             }
         });
     }
@@ -113,6 +134,9 @@ class NavigationProvider {
             public void onClick(View v) {
                 setCurrentColor(currentView, view);
                 currentView = view;
+                if (userPageFragments.isAdded()) return;
+                FragmentUtils.addFragment(mainActivity, frameLayout, userPageFragments);
+                FragmentUtils.removeFragments(mainActivity, new Fragment[]{chatPageFragment, homePageFragment});
             }
         });
     }

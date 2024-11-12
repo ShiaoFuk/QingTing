@@ -22,4 +22,9 @@
     <dimen name="player_icon_margin_vertical">10dp</dimen>
     <dimen name="play_bar_horizonal_margin">10dp</dimen>
     <dimen name="play_bar_icon_horizonal_margin">20dp</dimen>
+
+    <!--    HomePageFragment-->
+    <dimen name="search_height">50dp</dimen>
+    <dimen name="search_padding">10dp</dimen>
+    <dimen name="search_horizonal_margin">20dp</dimen>
 </resources>
