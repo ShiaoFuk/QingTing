@@ -52,7 +52,6 @@ public class FragmentUtils {
      */
     public static void removeFragment(FragmentActivity fragmentActivity, Fragment fragment) {
         if (fragment == null) return;
-//        FragmentActivity activity = frameLayout.getContext();
         FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.remove(fragment);
@@ -69,5 +68,19 @@ public class FragmentUtils {
         for (int i = 0; i < fragmentList.length; ++i) {
             removeFragment(fragmentActivity, fragmentList[i]);
         }
+    }
+
+    /**
+     * replace fragment into framelayout, if fragment is null, would do nothing
+     * @param frameLayout framelayout where fragment will be added
+     * @param fragment will be added to framelayout(ignore if will be added to backstack)ss
+     */
+    public static void replaceFragment(FrameLayout frameLayout, Fragment fragment) {
+        if (fragment == null) return;
+        FragmentActivity fragmentActivity = (FragmentActivity) frameLayout.getContext();
+        FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(frameLayout.getId(), fragment);
+        transaction.commit();
     }
 }

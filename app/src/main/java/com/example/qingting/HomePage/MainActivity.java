@@ -1,8 +1,6 @@
 package com.example.qingting.HomePage;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -16,8 +14,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 
 import com.example.qingting.ChatPage.ChatPageFragment;
 import com.example.qingting.R;
@@ -67,78 +63,70 @@ public class MainActivity extends AppCompatActivity {
 
 class NavigationProvider {
 
-    final static int SELECTED_COLOR = Color.rgb(118, 194, 175);
-    final static int DEFAULT_COLOR = Color.GRAY;
     private static View currentView;
     private static FrameLayout frameLayout;
     private static MainActivity mainActivity;
     private static HomePageFragment homePageFragment;
     private static ChatPageFragment chatPageFragment;
-    private static UserPageFragment userPageFragments;
+    private static UserPageFragment userPageFragment;
     static void initNavigation(MainActivity mainActivity1, View view, FrameLayout frameLayout1) {
         mainActivity = mainActivity1;
         frameLayout = frameLayout1;
         homePageFragment = HomePageFragment.newInstance();
         chatPageFragment = ChatPageFragment.newInstance();
-        userPageFragments = UserPageFragment.newInstance();
+        userPageFragment = UserPageFragment.newInstance();
         initHomePage(view);
         initChatPage(view);
         initUserPage(view);
     }
 
     private static void initHomePage(View rootView) {
-        View view = rootView.findViewById(R.id.home_page).findViewById(R.id.navigation_layout);
-        ImageView im = view.findViewById(R.id.navigation_icon);
-        TextView tv = view.findViewById(R.id.navigation_text);
-        im.setImageResource(R.drawable.home_page_icon);
-        tv.setText("首页");
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setCurrentColor(currentView, view);
-                currentView = view;
-                if (homePageFragment.isAdded()) return;
-                FragmentUtils.addFragment(mainActivity, frameLayout, homePageFragment);
-                FragmentUtils.removeFragments(mainActivity, new Fragment[]{chatPageFragment, userPageFragments});
-            }
-        });
+        initPage(rootView, R.id.home_page);
     }
 
     private static void initChatPage(View rootView) {
-        View view = rootView.findViewById(R.id.chat_page).findViewById(R.id.navigation_layout);
-        ImageView im = view.findViewById(R.id.navigation_icon);
-        TextView tv = view.findViewById(R.id.navigation_text);
-        im.setImageResource(R.drawable.chat_page_icon);
-        tv.setText("聊天");
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setCurrentColor(currentView, view);
-                currentView = view;
-                if (chatPageFragment.isAdded()) return;
-                FragmentUtils.addFragment(mainActivity, frameLayout, chatPageFragment);
-                FragmentUtils.removeFragments(mainActivity, new Fragment[]{homePageFragment, userPageFragments});
-            }
-        });
+        initPage(rootView, R.id.chat_page);
     }
     private static void initUserPage(View rootView) {
-        View view = rootView.findViewById(R.id.user_page).findViewById(R.id.navigation_layout);
+        initPage(rootView, R.id.user_page);
+    }
+
+
+    private static void initPage(View rootView, int pageId) {
+        View view = rootView.findViewById(pageId).findViewById(R.id.navigation_layout);
         ImageView im = view.findViewById(R.id.navigation_icon);
         TextView tv = view.findViewById(R.id.navigation_text);
         im.setImageResource(R.drawable.user_page_icon);
-        tv.setText("我的");
-
+        final Fragment pageFragment;
+        final String text;
+        if (pageId == R.id.home_page) {
+            text = "主页";
+            pageFragment = homePageFragment;
+        } else if (pageId == R.id.chat_page){
+            text = "聊天";
+            pageFragment = chatPageFragment;
+        } else if (pageId == R.id.user_page) {
+            text = "我的";
+            pageFragment = userPageFragment;
+        } else {
+            text = "";
+            pageFragment = null;
+        }
+        tv.setText(text);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setCurrentColor(currentView, view);
-                currentView = view;
-                if (userPageFragments.isAdded()) return;
-                FragmentUtils.addFragment(mainActivity, frameLayout, userPageFragments);
-                FragmentUtils.removeFragments(mainActivity, new Fragment[]{chatPageFragment, homePageFragment});
+                initFragmentClickListener(v, pageFragment);
             }
         });
+    }
+
+
+    private static void initFragmentClickListener(View view, Fragment fragment) {
+        setCurrentColor(currentView, view);
+        currentView = view;
+        if (fragment.isAdded()) return;
+        FragmentUtils.replaceFragment(frameLayout, fragment);
     }
 
     /**
@@ -150,12 +138,12 @@ class NavigationProvider {
         if (oldView != null) {
             ImageView oldImageView = oldView.findViewById(R.id.navigation_icon);
             TextView oldTV = oldView.findViewById(R.id.navigation_text);
-            TintUtils.setImageViewTint(oldImageView, DEFAULT_COLOR);
-            oldTV.setTextColor(DEFAULT_COLOR);
+            TintUtils.setImageViewTint(oldImageView, oldView.getResources().getColor(R.color.gray));
+            oldTV.setTextColor(oldView.getResources().getColor(R.color.gray));
         }
         ImageView newImgView = newView.findViewById(R.id.navigation_icon);
         TextView newTV = newView.findViewById(R.id.navigation_text);
-        TintUtils.setImageViewTint(newImgView, SELECTED_COLOR);
-        newTV.setTextColor(SELECTED_COLOR);
+        TintUtils.setImageViewTint(newImgView, newView.getResources().getColor(R.color.green));
+        newTV.setTextColor(newView.getResources().getColor(R.color.green));
     }
 }
