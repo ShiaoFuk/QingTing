@@ -1,4 +1,4 @@
-package com.example.qingting.HomePage;
+package com.example.qingting;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.qingting.ChatPage.ChatPageFragment;
-import com.example.qingting.R;
+import com.example.qingting.HomePage.HomePageFragment;
 import com.example.qingting.UserPage.UserPageFragment;
 import com.example.qingting.Utils.FragmentUtils;
 import com.example.qingting.Utils.TintUtils;
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
      * 初始化底部导航栏
      */
     private void initNavigation() {
-        NavigationProvider.initNavigation(this, rootView, frameLayout);
+        NavigationProvider.initNavigation(rootView, frameLayout);
     }
 
 
@@ -65,25 +65,25 @@ class NavigationProvider {
 
     private static View currentView;
     private static FrameLayout frameLayout;
-    private static MainActivity mainActivity;
     private static HomePageFragment homePageFragment;
     private static ChatPageFragment chatPageFragment;
     private static UserPageFragment userPageFragment;
-    static void initNavigation(MainActivity mainActivity1, View view, FrameLayout frameLayout1) {
-        mainActivity = mainActivity1;
+    static void initNavigation(View view, FrameLayout frameLayout1) {
         frameLayout = frameLayout1;
         homePageFragment = HomePageFragment.newInstance();
         chatPageFragment = ChatPageFragment.newInstance();
         userPageFragment = UserPageFragment.newInstance();
+
+        // 初始化要切换到homePage页面
         initHomePage(view);
         initChatPage(view);
         initUserPage(view);
+        initEnd(view);
     }
 
     private static void initHomePage(View rootView) {
         initPage(rootView, R.id.home_page);
     }
-
     private static void initChatPage(View rootView) {
         initPage(rootView, R.id.chat_page);
     }
@@ -96,43 +96,53 @@ class NavigationProvider {
         View view = rootView.findViewById(pageId).findViewById(R.id.navigation_layout);
         ImageView im = view.findViewById(R.id.navigation_icon);
         TextView tv = view.findViewById(R.id.navigation_text);
-        im.setImageResource(R.drawable.user_page_icon);
         final Fragment pageFragment;
         final String text;
+        final int drawableResouceId;
         if (pageId == R.id.home_page) {
-            text = "主页";
+            text = rootView.getResources().getString(R.string.home_page_name);
             pageFragment = homePageFragment;
+            drawableResouceId = R.drawable.home_page_icon;
         } else if (pageId == R.id.chat_page){
-            text = "聊天";
+            text = rootView.getResources().getString(R.string.chat_page_name);
             pageFragment = chatPageFragment;
+            drawableResouceId = R.drawable.chat_page_icon;
         } else if (pageId == R.id.user_page) {
-            text = "我的";
+            text = rootView.getResources().getString(R.string.user_page_name);
             pageFragment = userPageFragment;
+            drawableResouceId = R.drawable.user_page_icon;
         } else {
             text = "";
             pageFragment = null;
+            drawableResouceId = -1;
         }
+        im.setImageResource(drawableResouceId);
         tv.setText(text);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initFragmentClickListener(v, pageFragment);
+                initNavigationClickEvent(v, pageFragment);
             }
         });
     }
 
 
-    private static void initFragmentClickListener(View view, Fragment fragment) {
+    /**
+     * tiggerd when the navigation icon group is clicked
+     * @param view the navigation icon group
+     * @param fragment fragment would be put on the framelayout
+     */
+    private static void initNavigationClickEvent(View view, Fragment fragment) {
         setCurrentColor(currentView, view);
         currentView = view;
         if (fragment.isAdded()) return;
-        FragmentUtils.replaceFragment(frameLayout, fragment);
+        FragmentUtils.replaceFragment(frameLayout, fragment, false);
     }
 
     /**
-     * 切换的时候要切换导航栏按钮的颜色
-     * @param oldView 原来被选中的linearlayout，第一次选中的时候没有oldView，传null
-     * @param newView 即将被选中的linearlayout
+     * switch the navigation color when switch the fragment by touching navigation color
+     * @param oldView the previous selected navigation icon group, if no then pass null
+     * @param newView the navigation icon group been clicked
      */
     private static void setCurrentColor(View oldView, View newView) {
         if (oldView != null) {
@@ -145,5 +155,10 @@ class NavigationProvider {
         TextView newTV = newView.findViewById(R.id.navigation_text);
         TintUtils.setImageViewTint(newImgView, newView.getResources().getColor(R.color.green));
         newTV.setTextColor(newView.getResources().getColor(R.color.green));
+    }
+
+    private static void initEnd(View rootView) {
+        View view = rootView.findViewById(R.id.home_page).findViewById(R.id.navigation_layout);
+        view.performClick();
     }
 }

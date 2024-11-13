@@ -10,18 +10,16 @@ import android.view.ViewGroup;
 
 import com.example.qingting.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ChatPageFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class ChatPageFragment extends Fragment {
-    public ChatPageFragment() {
+    private static ChatPageFragment fragment;
+    private ChatPageFragment() {
         // Required empty public constructor
     }
 
     public static ChatPageFragment newInstance() {
-        ChatPageFragment fragment = new ChatPageFragment();
+        if (fragment == null)
+            fragment = new ChatPageFragment();
         return fragment;
     }
 

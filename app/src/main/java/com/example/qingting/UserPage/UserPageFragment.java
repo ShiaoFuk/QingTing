@@ -18,14 +18,14 @@ import com.example.qingting.R;
 public class UserPageFragment extends Fragment {
 
 
-
-    public UserPageFragment() {
+    private static UserPageFragment fragment;
+    private UserPageFragment() {
         // Required empty public constructor
     }
 
 
     public static UserPageFragment newInstance() {
-        UserPageFragment fragment = new UserPageFragment();
+        if (fragment == null) fragment = new UserPageFragment();
         return fragment;
     }
 

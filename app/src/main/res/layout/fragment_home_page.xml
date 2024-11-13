@@ -5,8 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomePage.HomePageFragment">
-
+    <View
+        android:id="@+id/top_bar"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/top_bar_height"
+        app:layout_constraintTop_toTopOf="parent"
+        />
     <EditText
+        android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_height"
         android:layout_marginHorizontal="@dimen/search_horizonal_margin"
@@ -16,6 +23,17 @@
         android:singleLine="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/top_bar"
+        />
+    <FrameLayout
+        android:id="@+id/page_frame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/green"
+        >
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

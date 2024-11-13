@@ -1,0 +1,8 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 背景层，使用一个颜色或固定尺寸的边距 -->
+    <item android:left="320px" android:right="320px" android:top="320px" android:bottom="320px">
+        <bitmap
+            android:src="@drawable/note"
+            android:gravity="center"/>
+    </item>
+</layer-list>
