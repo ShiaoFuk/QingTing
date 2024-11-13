@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.qingting.ChatPage.ChatPageFragment;
 import com.example.qingting.HomePage.HomePageFragment;
+import com.example.qingting.SearchPage.SearchHistoryFragment;
 import com.example.qingting.UserPage.UserPageFragment;
 import com.example.qingting.Utils.FragmentUtils;
 import com.example.qingting.Utils.TintUtils;
@@ -58,6 +59,16 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    @Override
+    public void onBackPressed() {
+        if (SearchHistoryFragment.getInstance().isAdded()) {
+            HomePageFragment homePageFragment = HomePageFragment.getInstance();
+            FragmentUtils.removeFragmentFromFragment(homePageFragment, (FrameLayout) homePageFragment.getView().findViewById(R.id.page_frame), SearchHistoryFragment.getInstance());
+            return;
+        }
+        super.onBackPressed();
+    }
+
 }
 
 
@@ -70,9 +81,9 @@ class NavigationProvider {
     private static UserPageFragment userPageFragment;
     static void initNavigation(View view, FrameLayout frameLayout1) {
         frameLayout = frameLayout1;
-        homePageFragment = HomePageFragment.newInstance();
-        chatPageFragment = ChatPageFragment.newInstance();
-        userPageFragment = UserPageFragment.newInstance();
+        homePageFragment = HomePageFragment.getInstance();
+        chatPageFragment = ChatPageFragment.getInstance();
+        userPageFragment = UserPageFragment.getInstance();
 
         // 初始化要切换到homePage页面
         initHomePage(view);
@@ -136,7 +147,7 @@ class NavigationProvider {
         setCurrentColor(currentView, view);
         currentView = view;
         if (fragment.isAdded()) return;
-        FragmentUtils.replaceFragment(frameLayout, fragment, false);
+        FragmentUtils.replaceFragmentToActivity(frameLayout, fragment);
     }
 
     /**
@@ -161,4 +172,6 @@ class NavigationProvider {
         View view = rootView.findViewById(R.id.home_page).findViewById(R.id.navigation_layout);
         view.performClick();
     }
+
+
 }

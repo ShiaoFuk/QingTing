@@ -12,7 +12,7 @@ import com.example.qingting.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link UserPageFragment#newInstance} factory method to
+ * Use the {@link UserPageFragment#getInstance} factory method to
  * create an instance of this fragment.
  */
 public class UserPageFragment extends Fragment {
@@ -24,7 +24,7 @@ public class UserPageFragment extends Fragment {
     }
 
 
-    public static UserPageFragment newInstance() {
+    public static UserPageFragment getInstance() {
         if (fragment == null) fragment = new UserPageFragment();
         return fragment;
     }

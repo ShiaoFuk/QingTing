@@ -16,7 +16,7 @@ public class SearchHistoryFragment extends Fragment {
     private static SearchHistoryFragment fragment;
     private SearchHistoryFragment() {
     }
-    public static SearchHistoryFragment newInstance() {
+    public static SearchHistoryFragment getInstance() {
         if (fragment == null)
             fragment = new SearchHistoryFragment();
         return fragment;
@@ -38,7 +38,9 @@ public class SearchHistoryFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        // 要确保这个fragment被添加到fragment上而不是activity上
         HomePageFragment homePageFragment = (HomePageFragment) getParentFragment();
         homePageFragment.clearSearchFocus();
     }
+
 }

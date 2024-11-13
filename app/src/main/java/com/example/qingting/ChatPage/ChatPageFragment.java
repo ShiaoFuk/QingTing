@@ -17,7 +17,7 @@ public class ChatPageFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static ChatPageFragment newInstance() {
+    public static ChatPageFragment getInstance() {
         if (fragment == null)
             fragment = new ChatPageFragment();
         return fragment;

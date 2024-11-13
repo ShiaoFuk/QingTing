@@ -24,7 +24,7 @@ public class HomePageFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static HomePageFragment newInstance() {
+    public static HomePageFragment getInstance() {
         if (fragment == null)
             fragment = new HomePageFragment();
         return fragment;
@@ -42,7 +42,7 @@ public class HomePageFragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_home_page, container, false);
         frameLayout = rootView.findViewById(R.id.page_frame);
-        searchHistoryFragment = SearchHistoryFragment.newInstance();
+        searchHistoryFragment = SearchHistoryFragment.getInstance();
         init();
         return rootView;
     }
@@ -60,13 +60,14 @@ public class HomePageFragment extends Fragment {
                 if (!hasFocus) {
                     topBar.setVisibility(View.INVISIBLE);
                     if (searchHistoryFragment.isAdded())
-                        FragmentUtils.removeFragment(frameLayout, searchHistoryFragment, false);
+                        FragmentUtils.removeFragmentFromFragment(fragment, frameLayout, searchHistoryFragment);
                     return;
                 }
                 // focus在搜索框的时候要替换另一个fragment
                 topBar.setVisibility(View.GONE);
-                if (!searchHistoryFragment.isAdded())
-                    FragmentUtils.addFragmentToBackStack(frameLayout, searchHistoryFragment, false);
+                if (!searchHistoryFragment.isAdded()) {
+                    boolean isAddToBackStack = FragmentUtils.addFragmentToBackStackToFragment(fragment, frameLayout, searchHistoryFragment);
+                }
             }
         });
     }
