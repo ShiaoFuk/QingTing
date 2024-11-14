@@ -1,12 +1,16 @@
 package com.example.qingting.Utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.example.qingting.HomePage.HomePageFragment;
+import com.example.qingting.R;
 
 public class FragmentUtils {
 

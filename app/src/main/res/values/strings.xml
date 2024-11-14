@@ -4,5 +4,8 @@
     <string name="home_page_name">主页</string>
     <string name="chat_page_name">聊天</string>
     <string name="user_page_name">我的</string>
+    <string name="title_activity_play">PlayActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

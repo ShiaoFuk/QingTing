@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.qingting.ChatPage.ChatPageFragment;
 import com.example.qingting.HomePage.HomePageFragment;
-import com.example.qingting.SearchPage.SearchHistoryFragment;
+import com.example.qingting.PlayPage.PlayFragment;
 import com.example.qingting.UserPage.UserPageFragment;
 import com.example.qingting.Utils.FragmentUtils;
 import com.example.qingting.Utils.TintUtils;
@@ -46,9 +46,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
+        initPlayBar();
         initNavigation();
     }
 
+
+    private void initPlayBar() {
+        View playBarIcon = findViewById(R.id.play_bar_icon);
+        View playBar = findViewById(R.id.play_bar);
+        playBarIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setPlayBarClickEvent(v);
+            }
+        });
+        playBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setPlayBarClickEvent(v);
+            }
+        });
+    }
+
+    private void setPlayBarClickEvent(View view) {
+        // 添加播放页面的fragment
+        FrameLayout rootFrame = findViewById(R.id.main);
+        FragmentUtils.addFragmentToBackStackToActivity(rootFrame, PlayFragment.getInstance());
+    }
 
     /**
      * 初始化底部导航栏
@@ -61,10 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (SearchHistoryFragment.getInstance().isAdded()) {
-            HomePageFragment homePageFragment = HomePageFragment.getInstance();
-            FragmentUtils.removeFragmentFromFragment(homePageFragment, (FrameLayout) homePageFragment.getView().findViewById(R.id.page_frame), SearchHistoryFragment.getInstance());
-            return;
+        if (HomePageFragment.getInstance().isAdded()) {
+            if (HomePageFragment.getInstance().removeChildFragments()) return;
         }
         super.onBackPressed();
     }
@@ -76,21 +98,15 @@ class NavigationProvider {
 
     private static View currentView;
     private static FrameLayout frameLayout;
-    private static HomePageFragment homePageFragment;
-    private static ChatPageFragment chatPageFragment;
-    private static UserPageFragment userPageFragment;
     static void initNavigation(View view, FrameLayout frameLayout1) {
         frameLayout = frameLayout1;
-        homePageFragment = HomePageFragment.getInstance();
-        chatPageFragment = ChatPageFragment.getInstance();
-        userPageFragment = UserPageFragment.getInstance();
-
         // 初始化要切换到homePage页面
         initHomePage(view);
         initChatPage(view);
         initUserPage(view);
         initEnd(view);
     }
+
 
     private static void initHomePage(View rootView) {
         initPage(rootView, R.id.home_page);
@@ -112,15 +128,15 @@ class NavigationProvider {
         final int drawableResouceId;
         if (pageId == R.id.home_page) {
             text = rootView.getResources().getString(R.string.home_page_name);
-            pageFragment = homePageFragment;
+            pageFragment = HomePageFragment.getInstance();
             drawableResouceId = R.drawable.home_page_icon;
         } else if (pageId == R.id.chat_page){
             text = rootView.getResources().getString(R.string.chat_page_name);
-            pageFragment = chatPageFragment;
+            pageFragment = ChatPageFragment.getInstance();
             drawableResouceId = R.drawable.chat_page_icon;
         } else if (pageId == R.id.user_page) {
             text = rootView.getResources().getString(R.string.user_page_name);
-            pageFragment = userPageFragment;
+            pageFragment = UserPageFragment.getInstance();
             drawableResouceId = R.drawable.user_page_icon;
         } else {
             text = "";

@@ -1,77 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    tools:context=".MainActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
-    <FrameLayout
-        android:id="@+id/page_frame"
+    android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/navigation_bar"
-        tools:comment="点击导航栏的图标的时候切换"
+        android:layout_height="match_parent"
         >
+        <FrameLayout
+            android:id="@+id/page_frame"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/navigation_bar"
+            tools:comment="点击导航栏的图标的时候切换"
+            >
 
-    </FrameLayout>
-    <com.google.android.material.imageview.ShapeableImageView
-        app:shapeAppearance="@style/play_bar_icon_style"
-        android:layout_width="@dimen/play_bar_icon_length"
-        android:layout_height="@dimen/play_bar_icon_length"
-        android:src="@drawable/question_icon"
-        android:scaleType="fitXY"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="@dimen/play_bar_icon_bottom_margin"
-        android:layout_marginStart="@dimen/play_bar_icon_horizonal_margin"
-        android:elevation="8dp"
-        />
-    <RelativeLayout
-        android:id="@+id/play_bar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/play_bar_height"
-        android:layout_marginStart="@dimen/play_bar_icon_horizonal_margin"
-        android:layout_marginEnd="@dimen/play_bar_horizonal_margin"
-        android:background="@drawable/shape_play_bar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="@dimen/play_bar_bottom_margin"
-        android:elevation="3dp"
-        >
+        </FrameLayout>
         <com.google.android.material.imageview.ShapeableImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/play_icon"
-            app:shapeAppearance="@style/player_icon_style"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginVertical="@dimen/player_icon_margin_vertical"
-            android:layout_marginEnd="@dimen/player_icon_margin_end"
+            android:id="@+id/play_bar_icon"
+            app:shapeAppearance="@style/play_bar_icon_style"
+            android:layout_width="@dimen/play_bar_icon_length"
+            android:layout_height="@dimen/play_bar_icon_length"
+            android:src="@drawable/question_icon"
+            android:scaleType="fitXY"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="@dimen/play_bar_icon_bottom_margin"
+            android:layout_marginStart="@dimen/play_bar_icon_horizonal_margin"
+            android:elevation="8dp"
             />
+        <RelativeLayout
+            android:id="@+id/play_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/play_bar_height"
+            android:layout_marginStart="@dimen/play_bar_icon_horizonal_margin"
+            android:layout_marginEnd="@dimen/play_bar_horizonal_margin"
+            android:background="@drawable/shape_play_bar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="@dimen/play_bar_bottom_margin"
+            android:elevation="3dp"
+            >
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/play_icon"
+                app:shapeAppearance="@style/player_icon_style"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginVertical="@dimen/player_icon_margin_vertical"
+                android:layout_marginEnd="@dimen/player_icon_margin_end"
+                />
+        </RelativeLayout>
 
-    </RelativeLayout>
 
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/navigation_bar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/navigation_height"
-        app:elevation="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="0dp"
-        android:gravity="bottom"
-        tools:comment="导航栏"
-        android:paddingBottom="@dimen/navigation_icon_padding_bottom"
-        >
-        <include layout="@layout/navigation_item"
-            android:id="@+id/home_page" />
-        <include layout="@layout/navigation_item"
-            android:id="@+id/chat_page"/>
-        <include layout="@layout/navigation_item"
-            android:id="@+id/user_page"/>
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:id="@+id/navigation_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/navigation_height"
+            app:elevation="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:layout_editor_absoluteX="0dp"
+            android:gravity="bottom"
+            tools:comment="导航栏"
+            android:paddingBottom="@dimen/navigation_icon_padding_bottom"
+            >
+            <include layout="@layout/navigation_item"
+                android:id="@+id/home_page" />
+            <include layout="@layout/navigation_item"
+                android:id="@+id/chat_page"/>
+            <include layout="@layout/navigation_item"
+                android:id="@+id/user_page"/>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
