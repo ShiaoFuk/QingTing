@@ -2,6 +2,7 @@ package com.example.qingting;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -21,9 +22,10 @@ import com.example.qingting.PlayPage.PlayFragment;
 import com.example.qingting.UserPage.UserPageFragment;
 import com.example.qingting.Utils.FragmentUtils;
 import com.example.qingting.Utils.TintUtils;
+import com.example.qingting.net.cyper.AESUtils;
 
 public class MainActivity extends AppCompatActivity {
-
+    private final static String TAG = MainActivity.class.getName();
     Context context;
     LinearLayout navigationView;
     FrameLayout frameLayout;
