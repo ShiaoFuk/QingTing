@@ -9,7 +9,7 @@ public interface RequestListener {
     void onRequest();  // 发送前后
     void onReceive();  // 接收响应后 trigger onSuccess | onError
     void onSuccess(JsonElement element);  // 响应成功
-    void onError();  // 响应失败
+    void onError(Exception e);  // 响应失败
     void onFinish();  // 结束
 
 

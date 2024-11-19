@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.qingting.Adapter.HostListAdapter;
+import com.example.qingting.Adapter.HotListAdapter;
 import com.example.qingting.R;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class SearchHistoryFragment extends Fragment {
         arrayList.add("test3");
         arrayList.add("test4");
         // 发起网络请求获取热门歌曲列表后用于初始化contentList
-        HostListAdapter hostListAdapter = new HostListAdapter(arrayList);
+        HotListAdapter hostListAdapter = new HotListAdapter(arrayList);
         recyclerView.setAdapter(hostListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
     }

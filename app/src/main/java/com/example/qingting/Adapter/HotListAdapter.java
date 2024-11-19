@@ -1,6 +1,5 @@
 package com.example.qingting.Adapter;
 
-import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Spannable;
@@ -20,10 +19,10 @@ import com.example.qingting.R;
 
 import java.util.List;
 
-public class HostListAdapter extends RecyclerView.Adapter<HostListAdapter.HotItemViewHolder> {
+public class HotListAdapter extends RecyclerView.Adapter<HotListAdapter.HotItemViewHolder> {
 
     List<String> contentList;
-    public HostListAdapter(List<String> contentList) {
+    public HotListAdapter(List<String> contentList) {
         this.contentList = contentList;
     }
 

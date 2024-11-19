@@ -5,16 +5,11 @@ import android.content.Context;
 import com.example.qingting.R;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Base64;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.io.IOException;
 
 public class AESUtils {

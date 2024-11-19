@@ -86,6 +86,10 @@ public class HomePageFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String content = search.getText().toString();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(SearchResultFragment.CONTENT_KEY, content);
+                    searchResultFragment.setArguments(bundle);
                     FragmentUtils.replaceFragmentToFragment(fragment, frameLayout, searchResultFragment);
                     clearSearchFocus();
                 }

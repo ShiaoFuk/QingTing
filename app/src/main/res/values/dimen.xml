@@ -30,4 +30,12 @@
     <dimen name="top_bar_height">50dp</dimen>
     <dimen name="frame_padding">20dp</dimen>
 
+    <!--    SearchResultFragment-->
+    <dimen name="result_padding">10dp</dimen>
+    <dimen name="result_item_height">70dp</dimen>
+    <dimen name="result_item_padding">5dp</dimen>
+    <dimen name="result_item_play_btn_margin">10dp</dimen>
+    <dimen name="result_item_title_text_size">24dp</dimen>
+    <dimen name="result_item_genre_text_size">16dp</dimen>
+    <dimen name="result_item_text_length">240dp</dimen>
 </resources>
