@@ -7,5 +7,7 @@
     <string name="title_activity_play">PlayActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-
+    <string name="loading">加载中...</string>
+    <string name="no_result">没有结果</string>
+    <string name="load_error">搜索失败，请检查网络</string>
 </resources>

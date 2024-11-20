@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.qingting.Adapter.SearchResultAdapter;
 import com.example.qingting.Bean.Music;
@@ -34,6 +35,8 @@ public class SearchResultFragment extends Fragment {
     final static String TAG = SearchResultFragment.class.getName();
     final static String CONTENT_KEY = "content";
     View rootView;
+    View loadingView;
+    TextView loadingText;
     private Handler handler = new Handler(Looper.getMainLooper());
     private SearchResultFragment() {
 
@@ -55,6 +58,8 @@ public class SearchResultFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_search_result, container, false);
+        loadingView = rootView.findViewById(R.id.loading_view);
+        loadingText = rootView.findViewById(R.id.loading_text);
         init();
         return rootView;
     }
@@ -77,12 +82,21 @@ public class SearchResultFragment extends Fragment {
 
             @Override
             public void onRequest() {
+                // 添加loading
+                handler.post(()->{
+                    loadingView.setVisibility(View.VISIBLE);
+                    loadingText.setVisibility(View.VISIBLE);
+                });
 
             }
 
             @Override
             public void onReceive() {
-
+                // 移除loading
+                handler.post(()->{
+                    loadingView.setVisibility(View.GONE);
+                    loadingText.setVisibility(View.GONE);
+                });
             }
 
             @Override
@@ -103,6 +117,12 @@ public class SearchResultFragment extends Fragment {
             @Override
             public void onError(Exception e) {
                 Log.e(TAG, e.getMessage());
+                // 添加错误标识
+                handler.post(()->{
+                    loadingView.setVisibility(View.VISIBLE);
+                    loadingText.setText(getText(R.string.load_error));
+                    loadingText.setVisibility(View.VISIBLE);
+                });
             }
 
             @Override

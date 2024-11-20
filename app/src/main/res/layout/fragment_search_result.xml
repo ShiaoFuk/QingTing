@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomePage.SearchResultFragment">
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/music_recycler_view"
         android:orientation="vertical"
@@ -12,5 +11,25 @@
         android:layout_height="match_parent"
         android:padding="@dimen/frame_padding"
         />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.example.qingting.CustomView.LoadingView
+            android:id="@+id/loading_view"
+            android:layout_width="@dimen/result_item_loading_margin"
+            android:layout_height="@dimen/result_item_loading_margin"
+            android:layout_centerInParent="true"
+            />
+        <TextView
+            android:id="@+id/loading_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading"
+            android:textSize="@dimen/result_item_loading_text_size"
+            android:gravity="center"
+            android:layout_below="@id/loading_view"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
 
 </FrameLayout>
