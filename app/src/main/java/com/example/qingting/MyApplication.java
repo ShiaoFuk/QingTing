@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import lombok.Getter;
+
 /**
  * App对象，维护一个播放队列
  */
@@ -17,12 +19,14 @@ public class MyApplication extends Application {
     LinkedList<Music> musicList;
     AudioPlayUtils audioPlayUtils;
     static MyApplication application;
+    @Getter
+    static Music currentMusic;
     @Override
     public void onCreate() {
         super.onCreate();
         application = this;
         musicList = new LinkedList<>();
-        audioPlayUtils = new AudioPlayUtils(new AudioPlayUtils.OnAudioPlayerListener() {
+        AudioPlayUtils.addOnAudioPlayerListener(new AudioPlayUtils.OnAudioPlayerListener() {
             @Override
             public void onStarted() {
 
@@ -47,12 +51,14 @@ public class MyApplication extends Application {
             public void onComplete() {
                 if (!musicList.isEmpty()) {
                     Music music = musicList.pop();
+                    currentMusic = music;
                     audioPlayUtils.playFromUrl(music.getPath());
                 }
             }
 
         });
     }
+
 
 
     public static MyApplication getInstance() {
@@ -67,7 +73,7 @@ public class MyApplication extends Application {
     // 列表最后加上音乐
     public static void addMusicToEnd(Music music, AudioPlayUtils.OnAudioPlayerListener onAudioPlayerListener) {
         if (onAudioPlayerListener != null) {
-            application.audioPlayUtils.setOnAudioPlayerListener(onAudioPlayerListener);
+            AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
         }
         application.musicList.addLast(music);
     }
@@ -76,7 +82,7 @@ public class MyApplication extends Application {
     // 加入下一首
     public static void addMusicToNext(Music music, AudioPlayUtils.OnAudioPlayerListener onAudioPlayerListener) {
         if (onAudioPlayerListener != null) {
-            application.audioPlayUtils.setOnAudioPlayerListener(onAudioPlayerListener);
+            AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
         }
         application.musicList.addFirst(music);
     }
@@ -85,9 +91,11 @@ public class MyApplication extends Application {
     // 马上播放音乐
     public static void playMusic(Music music, AudioPlayUtils.OnAudioPlayerListener onAudioPlayerListener) {
         if (onAudioPlayerListener != null) {
-            application.audioPlayUtils.setOnAudioPlayerListener(onAudioPlayerListener);
+            AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
         }
-        application.audioPlayUtils.playFromUrl(music.getPath());
+        currentMusic = music;
+        AudioPlayUtils.playFromUrl(music.getPath());
     }
+
 
 }

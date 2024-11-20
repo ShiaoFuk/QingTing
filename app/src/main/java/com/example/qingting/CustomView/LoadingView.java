@@ -138,7 +138,6 @@ public class LoadingView extends View {
             paint.setColor(Color.argb(transparent[i], centerColor[0] / 255f, centerColor[1] / 255f, centerColor[2] / 255f));
             canvas.drawCircle(cx, cy, radiusList[i], paint);
         }
-        Log.e("gg", ""+transparent[0] + transparent[1] + transparent[2]);
         // 绘制中心实心圆
         paint.setColor(Color.rgb(centerColor[0], centerColor[1], centerColor[2]));
         canvas.drawCircle(cx, cy, actualRadius, paint);

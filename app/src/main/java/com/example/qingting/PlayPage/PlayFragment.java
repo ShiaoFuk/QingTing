@@ -1,7 +1,9 @@
 package com.example.qingting.PlayPage;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Dialog;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,10 +12,18 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
+import com.example.qingting.Bean.Music;
+import com.example.qingting.MyApplication;
 import com.example.qingting.R;
+import com.example.qingting.Utils.AudioPlayUtils;
 import com.example.qingting.Utils.FragmentUtils;
+import com.example.qingting.Utils.TimeUtils;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -23,6 +33,8 @@ public class PlayFragment extends BottomSheetDialogFragment {
     static PlayFragment fragment;
     View rootView;
     BottomSheetBehavior<ConstraintLayout> bottomSheetBehavior;
+    Music music;
+    SeekBar seekBar;
     private PlayFragment() {
     }
 
@@ -46,18 +58,36 @@ public class PlayFragment extends BottomSheetDialogFragment {
         return dialog;
     }
 
-
-
+    TextView songLengthLeftTextView;
+    TextView songLengthTextView;
+    ImageView album;
+    ImageView playBtn;
+    ImageView forwardBtn;
+    ImageView rewindBtn;
+    TextView titleTextView;
+    TextView genreTextView;
+    AudioPlayUtils.OnAudioPlayerListener onAudioPlayerListener;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_play, container, false);
+        music = MyApplication.getCurrentMusic();
+        seekBar = rootView.findViewById(R.id.seekbar);
+        songLengthTextView = rootView.findViewById(R.id.song_length);
+        album = rootView.findViewById(R.id.album);
+        playBtn = rootView.findViewById(R.id.play_btn);
+        forwardBtn = rootView.findViewById(R.id.fast_forward);
+        rewindBtn = rootView.findViewById(R.id.rewind);
+        titleTextView = rootView.findViewById(R.id.title);
+        genreTextView = rootView.findViewById(R.id.genre);
         init();
         return rootView;
     }
 
     private void init() {
         initBottomSheetBehavior();
+        initAlbum();
+        initCurrentMusic();
     }
 
     private void initBottomSheetBehavior() {
@@ -83,6 +113,64 @@ public class PlayFragment extends BottomSheetDialogFragment {
             }
         });
     }
+
+
+    private void initAlbum() {
+        ImageView imageView = rootView.findViewById(R.id.album);
+        // 创建旋转动画
+        ObjectAnimator rotationAnimator = ObjectAnimator.ofFloat(imageView, "rotation", 0f, 360f);
+        rotationAnimator.setDuration(8000); // 设置动画循环时间,每n秒转360度
+        rotationAnimator.setRepeatCount(ObjectAnimator.INFINITE); // 设置动画循环播放
+        rotationAnimator.setRepeatMode(ObjectAnimator.RESTART); // 重启模式
+        rotationAnimator.setInterpolator(new LinearInterpolator()); // 设置匀速插值器
+        if (AudioPlayUtils.isPlaying())
+            rotationAnimator.start(); // 启动旋转动画
+        onAudioPlayerListener = new AudioPlayUtils.OnAudioPlayerListener() {
+            @Override
+            public void onStarted() {
+                rotationAnimator.start();
+            }
+
+            @Override
+            public void onPaused() {
+                rotationAnimator.pause();
+            }
+
+            @Override
+            public void onStopped() {
+                rotationAnimator.pause();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                rotationAnimator.pause();
+            }
+        };
+        AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        if (onAudioPlayerListener != null) {
+            AudioPlayUtils.removeOnAudioPlayerListener(onAudioPlayerListener);
+        }
+        super.onDestroyView();
+    }
+
+    private void initCurrentMusic() {
+        if (music == null) return;
+        titleTextView.setText(music.getName());
+        genreTextView.setText(music.getGenre());
+        songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getCurrentPosition()));
+        songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getDuration()));
+    }
+
 
     public void expandBottomSheet() {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);

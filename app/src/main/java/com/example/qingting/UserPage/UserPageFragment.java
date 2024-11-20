@@ -10,11 +10,7 @@ import android.view.ViewGroup;
 
 import com.example.qingting.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link UserPageFragment#getInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class UserPageFragment extends Fragment {
 
 

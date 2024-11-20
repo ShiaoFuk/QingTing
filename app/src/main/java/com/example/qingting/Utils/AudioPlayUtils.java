@@ -7,21 +7,21 @@ import android.os.Looper;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import lombok.Getter;
 import lombok.Setter;
 
 public class AudioPlayUtils {
     private static final String TAG = AudioPlayUtils.class.getName();
-    private MediaPlayer mediaPlayer;
-    @Setter
-    private OnAudioPlayerListener onAudioPlayerListener;
+    @Getter
+    private static MediaPlayer mediaPlayer;
 
-    public AudioPlayUtils(OnAudioPlayerListener listener) {
-        this.onAudioPlayerListener = listener;
-    }
+    private static List<OnAudioPlayerListener> onAudioPlayerListenerList = new ArrayList<>();
 
     // 播放网络音频
-    public void playFromUrl(String url) {
+    public static void playFromUrl(String url) {
         if (mediaPlayer != null) {
             stop();
         }
@@ -37,7 +37,7 @@ public class AudioPlayUtils {
             // 播放准备完成后
             mediaPlayer.setOnPreparedListener(mp -> {
                 mediaPlayer.start();
-                if (onAudioPlayerListener != null) {
+                for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
                     onAudioPlayerListener.onStarted();
                 }
             });
@@ -45,7 +45,7 @@ public class AudioPlayUtils {
             // 处理播放错误
             mediaPlayer.setOnErrorListener((mp, what, extra) -> {
                 Log.e(TAG, "Error occurred: " + what);
-                if (onAudioPlayerListener != null) {
+                for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
                     onAudioPlayerListener.onError("播放出错");
                 }
                 return true;
@@ -54,14 +54,14 @@ public class AudioPlayUtils {
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "Error setting data source for URL", e);
-            if (onAudioPlayerListener != null) {
+            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
                 onAudioPlayerListener.onError("无法加载音频");
             }
         }
     }
 
     // 播放本地音频文件
-    public void playFromFile(String filePath) {
+    public static void playFromFile(String filePath) {
         if (mediaPlayer != null) {
             stop();
         }
@@ -79,7 +79,7 @@ public class AudioPlayUtils {
             // 播放准备完成后
             mediaPlayer.setOnPreparedListener(mp -> {
                 mediaPlayer.start();
-                if (onAudioPlayerListener != null) {
+                for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
                     onAudioPlayerListener.onStarted();
                 }
             });
@@ -87,7 +87,7 @@ public class AudioPlayUtils {
             // 处理播放错误
             mediaPlayer.setOnErrorListener((mp, what, extra) -> {
                 Log.e(TAG, "Error occurred: " + what);
-                if (onAudioPlayerListener != null) {
+                for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
                     onAudioPlayerListener.onError("播放出错");
                 }
                 return true;
@@ -95,30 +95,33 @@ public class AudioPlayUtils {
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "Error setting data source for file", e);
-            if (onAudioPlayerListener != null) {
+            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
                 onAudioPlayerListener.onError("无法加载音频");
             }
+
         }
     }
 
-    private MediaPlayer getMediaPlayer() {
+    private static MediaPlayer getMediaPlayer() {
         MediaPlayer mediaPlayer1 = new MediaPlayer();
         mediaPlayer1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                onAudioPlayerListener.onComplete();
+                for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+                    onAudioPlayerListener.onComplete();
+                }
             }
         });
         return mediaPlayer1;
     }
 
     // 停止播放
-    public void stop() {
+    public static void stop() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
-            if (onAudioPlayerListener != null) {
+            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
                 onAudioPlayerListener.onStopped();
             }
         }
@@ -126,27 +129,27 @@ public class AudioPlayUtils {
 
 
     // 暂停播放
-    public void pause() {
+    public static void pause() {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
-            if (onAudioPlayerListener != null) {
+            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
                 onAudioPlayerListener.onPaused();
             }
         }
     }
 
     // 恢复播放
-    public void resume() {
+    public static void resume() {
         if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
             mediaPlayer.start();
-            if (onAudioPlayerListener != null) {
+            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
                 onAudioPlayerListener.onStarted();
             }
         }
     }
 
     // 获取当前播放位置
-    public int getCurrentPosition() {
+    public static int getCurrentPosition() {
         if (mediaPlayer != null) {
             return mediaPlayer.getCurrentPosition();
         }
@@ -154,7 +157,7 @@ public class AudioPlayUtils {
     }
 
     // 获取音频的总时长
-    public int getDuration() {
+    public static int getDuration() {
         if (mediaPlayer != null) {
             return mediaPlayer.getDuration();
         }
@@ -162,12 +165,53 @@ public class AudioPlayUtils {
     }
 
     // 释放资源
-    public void release() {
+    public static void release() {
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
         }
     }
+
+    public static boolean isPlaying() {
+        if (mediaPlayer != null) {
+            return mediaPlayer.isPlaying();
+        }
+        return false;
+    }
+
+
+    public static void addOnAudioPlayerListener(OnAudioPlayerListener onAudioPlayerListener) {
+        onAudioPlayerListenerList.add(onAudioPlayerListener);
+    }
+
+    public static void removeOnAudioPlayerListener(OnAudioPlayerListener onAudioPlayerListener) {
+        OnAudioPlayerListener onAudioPlayerListenerFirst = onAudioPlayerListenerList.get(0);
+        for (OnAudioPlayerListener onAudioPlayerListener1: onAudioPlayerListenerList) {
+            if (onAudioPlayerListener1.equals(onAudioPlayerListener) && !onAudioPlayerListenerFirst.equals(onAudioPlayerListener)) {
+                onAudioPlayerListenerList.remove(onAudioPlayerListener);
+            }
+        }
+    }
+
+
+    public static void removeOnAudioPlayerListener(int index) {
+        if (index < onAudioPlayerListenerList.size() && index > 0) {
+            onAudioPlayerListenerList.remove(index);
+        }
+    }
+
+    public static void removeAllOnAudioPlayerListener(int index) {
+        for (int i = onAudioPlayerListenerList.size() - 1; i > 0; --i) {
+            onAudioPlayerListenerList.remove(i);
+        }
+    }
+
+    public static void removeLastOnAudioPlayerListener() {
+        if (onAudioPlayerListenerList.size() > 0) {
+            onAudioPlayerListenerList.remove(onAudioPlayerListenerList.size() - 1);
+        }
+    }
+
 
     // 播放状态回调接口
     public interface OnAudioPlayerListener {

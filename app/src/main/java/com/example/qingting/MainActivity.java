@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.qingting.ChatPage.ChatPageFragment;
 import com.example.qingting.HomePage.HomePageFragment;
+import com.example.qingting.Utils.AudioPlayUtils;
 import com.example.qingting.net.request.MusicRequest;
 import com.example.qingting.net.request.RequestListener;
 import com.example.qingting.PlayPage.PlayFragment;
@@ -70,6 +71,13 @@ public class MainActivity extends AppCompatActivity {
                 setPlayBarClickEvent(v);
             }
         });
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AudioPlayUtils.stop();
     }
 
     private void setPlayBarClickEvent(View view) {
