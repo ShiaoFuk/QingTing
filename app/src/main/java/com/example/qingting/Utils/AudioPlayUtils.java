@@ -1,9 +1,6 @@
 package com.example.qingting.Utils;
 
-import android.content.Context;
 import android.media.MediaPlayer;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import java.io.IOException;
@@ -16,18 +13,18 @@ import lombok.Setter;
 public class AudioPlayUtils {
     private static final String TAG = AudioPlayUtils.class.getName();
     @Getter
-    private static MediaPlayer mediaPlayer;
+    private static MediaPlayer mediaPlayer = getMediaPlayer();
 
     private static List<OnAudioPlayerListener> onAudioPlayerListenerList = new ArrayList<>();
 
     // 播放网络音频
     public static void playFromUrl(String url) {
         if (mediaPlayer != null) {
-            stop();
+            pause();
         }
-        mediaPlayer = getMediaPlayer();
         try {
             // 设置音频来源为网络 URL
+            mediaPlayer.reset();
             mediaPlayer.setDataSource(url);
             mediaPlayer.setAudioStreamType(android.media.AudioManager.STREAM_MUSIC);
 
@@ -63,13 +60,11 @@ public class AudioPlayUtils {
     // 播放本地音频文件
     public static void playFromFile(String filePath) {
         if (mediaPlayer != null) {
-            stop();
+            pause();
         }
-
-        mediaPlayer = getMediaPlayer();
-
         try {
             // 设置音频来源为本地文件路径
+            mediaPlayer.reset();
             mediaPlayer.setDataSource(filePath);
             mediaPlayer.setAudioStreamType(android.media.AudioManager.STREAM_MUSIC);
 
@@ -116,7 +111,7 @@ public class AudioPlayUtils {
     }
 
     // 停止播放
-    public static void stop() {
+    public static void stopAndRelease() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();

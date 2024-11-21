@@ -2,7 +2,6 @@ package com.example.qingting;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -11,21 +10,15 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.qingting.ChatPage.ChatPageFragment;
 import com.example.qingting.HomePage.HomePageFragment;
 import com.example.qingting.Utils.AudioPlayUtils;
-import com.example.qingting.net.request.MusicRequest;
-import com.example.qingting.net.request.RequestListener;
 import com.example.qingting.PlayPage.PlayFragment;
 import com.example.qingting.UserPage.UserPageFragment;
 import com.example.qingting.Utils.FragmentUtils;
 import com.example.qingting.Utils.TintUtils;
-import com.google.gson.JsonElement;
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getName();
@@ -77,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        AudioPlayUtils.stop();
+        AudioPlayUtils.stopAndRelease();
     }
 
     private void setPlayBarClickEvent(View view) {
@@ -99,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (HomePageFragment.getInstance().isAdded()) {
             if (HomePageFragment.getInstance().removeChildFragments()) return;
+        }
+        if (PlayFragment.getInstance().isExpandBottomSheet()) {
+            PlayFragment.getInstance().collapseBottomSheet();
+            return;
         }
         super.onBackPressed();
     }

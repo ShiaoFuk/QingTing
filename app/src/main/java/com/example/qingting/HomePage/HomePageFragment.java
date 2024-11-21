@@ -76,7 +76,7 @@ public class HomePageFragment extends Fragment {
                     return;
                 }
                 // focus在搜索框的时候要替换另一个fragment
-                topBar.setVisibility(View.GONE);
+//                topBar.setVisibility(View.GONE);
                 if (!searchHistoryFragment.isAdded()) {
                     FragmentUtils.replaceFragmentToFragment(fragment, frameLayout, searchHistoryFragment);
                 }

@@ -96,6 +96,8 @@ public class PlayFragment extends BottomSheetDialogFragment {
         initSeekbar();
     }
 
+
+
     private void initBottomSheetBehavior() {
         // Set up BottomSheetBehavior
         View bottomSheet = rootView.findViewById(R.id.root_view);
@@ -193,6 +195,11 @@ public class PlayFragment extends BottomSheetDialogFragment {
 
     public void collapseBottomSheet() {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
+
+    public boolean isExpandBottomSheet() {
+        if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) return true;
+        return false;
     }
 
 }
