@@ -10,15 +10,22 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.qingting.Bean.Music;
 import com.example.qingting.ChatPage.ChatPageFragment;
 import com.example.qingting.HomePage.HomePageFragment;
-import com.example.qingting.Utils.AudioPlayUtils;
+import com.example.qingting.Utils.Play.AudioPlayUtils;
 import com.example.qingting.PlayPage.PlayFragment;
 import com.example.qingting.UserPage.UserPageFragment;
 import com.example.qingting.Utils.FragmentUtils;
+import com.example.qingting.Utils.Play.OnAudioPlayerListener;
 import com.example.qingting.Utils.TintUtils;
+import com.king.view.circleprogressview.CircleProgressView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getName();
@@ -26,16 +33,12 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout navigationView;
     FrameLayout frameLayout;
     View rootView;
+    List<OnAudioPlayerListener> onAudioPlayerListenerList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         EdgeToEdge.enable(this);
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
         context = this;
         navigationView = findViewById(R.id.navigation_bar);
         frameLayout = findViewById(R.id.page_frame);
@@ -43,9 +46,11 @@ public class MainActivity extends AppCompatActivity {
         init();
     }
 
+
     private void init() {
         initPlayBar();
         initNavigation();
+        initPlayBtn();
     }
 
 
@@ -66,6 +71,53 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void initPlayBtn() {
+        ConstraintLayout playGroup = findViewById(R.id.play_group);
+        CircleProgressView circleProgressView = findViewById(R.id.progress_view);
+        ImageView imageView = findViewById(R.id.main_play_btn);
+        playGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (AudioPlayUtils.isPlaying()) {
+                    AudioPlayUtils.pause();
+                }
+                else {
+                    AudioPlayUtils.resume();
+                }
+            }
+        });
+        OnAudioPlayerListener onAudioPlayerListener = new OnAudioPlayerListener() {
+            @Override
+            public void onStarted() {
+                circleProgressView.setMax(AudioPlayUtils.getDuration());
+                circleProgressView.setProgress(AudioPlayUtils.getCurrentPosition());
+                imageView.setImageResource(R.drawable.pause_icon);
+            }
+
+            @Override
+            public void onPaused() {
+                imageView.setImageResource(R.drawable.play_icon);
+            }
+
+            @Override
+            public void onStopped() {
+
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+        onAudioPlayerListenerList.add(onAudioPlayerListener);
+        AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -76,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
     private void setPlayBarClickEvent(View view) {
         // 添加播放页面的fragment
         FrameLayout rootFrame = findViewById(R.id.main);
-        FragmentUtils.addFragmentToBackStackToActivity(rootFrame, PlayFragment.getInstance());
+        if (!PlayFragment.getInstance().isAdded())
+            FragmentUtils.addFragmentToBackStackToActivity(rootFrame, PlayFragment.getInstance());
     }
 
     /**
@@ -90,13 +143,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (HomePageFragment.getInstance().isAdded()) {
-            if (HomePageFragment.getInstance().removeChildFragments()) return;
-        }
         if (PlayFragment.getInstance().isExpandBottomSheet()) {
             PlayFragment.getInstance().collapseBottomSheet();
             return;
         }
+        if (HomePageFragment.getInstance().isAdded()) {
+            if (HomePageFragment.getInstance().removeChildFragments()) return;
+        }
+
         super.onBackPressed();
     }
 
@@ -134,25 +188,25 @@ class NavigationProvider {
         TextView tv = view.findViewById(R.id.navigation_text);
         final Fragment pageFragment;
         final String text;
-        final int drawableResouceId;
+        final int drawableResourceId;
         if (pageId == R.id.home_page) {
             text = rootView.getResources().getString(R.string.home_page_name);
             pageFragment = HomePageFragment.getInstance();
-            drawableResouceId = R.drawable.home_page_icon;
+            drawableResourceId = R.drawable.home_page_icon;
         } else if (pageId == R.id.chat_page){
             text = rootView.getResources().getString(R.string.chat_page_name);
             pageFragment = ChatPageFragment.getInstance();
-            drawableResouceId = R.drawable.chat_page_icon;
+            drawableResourceId = R.drawable.chat_page_icon;
         } else if (pageId == R.id.user_page) {
             text = rootView.getResources().getString(R.string.user_page_name);
             pageFragment = UserPageFragment.getInstance();
-            drawableResouceId = R.drawable.user_page_icon;
+            drawableResourceId = R.drawable.user_page_icon;
         } else {
             text = "";
             pageFragment = null;
-            drawableResouceId = -1;
+            drawableResourceId = -1;
         }
-        im.setImageResource(drawableResouceId);
+        im.setImageResource(drawableResourceId);
         tv.setText(text);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,9 +218,9 @@ class NavigationProvider {
 
 
     /**
-     * tiggerd when the navigation icon group is clicked
+     * triggered when the navigation icon group is clicked
      * @param view the navigation icon group
-     * @param fragment fragment would be put on the framelayout
+     * @param fragment fragment would be put on the frameLayout
      */
     private static void initNavigationClickEvent(View view, Fragment fragment) {
         setCurrentColor(currentView, view);
@@ -197,6 +251,7 @@ class NavigationProvider {
         View view = rootView.findViewById(R.id.home_page).findViewById(R.id.navigation_layout);
         view.performClick();
     }
+
 
 
 }

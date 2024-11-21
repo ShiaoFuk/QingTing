@@ -3,7 +3,6 @@ package com.example.qingting.PlayPage;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Dialog;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,8 +21,9 @@ import android.widget.TextView;
 import com.example.qingting.Bean.Music;
 import com.example.qingting.MyApplication;
 import com.example.qingting.R;
-import com.example.qingting.Utils.AudioPlayUtils;
+import com.example.qingting.Utils.Play.AudioPlayUtils;
 import com.example.qingting.Utils.FragmentUtils;
+import com.example.qingting.Utils.Play.OnAudioPlayerListener;
 import com.example.qingting.Utils.TimeUtils;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -37,7 +37,6 @@ public class PlayFragment extends BottomSheetDialogFragment {
     static PlayFragment fragment;
     View rootView;
     BottomSheetBehavior<ConstraintLayout> bottomSheetBehavior;
-    Music music;
     SeekBar seekBar;
     private PlayFragment() {
     }
@@ -70,13 +69,12 @@ public class PlayFragment extends BottomSheetDialogFragment {
     ImageView rewindBtn;
     TextView titleTextView;
     TextView genreTextView;
-    List<AudioPlayUtils.OnAudioPlayerListener> onAudioPlayerListenerList = new ArrayList<>();
+    List<OnAudioPlayerListener> onAudioPlayerListenerList = new ArrayList<>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_play, container, false);
         rootView.setAnimation(AnimationUtils.loadAnimation(rootView.getContext(), R.anim.slide_in_bottom));
-        music = MyApplication.getCurrentMusic();
         seekBar = rootView.findViewById(R.id.seekbar);
         songLengthTextView = rootView.findViewById(R.id.song_length);
         album = rootView.findViewById(R.id.album);
@@ -95,7 +93,6 @@ public class PlayFragment extends BottomSheetDialogFragment {
         initCurrentMusic();
         initSeekbar();
     }
-
 
 
     private void initBottomSheetBehavior() {
@@ -134,7 +131,7 @@ public class PlayFragment extends BottomSheetDialogFragment {
         if (AudioPlayUtils.isPlaying())
             rotationAnimator.start(); // 启动旋转动画
         // 旋转动画回调
-        AudioPlayUtils.OnAudioPlayerListener onAudioPlayerListener = new AudioPlayUtils.OnAudioPlayerListener() {
+        OnAudioPlayerListener onAudioPlayerListener = new OnAudioPlayerListener() {
             @Override
             public void onStarted() {
                 rotationAnimator.start();
@@ -171,7 +168,7 @@ public class PlayFragment extends BottomSheetDialogFragment {
 
     @Override
     public void onDestroyView() {
-        for (AudioPlayUtils.OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+        for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
             if (onAudioPlayerListener != null) {
                 AudioPlayUtils.removeOnAudioPlayerListener(onAudioPlayerListener);
             }
@@ -180,11 +177,43 @@ public class PlayFragment extends BottomSheetDialogFragment {
     }
 
     private void initCurrentMusic() {
-        if (music == null) return;
+        Music music = AudioPlayUtils.getCurrentMusic();
         titleTextView.setText(music.getName());
         genreTextView.setText(music.getGenre());
         songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getCurrentPosition()));
         songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getDuration()));
+        OnAudioPlayerListener onAudioPlayerListener = new OnAudioPlayerListener() {
+            @Override
+            public void onStarted() {
+                Music music = AudioPlayUtils.getCurrentMusic();
+                titleTextView.setText(music.getName());
+                genreTextView.setText(music.getGenre());
+                songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getCurrentPosition()));
+                songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getDuration()));
+            }
+
+            @Override
+            public void onPaused() {
+
+            }
+
+            @Override
+            public void onStopped() {
+
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+        AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
+        onAudioPlayerListenerList.add(onAudioPlayerListener);
     }
 
 

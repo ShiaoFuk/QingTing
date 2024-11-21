@@ -1,36 +1,45 @@
-package com.example.qingting.Utils;
+package com.example.qingting.Utils.Play;
 
 import android.media.MediaPlayer;
 import android.util.Log;
 
+import com.example.qingting.Bean.Music;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import lombok.Getter;
-import lombok.Setter;
 
 public class AudioPlayUtils {
     private static final String TAG = AudioPlayUtils.class.getName();
-    @Getter
-    private static MediaPlayer mediaPlayer = getMediaPlayer();
+    private static MediaPlayer mediaPlayer;
 
-    private static List<OnAudioPlayerListener> onAudioPlayerListenerList = new ArrayList<>();
+    private static boolean hasDataSource;
+    final private static LinkedList<Music> musicList;
+    @Getter
+    private static Music currentMusic;
+
+    final private static List<OnAudioPlayerListener> onAudioPlayerListenerList;
+
+    static {
+        musicList = new LinkedList<>();
+        onAudioPlayerListenerList = new ArrayList<>();
+        mediaPlayer = getMediaPlayer();
+    }
+
 
     // 播放网络音频
     public static void playFromUrl(String url) {
-        if (mediaPlayer != null) {
-            pause();
-        }
         try {
             // 设置音频来源为网络 URL
             mediaPlayer.reset();
             mediaPlayer.setDataSource(url);
             mediaPlayer.setAudioStreamType(android.media.AudioManager.STREAM_MUSIC);
-
+            hasDataSource = true;
             // 准备异步播放
             mediaPlayer.prepareAsync();
-
             // 播放准备完成后
             mediaPlayer.setOnPreparedListener(mp -> {
                 mediaPlayer.start();
@@ -59,15 +68,12 @@ public class AudioPlayUtils {
 
     // 播放本地音频文件
     public static void playFromFile(String filePath) {
-        if (mediaPlayer != null) {
-            pause();
-        }
         try {
             // 设置音频来源为本地文件路径
             mediaPlayer.reset();
             mediaPlayer.setDataSource(filePath);
             mediaPlayer.setAudioStreamType(android.media.AudioManager.STREAM_MUSIC);
-
+            hasDataSource = true;
             // 准备异步播放
             mediaPlayer.prepareAsync();
 
@@ -97,18 +103,6 @@ public class AudioPlayUtils {
         }
     }
 
-    private static MediaPlayer getMediaPlayer() {
-        MediaPlayer mediaPlayer1 = new MediaPlayer();
-        mediaPlayer1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
-                    onAudioPlayerListener.onComplete();
-                }
-            }
-        });
-        return mediaPlayer1;
-    }
 
     // 停止播放
     public static void stopAndRelease() {
@@ -125,7 +119,7 @@ public class AudioPlayUtils {
 
     // 暂停播放
     public static void pause() {
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+        if (hasDataSource && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
             for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
                 onAudioPlayerListener.onPaused();
@@ -135,7 +129,7 @@ public class AudioPlayUtils {
 
     // 恢复播放
     public static void resume() {
-        if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+        if (hasDataSource && !mediaPlayer.isPlaying()) {
             mediaPlayer.start();
             for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
                 onAudioPlayerListener.onStarted();
@@ -145,7 +139,7 @@ public class AudioPlayUtils {
 
     // 获取当前播放位置
     public static int getCurrentPosition() {
-        if (mediaPlayer != null) {
+        if (hasDataSource) {
             return mediaPlayer.getCurrentPosition();
         }
         return 0;
@@ -153,14 +147,14 @@ public class AudioPlayUtils {
 
     // 获取音频的总时长
     public static int getDuration() {
-        if (mediaPlayer != null) {
+        if (hasDataSource) {
             return mediaPlayer.getDuration();
         }
         return 0;
     }
 
     // 释放资源
-    public static void release() {
+    private static void release() {
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
@@ -168,7 +162,7 @@ public class AudioPlayUtils {
     }
 
     public static boolean isPlaying() {
-        if (mediaPlayer != null) {
+        if (hasDataSource) {
             return mediaPlayer.isPlaying();
         }
         return false;
@@ -207,14 +201,80 @@ public class AudioPlayUtils {
         }
     }
 
+    // 列表最后加上音乐
+    public static void addMusicToEnd(Music music, OnAudioPlayerListener onAudioPlayerListener) {
+        if (onAudioPlayerListener != null) {
+            AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
+        }
+        musicList.addLast(music);
+    }
 
-    // 播放状态回调接口
-    public interface OnAudioPlayerListener {
-        void onStarted();
-        void onPaused();
-        void onStopped();
-        void onError(String errorMessage);
-        void onComplete();
+
+    // 加入下一首
+    public static void addMusicToNext(Music music, OnAudioPlayerListener onAudioPlayerListener) {
+        if (onAudioPlayerListener != null) {
+            AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
+        }
+        musicList.addFirst(music);
+    }
+
+
+    // 马上播放音乐
+    public static void playMusic(Music music, OnAudioPlayerListener onAudioPlayerListener) {
+        if (onAudioPlayerListener != null) {
+            AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
+        }
+        currentMusic = music;
+        AudioPlayUtils.playFromUrl(music.getPath());
+    }
+
+
+    private static MediaPlayer getMediaPlayer() {
+        MediaPlayer mediaPlayer1 = new MediaPlayer();
+        mediaPlayer1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+                    onAudioPlayerListener.onComplete();
+                }
+            }
+        });
+        AudioPlayUtils.addOnAudioPlayerListener(new OnAudioPlayerListener() {
+            @Override
+            public void onStarted() {
+
+            }
+
+            @Override
+            public void onPaused() {
+
+            }
+
+            @Override
+            public void onStopped() {
+
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                if (!musicList.isEmpty()) {
+                    Music music = musicList.pop();
+                    currentMusic = music;
+                    playFromUrl(music.getPath());
+                }
+            }
+
+        });
+        return mediaPlayer1;
+    }
+
+    public static List<Music> getMusicList() {
+        return musicList;
     }
 
 }

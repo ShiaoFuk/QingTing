@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.qingting.Bean.Music;
 import com.example.qingting.MyApplication;
 import com.example.qingting.R;
+import com.example.qingting.Utils.Play.AudioPlayUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,19 +45,19 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultViewHo
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyApplication.playMusic(music, null);
+                AudioPlayUtils.playMusic(music, null);
             }
         });
         holder.playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyApplication.playMusic(music, null);
+                AudioPlayUtils.playMusic(music, null);
             }
         });
         holder.addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyApplication.addMusicToNext(music, null);
+                AudioPlayUtils.addMusicToNext(music, null);
             }
         });
         holder.title.setText(music.getName());
