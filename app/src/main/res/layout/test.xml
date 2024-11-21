@@ -18,11 +18,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:shapeAppearance="@style/ovalshape"
-        android:src="@drawable/app_icon"
+        android:src="@drawable/album"
         />
     <TextView
         android:textColor="@color/black"
-        android:text="ggggggg"
+        android:text="@string/no_music_playing"
         android:textSize="@dimen/result_item_title_text_size"
         android:id="@+id/title"
         android:layout_width="match_parent"
@@ -33,7 +33,7 @@
         android:layout_marginStart="@dimen/song_length_margin_horzitonal"
         />
     <TextView
-        android:text="ggggggg"
+        android:text=""
         android:textSize="@dimen/result_item_genre_text_size"
         android:id="@+id/genre"
         android:layout_width="match_parent"
@@ -52,13 +52,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         />
     <TextView
-        android:text="00:00"
+        android:id="@+id/song_length_left"
+        android:text="0:00"
         app:layout_constraintTop_toBottomOf="@id/seekbar"
         app:layout_constraintStart_toStartOf="@id/seekbar"
         style="@style/song_length"
         />
     <TextView
-        android:text="11:11"
+        android:id="@+id/song_length"
+        android:text="0:00"
         app:layout_constraintTop_toBottomOf="@id/seekbar"
         app:layout_constraintEnd_toEndOf="@id/seekbar"
         style="@style/song_length"

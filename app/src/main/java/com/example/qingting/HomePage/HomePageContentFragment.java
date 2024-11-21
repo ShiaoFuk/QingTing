@@ -35,7 +35,6 @@ public class HomePageContentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_home_page_content, container, false);
-        rootView.setAnimation(AnimationUtils.loadAnimation(rootView.getContext(), R.anim.slide_in_bottom));
         return rootView;
     }
 }

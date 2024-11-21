@@ -20,6 +20,9 @@
 
     <dimen name="player_icon_margin_end">12dp</dimen>
     <dimen name="player_icon_margin_vertical">10dp</dimen>
+    <dimen name="player_icon_padding">3dp</dimen>
+    <dimen name="player_icon_start_margin">3dp</dimen>
+    <dimen name="play_list_padding">10dp</dimen>
     <dimen name="play_bar_horizonal_margin">10dp</dimen>
     <dimen name="play_bar_icon_horizonal_margin">20dp</dimen>
 

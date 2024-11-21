@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -26,6 +27,9 @@ import com.example.qingting.Utils.FragmentUtils;
 import com.example.qingting.Utils.TimeUtils;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class PlayFragment extends BottomSheetDialogFragment {
@@ -66,11 +70,12 @@ public class PlayFragment extends BottomSheetDialogFragment {
     ImageView rewindBtn;
     TextView titleTextView;
     TextView genreTextView;
-    AudioPlayUtils.OnAudioPlayerListener onAudioPlayerListener;
+    List<AudioPlayUtils.OnAudioPlayerListener> onAudioPlayerListenerList = new ArrayList<>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_play, container, false);
+        rootView.setAnimation(AnimationUtils.loadAnimation(rootView.getContext(), R.anim.slide_in_bottom));
         music = MyApplication.getCurrentMusic();
         seekBar = rootView.findViewById(R.id.seekbar);
         songLengthTextView = rootView.findViewById(R.id.song_length);
@@ -88,6 +93,7 @@ public class PlayFragment extends BottomSheetDialogFragment {
         initBottomSheetBehavior();
         initAlbum();
         initCurrentMusic();
+        initSeekbar();
     }
 
     private void initBottomSheetBehavior() {
@@ -125,7 +131,8 @@ public class PlayFragment extends BottomSheetDialogFragment {
         rotationAnimator.setInterpolator(new LinearInterpolator()); // 设置匀速插值器
         if (AudioPlayUtils.isPlaying())
             rotationAnimator.start(); // 启动旋转动画
-        onAudioPlayerListener = new AudioPlayUtils.OnAudioPlayerListener() {
+        // 旋转动画回调
+        AudioPlayUtils.OnAudioPlayerListener onAudioPlayerListener = new AudioPlayUtils.OnAudioPlayerListener() {
             @Override
             public void onStarted() {
                 rotationAnimator.start();
@@ -155,10 +162,17 @@ public class PlayFragment extends BottomSheetDialogFragment {
     }
 
 
+    void initSeekbar() {
+
+    }
+
+
     @Override
     public void onDestroyView() {
-        if (onAudioPlayerListener != null) {
-            AudioPlayUtils.removeOnAudioPlayerListener(onAudioPlayerListener);
+        for (AudioPlayUtils.OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+            if (onAudioPlayerListener != null) {
+                AudioPlayUtils.removeOnAudioPlayerListener(onAudioPlayerListener);
+            }
         }
         super.onDestroyView();
     }
