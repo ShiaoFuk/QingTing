@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 public class Music {
     Integer id;
     String name;
-    Integer duration;
     String path;
     String genre;  // 曲风
     String tempo;  // 速度

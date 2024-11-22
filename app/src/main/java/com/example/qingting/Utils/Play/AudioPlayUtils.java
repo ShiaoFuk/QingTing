@@ -104,18 +104,11 @@ public class AudioPlayUtils {
     }
 
 
-    // 停止播放
-    public static void stopAndRelease() {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
-                onAudioPlayerListener.onStopped();
-            }
+    public static void seekTo(int millSecs) {
+        if (hasDataSource) {
+            mediaPlayer.seekTo(millSecs);
         }
     }
-
 
     // 暂停播放
     public static void pause() {
@@ -153,13 +146,18 @@ public class AudioPlayUtils {
         return 0;
     }
 
-    // 释放资源
-    private static void release() {
+    public static void stopAndRelease() {
         if (mediaPlayer != null) {
+            mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
+            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+                onAudioPlayerListener.onStopped();
+            }
+            hasDataSource = false;
         }
     }
+
 
     public static boolean isPlaying() {
         if (hasDataSource) {
@@ -174,11 +172,8 @@ public class AudioPlayUtils {
     }
 
     public static void removeOnAudioPlayerListener(OnAudioPlayerListener onAudioPlayerListener) {
-        OnAudioPlayerListener onAudioPlayerListenerFirst = onAudioPlayerListenerList.get(0);
-        for (OnAudioPlayerListener onAudioPlayerListener1: onAudioPlayerListenerList) {
-            if (onAudioPlayerListener1.equals(onAudioPlayerListener) && !onAudioPlayerListenerFirst.equals(onAudioPlayerListener)) {
-                onAudioPlayerListenerList.remove(onAudioPlayerListener);
-            }
+        if (onAudioPlayerListenerList.contains(onAudioPlayerListener)) {
+            onAudioPlayerListenerList.remove(onAudioPlayerListener);
         }
     }
 
@@ -279,8 +274,15 @@ public class AudioPlayUtils {
         return mediaPlayer1;
     }
 
-    public static List<Music> getMusicList() {
-        return musicList;
+//    public static List<Music> getMusicList() {
+//        return musicList;
+//    }
+
+    public static boolean hasNext() {
+        if (musicList.isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
 }

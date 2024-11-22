@@ -8,6 +8,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +33,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class PlayFragment extends BottomSheetDialogFragment {
 
+    final static String TAG = PlayFragment.class.getName();
     static PlayFragment fragment;
     View rootView;
     BottomSheetBehavior<ConstraintLayout> bottomSheetBehavior;
@@ -76,6 +81,7 @@ public class PlayFragment extends BottomSheetDialogFragment {
         rootView = inflater.inflate(R.layout.fragment_play, container, false);
         rootView.setAnimation(AnimationUtils.loadAnimation(rootView.getContext(), R.anim.slide_in_bottom));
         seekBar = rootView.findViewById(R.id.seekbar);
+        songLengthLeftTextView = rootView.findViewById(R.id.song_length_left);
         songLengthTextView = rootView.findViewById(R.id.song_length);
         album = rootView.findViewById(R.id.album);
         playBtn = rootView.findViewById(R.id.play_btn);
@@ -160,38 +166,39 @@ public class PlayFragment extends BottomSheetDialogFragment {
         AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
     }
 
-
+    boolean isEnd;
+    Thread seekBarThread;
     void initSeekbar() {
-
-    }
-
-
-    @Override
-    public void onDestroyView() {
-        for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
-            if (onAudioPlayerListener != null) {
-                AudioPlayUtils.removeOnAudioPlayerListener(onAudioPlayerListener);
+        seekBarThread = new Thread(new Runnable() {
+            final Handler handler = new Handler(Looper.getMainLooper());
+            @Override
+            public void run() {
+                isEnd = false;
+                while (!isEnd) {
+                    while (!isEnd && AudioPlayUtils.isPlaying()) {
+                        handler.post(() -> {
+                            int currentTime = AudioPlayUtils.getCurrentPosition();
+                            seekBar.setProgress(currentTime);
+                            songLengthLeftTextView.setText(TimeUtils.milliSecs2MMss(currentTime));
+                        });
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
+                }
             }
-        }
-        super.onDestroyView();
-    }
-
-    private void initCurrentMusic() {
+        });
+        seekBarThread.start();
         Music music = AudioPlayUtils.getCurrentMusic();
         if (music != null) {
-            titleTextView.setText(music.getName());
-            genreTextView.setText(music.getGenre());
-            songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getCurrentPosition()));
-            songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getDuration()));
+            doWithSeekBar();
         }
         OnAudioPlayerListener onAudioPlayerListener = new OnAudioPlayerListener() {
             @Override
             public void onStarted() {
-                Music music = AudioPlayUtils.getCurrentMusic();
-                titleTextView.setText(music.getName());
-                genreTextView.setText(music.getGenre());
-                songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getCurrentPosition()));
-                songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getDuration()));
+                doWithSeekBar();
             }
 
             @Override
@@ -211,13 +218,112 @@ public class PlayFragment extends BottomSheetDialogFragment {
 
             @Override
             public void onComplete() {
-
+                // 回收seekbar
+                if (!AudioPlayUtils.hasNext()) {
+                    collectSeekBar();
+                }
             }
         };
         AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
         onAudioPlayerListenerList.add(onAudioPlayerListener);
     }
 
+
+    private void doWithSeekBar() {
+        seekBar.setMax(AudioPlayUtils.getDuration());
+        seekBar.setProgress(AudioPlayUtils.getCurrentPosition());
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    AudioPlayUtils.seekTo(progress);
+                    songLengthLeftTextView.setText(TimeUtils.milliSecs2MMss(progress));
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
+    private void collectSeekBar() {
+        seekBar.setProgress(0);
+        seekBar.setMax(0);
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+            if (onAudioPlayerListener != null) {
+                AudioPlayUtils.removeOnAudioPlayerListener(onAudioPlayerListener);
+            }
+        }
+        isEnd = true;
+        try {
+            seekBarThread.join();
+        } catch (InterruptedException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        super.onDestroyView();
+    }
+
+    private void initCurrentMusic() {
+        doWithCurrentText();
+        OnAudioPlayerListener onAudioPlayerListener = new OnAudioPlayerListener() {
+            @Override
+            public void onStarted() {
+                doWithCurrentText();
+            }
+
+            @Override
+            public void onPaused() {
+
+            }
+
+            @Override
+            public void onStopped() {
+
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                if (!AudioPlayUtils.hasNext()) {
+                    collectCurrentText();
+                }
+            }
+        };
+        AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
+        onAudioPlayerListenerList.add(onAudioPlayerListener);
+    }
+
+
+    private void doWithCurrentText() {
+        Music music = AudioPlayUtils.getCurrentMusic();
+        if (music != null) {
+            titleTextView.setText(music.getName());
+            genreTextView.setText(music.getGenre());
+            songLengthLeftTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getCurrentPosition()));
+            songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getDuration()));
+        }
+    }
+
+    private void collectCurrentText() {
+        titleTextView.setText(rootView.getResources().getString(R.string.no_music_playing));
+        genreTextView.setText("");
+        songLengthLeftTextView.setText(rootView.getResources().getString(R.string.song_initial_length));
+        songLengthTextView.setText(rootView.getResources().getString(R.string.song_initial_length));
+    }
 
     public void expandBottomSheet() {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
