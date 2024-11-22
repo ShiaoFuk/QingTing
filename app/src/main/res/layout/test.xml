@@ -76,7 +76,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         >
         <ImageView
-            android:id="@+id/rewind"
+            android:id="@+id/last_song"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/control_btn_other_length"
             android:adjustViewBounds="true"
@@ -94,7 +94,7 @@
             app:tint="@color/control_btn_color"
             />
         <ImageView
-            android:id="@+id/fast_forward"
+            android:id="@+id/next_song"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/control_btn_other_length"
             android:adjustViewBounds="true"

@@ -9,7 +9,9 @@
     </style>
     <style name="seekbar" parent="Widget.AppCompat.SeekBar">
         <item name="android:thumbTint">@color/green</item>
-        <item name="android:progressBackgroundTint">#D0111B6B</item>
+        <item name="android:secondaryProgressTint">@color/seek_bar_second_process</item>
+        <item name="android:progressTint">@color/seek_bar_process</item>
+        <item name="android:progressBackgroundTint">@color/seek_bar_bg</item>
     </style>
     <style name="ovalshape">
         <item name="cornerFamily">rounded</item>

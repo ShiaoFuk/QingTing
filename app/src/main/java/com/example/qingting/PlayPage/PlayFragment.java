@@ -22,18 +22,17 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.qingting.Bean.Music;
-import com.example.qingting.MyApplication;
 import com.example.qingting.R;
 import com.example.qingting.Utils.Play.AudioPlayUtils;
 import com.example.qingting.Utils.FragmentUtils;
 import com.example.qingting.Utils.Play.OnAudioPlayerListener;
 import com.example.qingting.Utils.TimeUtils;
+import com.example.qingting.Utils.ToastUtils;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class PlayFragment extends BottomSheetDialogFragment {
@@ -70,8 +69,8 @@ public class PlayFragment extends BottomSheetDialogFragment {
     TextView songLengthTextView;
     ImageView album;
     ImageView playBtn;
-    ImageView forwardBtn;
-    ImageView rewindBtn;
+    ImageView nextSongBtn;
+    ImageView lastSongBtn;
     TextView titleTextView;
     TextView genreTextView;
     List<OnAudioPlayerListener> onAudioPlayerListenerList = new ArrayList<>();
@@ -84,9 +83,9 @@ public class PlayFragment extends BottomSheetDialogFragment {
         songLengthLeftTextView = rootView.findViewById(R.id.song_length_left);
         songLengthTextView = rootView.findViewById(R.id.song_length);
         album = rootView.findViewById(R.id.album);
-        playBtn = rootView.findViewById(R.id.play_btn);
-        forwardBtn = rootView.findViewById(R.id.fast_forward);
-        rewindBtn = rootView.findViewById(R.id.rewind);
+        playBtn = rootView.findViewById(R.id.play);
+        nextSongBtn = rootView.findViewById(R.id.next_song);
+        lastSongBtn = rootView.findViewById(R.id.last_song);
         titleTextView = rootView.findViewById(R.id.title);
         genreTextView = rootView.findViewById(R.id.genre);
         init();
@@ -98,6 +97,7 @@ public class PlayFragment extends BottomSheetDialogFragment {
         initAlbum();
         initCurrentMusic();
         initSeekbar();
+        initPlayGroup();
     }
 
 
@@ -140,7 +140,11 @@ public class PlayFragment extends BottomSheetDialogFragment {
         OnAudioPlayerListener onAudioPlayerListener = new OnAudioPlayerListener() {
             @Override
             public void onStarted() {
-                rotationAnimator.start();
+                if (rotationAnimator.isPaused()) {
+                    rotationAnimator.resume();
+                } else {
+                    rotationAnimator.start();
+                }
             }
 
             @Override
@@ -179,6 +183,7 @@ public class PlayFragment extends BottomSheetDialogFragment {
                         handler.post(() -> {
                             int currentTime = AudioPlayUtils.getCurrentPosition();
                             seekBar.setProgress(currentTime);
+                            seekBar.setSecondaryProgress((int)(seekBar.getMax() * (AudioPlayUtils.getCacheProcess() / 100f)));
                             songLengthLeftTextView.setText(TimeUtils.milliSecs2MMss(currentTime));
                         });
                         try {
@@ -256,23 +261,6 @@ public class PlayFragment extends BottomSheetDialogFragment {
         seekBar.setMax(0);
     }
 
-
-    @Override
-    public void onDestroyView() {
-        for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
-            if (onAudioPlayerListener != null) {
-                AudioPlayUtils.removeOnAudioPlayerListener(onAudioPlayerListener);
-            }
-        }
-        isEnd = true;
-        try {
-            seekBarThread.join();
-        } catch (InterruptedException e) {
-            Log.e(TAG, e.getMessage());
-        }
-        super.onDestroyView();
-    }
-
     private void initCurrentMusic() {
         doWithCurrentText();
         OnAudioPlayerListener onAudioPlayerListener = new OnAudioPlayerListener() {
@@ -325,6 +313,59 @@ public class PlayFragment extends BottomSheetDialogFragment {
         songLengthTextView.setText(rootView.getResources().getString(R.string.song_initial_length));
     }
 
+    private void initPlayGroup() {
+        playBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (AudioPlayUtils.isPlaying()) {
+                    AudioPlayUtils.pause();
+                } else {
+                    AudioPlayUtils.resume();
+                }
+            }
+        });
+        nextSongBtn.setOnClickListener((v)->{
+            if (!AudioPlayUtils.playNextMusic()) {
+                ToastUtils.makeShortText(v.getContext(), v.getResources().getString(R.string.no_next_music));
+            }
+        });
+        lastSongBtn.setOnClickListener((v)->{
+            if (!AudioPlayUtils.playLastMusic()) {
+                ToastUtils.makeShortText(v.getContext(), v.getResources().getString(R.string.no_last_music));
+            }
+        });
+        OnAudioPlayerListener onAudioPlayerListener = new OnAudioPlayerListener() {
+            @Override
+            public void onStarted() {
+                playBtn.setImageResource(R.drawable.pause_icon);
+            }
+
+            @Override
+            public void onPaused() {
+                playBtn.setImageResource(R.drawable.play_icon);
+            }
+
+            @Override
+            public void onStopped() {
+
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+        AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
+        onAudioPlayerListenerList.add(onAudioPlayerListener);
+    }
+
+
+
     public void expandBottomSheet() {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
@@ -337,6 +378,24 @@ public class PlayFragment extends BottomSheetDialogFragment {
     public boolean isExpandBottomSheet() {
         if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) return true;
         return false;
+    }
+
+
+
+    @Override
+    public void onDestroyView() {
+        for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+            if (onAudioPlayerListener != null) {
+                AudioPlayUtils.removeOnAudioPlayerListener(onAudioPlayerListener);
+            }
+        }
+        isEnd = true;
+        try {
+            seekBarThread.join();
+        } catch (InterruptedException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        super.onDestroyView();
     }
 
 }

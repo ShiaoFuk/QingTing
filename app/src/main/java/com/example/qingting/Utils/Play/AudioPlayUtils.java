@@ -10,21 +10,27 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Lombok;
 
 public class AudioPlayUtils {
     private static final String TAG = AudioPlayUtils.class.getName();
     private static MediaPlayer mediaPlayer;
 
     private static boolean hasDataSource;
-    final private static LinkedList<Music> musicList;
+    // 下面这两个List关系     playedMusicList  musicList
+    //               last3 last2 last1 currentMusic next1 next2 next3
+    final private static LinkedList<Music> nextMusicList;  // 未被播放的音乐
+    final private static LinkedList<Music> playedMusicList;  // 被播放过的音乐
     @Getter
     private static Music currentMusic;
 
     final private static List<OnAudioPlayerListener> onAudioPlayerListenerList;
 
     static {
-        musicList = new LinkedList<>();
+        nextMusicList = new LinkedList<>();
+        playedMusicList = new LinkedList<>();
         onAudioPlayerListenerList = new ArrayList<>();
         mediaPlayer = getMediaPlayer();
     }
@@ -47,22 +53,10 @@ public class AudioPlayUtils {
                     onAudioPlayerListener.onStarted();
                 }
             });
-
             // 处理播放错误
-            mediaPlayer.setOnErrorListener((mp, what, extra) -> {
-                Log.e(TAG, "Error occurred: " + what);
-                for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
-                    onAudioPlayerListener.onError("播放出错");
-                }
-                return true;
-            });
-
+            mediaPlayer.setOnErrorListener(AudioPlayUtils::doWithPlayError);
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, "Error setting data source for URL", e);
-            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
-                onAudioPlayerListener.onError("无法加载音频");
-            }
+            doWithFetchResourceError(e);
         }
     }
 
@@ -84,23 +78,28 @@ public class AudioPlayUtils {
                     onAudioPlayerListener.onStarted();
                 }
             });
-
             // 处理播放错误
-            mediaPlayer.setOnErrorListener((mp, what, extra) -> {
-                Log.e(TAG, "Error occurred: " + what);
-                for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
-                    onAudioPlayerListener.onError("播放出错");
-                }
-                return true;
-            });
+            mediaPlayer.setOnErrorListener(AudioPlayUtils::doWithPlayError);
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, "Error setting data source for file", e);
-            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
-                onAudioPlayerListener.onError("无法加载音频");
-            }
-
+            doWithFetchResourceError(e);
         }
+    }
+
+    private static void doWithFetchResourceError(IOException e) {
+        Log.e(TAG, "Error setting data source for file", e);
+        for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+            onAudioPlayerListener.onPaused();
+            onAudioPlayerListener.onError("无法加载音频");
+        }
+    }
+
+    private static boolean doWithPlayError(MediaPlayer mediaPlayerOnError, int what, int extra) {
+        Log.e(TAG, "Error occurred: " + what);
+        for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+            onAudioPlayerListener.onPaused();
+            onAudioPlayerListener.onError("播放出错");
+        }
+        return true;
     }
 
 
@@ -130,6 +129,20 @@ public class AudioPlayUtils {
         }
     }
 
+
+    public static void stopAndRelease() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+                onAudioPlayerListener.onPaused();
+                onAudioPlayerListener.onStopped();
+            }
+            hasDataSource = false;
+        }
+    }
+
     // 获取当前播放位置
     public static int getCurrentPosition() {
         if (hasDataSource) {
@@ -146,18 +159,6 @@ public class AudioPlayUtils {
         return 0;
     }
 
-    public static void stopAndRelease() {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
-                onAudioPlayerListener.onStopped();
-            }
-            hasDataSource = false;
-        }
-    }
-
 
     public static boolean isPlaying() {
         if (hasDataSource) {
@@ -165,7 +166,6 @@ public class AudioPlayUtils {
         }
         return false;
     }
-
 
     public static void addOnAudioPlayerListener(OnAudioPlayerListener onAudioPlayerListener) {
         onAudioPlayerListenerList.add(onAudioPlayerListener);
@@ -201,7 +201,7 @@ public class AudioPlayUtils {
         if (onAudioPlayerListener != null) {
             AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
         }
-        musicList.addLast(music);
+        nextMusicList.addLast(music);
     }
 
 
@@ -214,7 +214,7 @@ public class AudioPlayUtils {
         if (onAudioPlayerListener != null) {
             AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
         }
-        musicList.addFirst(music);
+        nextMusicList.addFirst(music);
     }
 
 
@@ -228,12 +228,47 @@ public class AudioPlayUtils {
     }
 
 
+    // 播放下一首音乐
+    public static boolean playNextMusic() {
+        if (nextMusicList.isEmpty()) {
+            return false;
+        }
+        if (currentMusic != null) {
+            playedMusicList.addLast(currentMusic);
+        }
+        Music music = nextMusicList.pollFirst();
+        playMusic(music, null);
+        return true;
+    }
+
+    public static boolean playLastMusic() {
+        if (playedMusicList.isEmpty()) {
+            return false;
+        }
+        if (currentMusic != null) {
+            nextMusicList.addFirst(currentMusic);
+        }
+        Music music = playedMusicList.pollLast();
+        playMusic(music, null);
+        return true;
+    }
+
+    @Getter
+    static int cacheProcess;  // 播放器缓存的进度
+
     private static MediaPlayer getMediaPlayer() {
         MediaPlayer mediaPlayer1 = new MediaPlayer();
+        mediaPlayer1.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                cacheProcess = percent;
+            }
+        });
         mediaPlayer1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+                    onAudioPlayerListener.onPaused();
                     onAudioPlayerListener.onComplete();
                 }
             }
@@ -261,12 +296,11 @@ public class AudioPlayUtils {
 
             @Override
             public void onComplete() {
-                if (!musicList.isEmpty()) {
-                    Music music = musicList.pop();
-                    currentMusic = music;
-                    playFromUrl(music.getPath());
-                } else {
-                    currentMusic = null;
+                if (currentMusic != null) {
+                    playedMusicList.addLast(currentMusic);
+                    if (!playNextMusic()) {
+                        currentMusic = null;
+                    }
                 }
             }
 
@@ -274,12 +308,10 @@ public class AudioPlayUtils {
         return mediaPlayer1;
     }
 
-//    public static List<Music> getMusicList() {
-//        return musicList;
-//    }
+
 
     public static boolean hasNext() {
-        if (musicList.isEmpty()) {
+        if (nextMusicList.isEmpty()) {
             return false;
         }
         return true;
