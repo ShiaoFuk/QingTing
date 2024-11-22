@@ -212,6 +212,10 @@ public class AudioPlayUtils {
 
     // 加入下一首
     public static void addMusicToNext(Music music, OnAudioPlayerListener onAudioPlayerListener) {
+        if (currentMusic == null) {
+            playMusic(music, onAudioPlayerListener);
+            return;
+        }
         if (onAudioPlayerListener != null) {
             AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
         }
@@ -266,6 +270,8 @@ public class AudioPlayUtils {
                     Music music = musicList.pop();
                     currentMusic = music;
                     playFromUrl(music.getPath());
+                } else {
+                    currentMusic = null;
                 }
             }
 

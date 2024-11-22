@@ -13,6 +13,7 @@ import com.example.qingting.Bean.Music;
 import com.example.qingting.MyApplication;
 import com.example.qingting.R;
 import com.example.qingting.Utils.Play.AudioPlayUtils;
+import com.example.qingting.Utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultViewHo
             @Override
             public void onClick(View v) {
                 AudioPlayUtils.addMusicToNext(music, null);
+                ToastUtils.makeShortText(v.getContext(), v.getResources().getString(R.string.add_music_to_next));
             }
         });
         holder.title.setText(music.getName());

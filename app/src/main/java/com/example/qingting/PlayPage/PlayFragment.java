@@ -178,10 +178,12 @@ public class PlayFragment extends BottomSheetDialogFragment {
 
     private void initCurrentMusic() {
         Music music = AudioPlayUtils.getCurrentMusic();
-        titleTextView.setText(music.getName());
-        genreTextView.setText(music.getGenre());
-        songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getCurrentPosition()));
-        songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getDuration()));
+        if (music != null) {
+            titleTextView.setText(music.getName());
+            genreTextView.setText(music.getGenre());
+            songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getCurrentPosition()));
+            songLengthTextView.setText(TimeUtils.milliSecs2MMss(AudioPlayUtils.getDuration()));
+        }
         OnAudioPlayerListener onAudioPlayerListener = new OnAudioPlayerListener() {
             @Override
             public void onStarted() {

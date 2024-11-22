@@ -3,6 +3,7 @@ package com.example.qingting.Utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,7 +22,7 @@ public class ToastUtils {
     private static Toast getToastInstance(Context context) {
         if (toast == null) {
             Context context1 = context.getApplicationContext();
-            View view = View.inflate(context1, R.layout.toast_layout, null);  // 设置Toast布局
+            View view = LayoutInflater.from(context1).inflate(R.layout.toast_layout, null, false);
             toast = new Toast(context1);
             textView = view.findViewById(R.id.toast_text);
             layout = view.findViewById(R.id.toast_layout);
