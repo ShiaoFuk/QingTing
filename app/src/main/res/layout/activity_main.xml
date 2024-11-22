@@ -32,8 +32,36 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="@dimen/play_bar_icon_bottom_margin"
             android:layout_marginStart="@dimen/play_bar_icon_horizonal_margin"
-            android:elevation="8dp"
+            android:elevation="@dimen/play_bar_icon_elevation"
             />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="@dimen/play_bar_title_width"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/play_bar"
+            app:layout_constraintBottom_toBottomOf="@id/play_bar"
+            app:layout_constraintStart_toEndOf="@id/play_bar_icon"
+            android:elevation="@dimen/play_bar_icon_elevation"
+            android:padding="@dimen/play_bar_title_padding"
+            >
+            <TextView
+                android:id="@+id/play_bar_title"
+                android:text="@string/no_music_playing"
+                android:textSize="@dimen/play_bar_title_text_size"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/search_result_item_text"
+                />
+            <TextView
+                android:id="@+id/play_bar_genre"
+                android:textSize="@dimen/play_bar_genre_text_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/search_result_item_text"
+                />
+        </LinearLayout>
         <RelativeLayout
             android:id="@+id/play_bar"
             android:layout_width="match_parent"
@@ -43,7 +71,7 @@
             android:background="@drawable/shape_play_bar"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="@dimen/play_bar_bottom_margin"
-            android:elevation="3dp"
+            android:elevation="@dimen/play_bar_elevation"
             >
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="@dimen/play_bar_height"

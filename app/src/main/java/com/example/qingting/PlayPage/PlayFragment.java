@@ -314,6 +314,11 @@ public class PlayFragment extends BottomSheetDialogFragment {
     }
 
     private void initPlayGroup() {
+        if (AudioPlayUtils.isPlaying()) {
+            playBtn.setImageResource(R.drawable.pause_icon);
+        } else {
+            playBtn.setImageResource(R.drawable.play_icon);
+        }
         playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

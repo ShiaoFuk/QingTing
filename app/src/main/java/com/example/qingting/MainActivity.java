@@ -2,6 +2,9 @@ package com.example.qingting;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -21,6 +24,7 @@ import com.example.qingting.PlayPage.PlayFragment;
 import com.example.qingting.UserPage.UserPageFragment;
 import com.example.qingting.Utils.FragmentUtils;
 import com.example.qingting.Utils.Play.OnAudioPlayerListener;
+import com.example.qingting.Utils.TimeUtils;
 import com.example.qingting.Utils.TintUtils;
 import com.king.view.circleprogressview.CircleProgressView;
 
@@ -34,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     FrameLayout frameLayout;
     View rootView;
     List<OnAudioPlayerListener> onAudioPlayerListenerList = new ArrayList<>();
+    Thread seekBarThread;
+    boolean isEnd;
+    CircleProgressView circleProgressView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.navigation_bar);
         frameLayout = findViewById(R.id.page_frame);
         rootView = getWindow().getDecorView();
+        circleProgressView = findViewById(R.id.progress_view);
         init();
     }
 
@@ -51,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         initPlayBar();
         initNavigation();
         initPlayBtn();
+        initPlayBarTitle();
+        initSeekBar();
     }
 
 
@@ -71,9 +81,48 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void initPlayBarTitle() {
+        TextView titleView = findViewById(R.id.play_bar_title);
+        TextView genreView = findViewById(R.id.play_bar_genre);
+        OnAudioPlayerListener onAudioPlayerListener = new OnAudioPlayerListener() {
+            @Override
+            public void onStarted() {
+                Music music = AudioPlayUtils.getCurrentMusic();
+                if (music != null) {
+                    titleView.setText(music.getName());
+                    genreView.setText(music.getGenre());
+                }
+            }
+
+            @Override
+            public void onPaused() {
+
+            }
+
+            @Override
+            public void onStopped() {
+
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                if (!AudioPlayUtils.hasNext()) {
+                    titleView.setText(rootView.getResources().getString(R.string.no_music_playing));
+                    genreView.setText("");
+                }
+            }
+        };
+        AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
+    }
+
+
     private void initPlayBtn() {
         ConstraintLayout playGroup = findViewById(R.id.play_group);
-        CircleProgressView circleProgressView = findViewById(R.id.progress_view);
         ImageView imageView = findViewById(R.id.main_play_btn);
         playGroup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +160,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onComplete() {
-
+                if (!AudioPlayUtils.hasNext()) {
+                    circleProgressView.setProgress(0);
+                    circleProgressView.setMax(0);
+                }
             }
         };
         onAudioPlayerListenerList.add(onAudioPlayerListener);
@@ -121,8 +173,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        isEnd = true;
+        try {
+            seekBarThread.join();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
         AudioPlayUtils.stopAndRelease();
+        super.onDestroy();
     }
 
     private void setPlayBarClickEvent(View view) {
@@ -140,6 +198,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void initSeekBar() {
+        seekBarThread = new Thread(new Runnable() {
+            final Handler handler = new Handler(Looper.getMainLooper());
+            @Override
+            public void run() {
+                isEnd = false;
+                while (!isEnd) {
+                    while (!isEnd && AudioPlayUtils.isPlaying()) {
+                        handler.post(() -> {
+                            int currentTime = AudioPlayUtils.getCurrentPosition();
+                            circleProgressView.setProgress(currentTime);
+                        });
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
+                }
+            }
+        });
+        seekBarThread.start();
+    }
+
+
 
     @Override
     public void onBackPressed() {
@@ -153,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onBackPressed();
     }
+
 
 }
 
@@ -228,6 +312,7 @@ class NavigationProvider {
         if (fragment.isAdded()) return;
         FragmentUtils.replaceFragmentToActivity(frameLayout, fragment);
     }
+
 
     /**
      * switch the navigation color when switch the fragment by touching navigation color
