@@ -16,4 +16,8 @@
 
     <string name="add_music_to_next">已添加到下一首播放</string>
     <string name="song_initial_length">0:00</string>
+    <!--    user page-->
+    <string name="default_username">用户名称</string>
+    <string name="no_login_username">点击登录</string>
+    <string name="login_expire_message">登录状态过期，请重新登录</string>
 </resources>

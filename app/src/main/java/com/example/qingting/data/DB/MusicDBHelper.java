@@ -1,4 +1,4 @@
-package com.example.qingting.DB;
+package com.example.qingting.data.DB;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

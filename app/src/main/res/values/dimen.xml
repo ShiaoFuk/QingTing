@@ -62,4 +62,14 @@
     <dimen name="control_btn_center_length">50dp</dimen>
     <dimen name="control_btn_margin">30dp</dimen>
 
+    <!--    UserFragment-->
+    <dimen name="setting_icon_length">40dp</dimen>
+    <dimen name="user_avatar_length">80dp</dimen>
+    <dimen name="user_avatar_start_margin">30dp</dimen>
+    <dimen name="user_info_height">120dp</dimen>
+    <dimen name="tabs_height">30dp</dimen>
+    <dimen name="user_page_padding">10dp</dimen>
+    <dimen name="username_text_size">32dp</dimen>
+    <dimen name="username_margin">20dp</dimen>
+    <dimen name="play_list_layout_radius">16dp</dimen>
 </resources>
