@@ -29,7 +29,7 @@ import io.jsonwebtoken.JwtException;
 
 public class UserPageFragment extends Fragment {
     View rootView;
-    Date loginExpireTime;
+    Date loginExpireTime;  // 登录过期时间,如果已经过期会被置为null,没有登录也是null
     final static String TAG = UserPageFragment.class.getName();
 
     private static UserPageFragment fragment;
@@ -80,7 +80,7 @@ public class UserPageFragment extends Fragment {
         String token = LoginSP.getToken(rootView.getContext());
         try {
             loginExpireTime = JwtUtil.getExpireTime(token);
-        } catch (JwtException e) {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             loginExpireTime = null;
         }
@@ -128,6 +128,9 @@ public class UserPageFragment extends Fragment {
 
     private void initUserName() {
         TextView textView = rootView.findViewById(R.id.user_name);
+        if (loginExpireTime != null) {
+            textView.setText(rootView.getResources().getString(R.string.default_username));
+        }
         textView.setOnClickListener(this::loginListenEvent);
         // 发起请求获取用户名
     }

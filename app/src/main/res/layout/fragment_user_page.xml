@@ -6,6 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/user_info_layout_bg"
     tools:context=".UserPage.UserPageFragment"
+    android:paddingTop="@dimen/padding_top"
     >
 
     <RelativeLayout

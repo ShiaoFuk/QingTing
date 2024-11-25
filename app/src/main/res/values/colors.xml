@@ -18,4 +18,5 @@
     <color name="seek_bar_process">#03F80C</color>
     <color name="seek_bar_second_process">#5F03F80C</color>
     <color name="seek_bar_bg">#D0111B6B</color>
+    <color name="login_title_color">#E6BAF3F4</color>
 </resources>

@@ -8,7 +8,7 @@ public interface RequestListener {
     Object onPrepare(Object object);  // 发送前，返回处理后的数据
     void onRequest();  // 发送前后
     void onReceive();  // 接收响应后 trigger onSuccess | onError
-    void onSuccess(JsonElement element);  // 响应成功
+    void onSuccess(JsonElement element) throws Exception;  // 响应成功
     void onError(Exception e);  // 响应失败
     void onFinish();  // 结束
 

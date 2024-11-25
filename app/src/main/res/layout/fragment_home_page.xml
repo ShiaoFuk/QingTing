@@ -16,7 +16,7 @@
         android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="@dimen/search_height"
-        android:layout_marginHorizontal="@dimen/search_horizonal_margin"
+        android:layout_marginHorizontal="@dimen/search_horizontal_margin"
         android:background="@drawable/search_bg"
         android:drawableStart="@drawable/search_icon"
         android:paddingHorizontal="@dimen/search_padding"

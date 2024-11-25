@@ -1,6 +1,5 @@
 package com.example.qingting.HomePage;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -21,7 +20,6 @@ import com.example.qingting.R;
 import com.example.qingting.Utils.JsonUtils;
 import com.example.qingting.net.request.MusicRequest;
 import com.example.qingting.net.request.RequestListener;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -100,7 +98,7 @@ public class SearchResultFragment extends Fragment {
             }
 
             @Override
-            public void onSuccess(JsonElement element) {
+            public void onSuccess(JsonElement element) throws Exception {
                 JsonObject jsonObject = element.getAsJsonObject();
                 if (jsonObject.get("code").getAsInt() == 200) {
                     String jsonArray = jsonObject.get("data").toString();

@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="left|center_vertical"
                 android:textColor="@color/black"
-                android:textSize="24dp"
+                android:textSize="20dp"
                 android:text="示范文本"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

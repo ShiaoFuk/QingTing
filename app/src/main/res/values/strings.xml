@@ -20,4 +20,14 @@
     <string name="default_username">用户名称</string>
     <string name="no_login_username">点击登录</string>
     <string name="login_expire_message">登录状态过期，请重新登录</string>
+    <string name="login">登  录</string>
+    <string name="welcome">Wel-Come</string>
+    <string name="register">注  册</string>
+    <string name="no_user">没有账号?</string>
+    <string name="go_to_login">去登录</string>
+    <string name="user_pwd_invalid">账号或密码不满足要求</string>
+    <string name="user_invalid">账号不满足要求，需要不小于6位且不大于20位</string>
+    <string name="pwd_invalid">密码需要不小于6位且不大于20位,同时包含字母和数字</string>
+    <string name="login_fail">登录失败</string>
+    <string name="login_error">登录错误</string>
 </resources>

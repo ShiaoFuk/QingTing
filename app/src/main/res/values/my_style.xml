@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="login_edit_text" parent="Widget.AppCompat.EditText">
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:paddingHorizontal">@dimen/login_edit_horizontal_margin</item>
+        <item name="android:textSize">@dimen/login_edit_text_size</item>
+    </style>
     <style name="song_length" parent="Widget.AppCompat.TextView">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">#000000</item>
-        <item name="android:layout_marginHorizontal">@dimen/song_length_margin_horzitonal</item>
+        <item name="android:layout_marginHorizontal">@dimen/song_length_margin_horizontal</item>
         <item name="android:layout_marginVertical">@dimen/song_length_margin_vertical</item>
     </style>
     <style name="seekbar" parent="Widget.AppCompat.SeekBar">

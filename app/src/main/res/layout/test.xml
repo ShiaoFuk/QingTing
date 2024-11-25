@@ -30,7 +30,7 @@
         style="@style/search_result_item_text"
         app:layout_constraintBottom_toTopOf="@id/genre"
         app:layout_constraintStart_toStartOf="@id/seekbar"
-        android:layout_marginStart="@dimen/song_length_margin_horzitonal"
+        android:layout_marginStart="@dimen/song_length_margin_horizontal"
         />
     <TextView
         android:text=""
@@ -41,7 +41,7 @@
         app:layout_constraintBottom_toTopOf="@id/seekbar"
         android:layout_marginBottom="@dimen/title_bottom_margin"
         app:layout_constraintStart_toStartOf="@id/seekbar"
-        android:layout_marginStart="@dimen/song_length_margin_horzitonal"
+        android:layout_marginStart="@dimen/song_length_margin_horizontal"
         />
     <SeekBar
         android:id="@+id/seekbar"
