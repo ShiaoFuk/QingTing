@@ -1,20 +1,15 @@
 package com.example.qingting.Utils;
 
-import static javax.crypto.Cipher.SECRET_KEY;
+
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
 public class JwtUtil {
-
-
+    private final static String JWT_KEY = "dc36eb68d08d3dafc853e4bae50d4ad94a4a2093da8d639ada833826177e83ce";
     /**
      * 解析token，获取过期时间
      * @param token
@@ -23,12 +18,13 @@ public class JwtUtil {
      */
     public static Date getExpireTime(String token) throws JwtException {
         Jws<Claims> jwt = Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(JWT_KEY.getBytes()))
                 .build()
                 .parseSignedClaims(token);
         Claims claims = jwt.getPayload();
         Date expireTime = claims.getExpiration();
         if (checkIfTokenExpire(expireTime)) {
-            throw new JwtException("expired token");
+            throw new JwtException("token expired");
         }
         return expireTime;
     }
@@ -39,6 +35,6 @@ public class JwtUtil {
      * @return true if expired, else false
      */
     public static boolean checkIfTokenExpire(Date expireTime) {
-        return !(expireTime.getTime() < new Date().getTime());
+        return (expireTime.getTime() < new Date().getTime());
     }
 }

@@ -1,6 +1,7 @@
 package com.example.qingting.Login;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,6 +17,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qingting.Bean.User;
+import com.example.qingting.MainActivity;
 import com.example.qingting.R;
 import com.example.qingting.Utils.ToastUtils;
 import com.example.qingting.data.SP.LoginSP;
@@ -237,7 +239,9 @@ public class LoginActivity extends AppCompatActivity {
                     if (code.getAsInt() == 200) {
                         String token = obj.get("data").getAsString();
                         LoginSP.setToken(context, token);
-                        finish();
+                        Intent intent = new Intent(context, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                         return;
                     }
                     throw new Exception(context.getResources().getString(R.string.login_fail));

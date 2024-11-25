@@ -25,6 +25,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import java.util.Date;
 
 import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 
 
 public class UserPageFragment extends Fragment {
@@ -48,6 +49,18 @@ public class UserPageFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    boolean firstIn = true;
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (firstIn) {
+            firstIn = false;
+            return;
+        } else {
+            init();
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -59,6 +72,7 @@ public class UserPageFragment extends Fragment {
     private void init() {
         initLoginInfo();
         initUserInfo();
+
         initPlayList();
     }
 
@@ -80,9 +94,8 @@ public class UserPageFragment extends Fragment {
         String token = LoginSP.getToken(rootView.getContext());
         try {
             loginExpireTime = JwtUtil.getExpireTime(token);
-        } catch (Exception e) {
+        } catch (JwtException e) {
             Log.e(TAG, e.getMessage());
-            loginExpireTime = null;
         }
         checkLoginThread = new Thread(new Runnable() {
             Handler handler = new Handler(Looper.getMainLooper());
