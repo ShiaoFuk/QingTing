@@ -226,12 +226,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (PlayFragment.getInstance().isExpandBottomSheet()) {
+        if (PlayFragment.getInstance().isAdded() && PlayFragment.getInstance().isExpandBottomSheet()) {
             PlayFragment.getInstance().collapseBottomSheet();
             return;
         }
-        if (HomePageFragment.getInstance().isAdded()) {
-            if (HomePageFragment.getInstance().removeChildFragments()) return;
+        if (HomePageFragment.getInstance().isAdded() && HomePageFragment.getInstance().removeChildFragments()) {
+            return;
         }
 
         super.onBackPressed();
