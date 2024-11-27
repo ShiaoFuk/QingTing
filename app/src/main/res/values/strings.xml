@@ -38,9 +38,22 @@
     <string name="play_list_request_success">更新歌单数据成功</string>
     <string name="operate_playlist_fail">操作歌单失败</string>
     <string name="operate_playlist_success">操作歌单成功</string>
+
     <string name="insert_playlist_fail">添加歌单失败</string>
     <string name="insert_playlist_success">添加歌单成功</string>
+
+
+    <string name="update_playlist_fail">更新歌单失败</string>
+    <string name="update_playlist_success">更新歌单成功</string>
+
     <string name="add_playlist_title">添加歌单</string>
     <string name="add_playlist_message">请输入歌单名称</string>
+
+    <string name="update_playlist_title">更新歌单</string>
+    <string name="update_playlist_message">请输入歌单名称</string>
+
+    <string name="delete_playlist_title">删除歌单</string>
+    <string name="delete_playlist_message">确认要删除这个歌单吗？</string>
+
     <string name="sure_message">确定</string>
 </resources>
