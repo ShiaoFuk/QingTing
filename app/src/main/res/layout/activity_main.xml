@@ -91,8 +91,8 @@
                     app:cpvProgressColor="@color/green"
                     app:cpvShowLabel="false"
                     app:cpvShowTick="false"
-                    app:cpvMax="360"
-                    app:cpvProgress="180"
+                    app:cpvMax="0"
+                    app:cpvProgress="0"
                     />
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/main_play_btn"

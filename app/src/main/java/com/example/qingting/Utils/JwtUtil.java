@@ -16,7 +16,10 @@ public class JwtUtil {
      * @return
      * @throws JwtException
      */
-    public static Date getExpireTime(String token) throws JwtException {
+    public static Date getExpireTime(String token) throws JwtException, NullPointerException {
+        if (token == null) {
+            throw new NullPointerException();
+        }
         Jws<Claims> jwt = Jwts.parser()
                 .verifyWith(Keys.hmacShaKeyFor(JWT_KEY.getBytes()))
                 .build()

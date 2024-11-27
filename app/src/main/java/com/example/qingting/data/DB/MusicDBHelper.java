@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.qingting.Bean.PlayList;
+
 public class MusicDBHelper extends SQLiteOpenHelper {
     // 数据库名称和版本
     private static final String DATABASE_NAME = "QingTing.db";
@@ -19,13 +21,14 @@ public class MusicDBHelper extends SQLiteOpenHelper {
     public static MusicDBHelper getInstance(Context context) {
         if (musicDBHelper == null) {
             musicDBHelper = new MusicDBHelper(context);
+            musicDBHelper.getWritableDatabase();
         }
         return musicDBHelper;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        db.execSQL(PlayListDB.createSQL);
     }
 
     @Override

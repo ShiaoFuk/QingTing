@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <fraction name="login_editext_width_percent">0.85</fraction>
-    <fraction name="login_editext_height_percent">0.08</fraction>
+    <fraction name="login_editext_height_percent">0.06</fraction>
+    <fraction name="play_list_img_height">0.8</fraction>
 </resources>

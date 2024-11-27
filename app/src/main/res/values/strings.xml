@@ -30,4 +30,10 @@
     <string name="pwd_invalid">密码需要不小于6位且不大于20位,同时包含字母和数字</string>
     <string name="login_fail">登录失败</string>
     <string name="login_error">登录错误</string>
+<!--    tab name-->
+    <string name="tab_name_default">默认排序</string>
+    <string name="tab_name_order_by_name">名称排序</string>
+    <string name="nullptr_token">当前未登录</string>
+    <string name="play_list_request_fail">获取歌单数据失败</string>
+    <string name="play_list_request_success">更新歌单数据成功</string>
 </resources>

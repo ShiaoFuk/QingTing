@@ -23,6 +23,10 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item> <!-- 设置为50%使其成为圆形 -->
     </style>
+    <style name="round_shape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10%</item> <!-- 设置为50%使其成为圆形 -->
+    </style>
     <style name="search_result_item_text" parent="Widget.AppCompat.TextView">
         <item name="android:ellipsize">marquee</item>
         <item name="android:maxLines">1</item>

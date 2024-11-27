@@ -68,7 +68,7 @@
     <dimen name="user_avatar_length">80dp</dimen>
     <dimen name="user_avatar_start_margin">30dp</dimen>
     <dimen name="user_info_height">120dp</dimen>
-    <dimen name="tabs_height">30dp</dimen>
+    <dimen name="tabs_height">40dp</dimen>
     <dimen name="user_page_padding">10dp</dimen>
     <dimen name="username_text_size">32dp</dimen>
     <dimen name="username_margin">20dp</dimen>
@@ -76,7 +76,7 @@
 
 
 <!--    login-->
-    <dimen name="username_top_margin">200dp</dimen>
+    <dimen name="username_top_margin">300dp</dimen>
     <dimen name="login_edit_height">45dp</dimen>
     <dimen name="pwd_top_margin">40dp</dimen>
     <dimen name="pwd_bottom_margin">60dp</dimen>
@@ -91,5 +91,18 @@
     <dimen name="login_edit_text_size">24dp</dimen>
     <dimen name="login_edit_text_bg_stroke">4dp</dimen>
     <dimen name="login_edit_text_bg_radius">24dp</dimen>
+
+
+<!--    play list-->
+    <dimen name="play_list_item_height">80dp</dimen>
+    <dimen name="play_list_item_img_start_margin">10dp</dimen>
+    <dimen name="play_list_item_name_text_size">24dp</dimen>
+    <dimen name="play_list_item_info_text_size">16dp</dimen>
+    <dimen name="play_list_item_name_text_top_margin">12dp</dimen>
+    <dimen name="play_list_item_info_text_top_margin">8dp</dimen>
+    <dimen name="play_list_item_text_start_margin">10dp</dimen>
+    <dimen name="play_list_item_del_btn_height">40dp</dimen>
+    <dimen name="play_list_item_btn_group_padding">10dp</dimen>
+    <dimen name="play_list_item_btn_margin">10dp</dimen>
 
 </resources>

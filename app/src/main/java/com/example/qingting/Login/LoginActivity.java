@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qingting.Bean.User;
 import com.example.qingting.MainActivity;
+import com.example.qingting.MyApplication;
 import com.example.qingting.R;
 import com.example.qingting.Utils.ToastUtils;
 import com.example.qingting.data.SP.LoginSP;
@@ -239,6 +240,8 @@ public class LoginActivity extends AppCompatActivity {
                     if (code.getAsInt() == 200) {
                         String token = obj.get("data").getAsString();
                         LoginSP.setToken(context, token);
+                        // 获取歌单
+                        MyApplication.getInstance();
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
