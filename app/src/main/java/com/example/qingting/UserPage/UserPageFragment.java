@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Handler;
@@ -24,19 +23,18 @@ import com.example.qingting.Login.LoginActivity;
 import com.example.qingting.MyApplication;
 import com.example.qingting.R;
 import com.example.qingting.Setting.SettingActivity;
-import com.example.qingting.Utils.JsonUtils;
+import com.example.qingting.Utils.DialogUtils;
 import com.example.qingting.Utils.JwtUtil;
 import com.example.qingting.Utils.ToastUtils;
 import com.example.qingting.data.DB.PlayListDB;
 import com.example.qingting.data.SP.LoginSP;
-import com.example.qingting.net.request.PlayListRequest.GetAllPlayListRequest;
+import com.example.qingting.net.request.PlayListRequest.InsertPlayListRequest;
 import com.example.qingting.net.request.RequestListener;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.Date;
 import java.util.List;
@@ -91,6 +89,7 @@ public class UserPageFragment extends Fragment {
         initLoginInfo();
         initUserInfo();
         initPlayList();
+        initAddPlayListBtn();
     }
 
 
@@ -150,6 +149,76 @@ public class UserPageFragment extends Fragment {
     private void initPlayList() {
         initPlayListViewPager();
         initPlayListTabs();
+    }
+
+
+    private void initAddPlayListBtn() {
+        ImageView btn = rootView.findViewById(R.id.add_playlist_icon);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogUtils.showInputDialog(rootView.getContext(),
+                        rootView.getResources().getString(R.string.add_playlist_title),
+                        rootView.getResources().getString(R.string.add_playlist_message),
+                        rootView.getResources().getString(R.string.sure_message),
+                        new DialogUtils.DialogCallback() {
+                    @Override
+                    public void doSth(View view, String input) {
+                        // 添加歌单
+                        InsertPlayListRequest.insertPlayList(new RequestListener() {
+                            @Override
+                            public Object onPrepare(Object object) {
+                                return null;
+                            }
+
+                            @Override
+                            public void onRequest() {
+
+                            }
+
+                            @Override
+                            public void onReceive() {
+
+                            }
+
+                            @Override
+                            public void onSuccess(JsonElement element) throws Exception {
+                                JsonObject jsonObject = element.getAsJsonObject();
+                                if (jsonObject.get("code") != null && jsonObject.get("code").getAsInt() == 200) {
+                                    // 插入成功，更新全局list
+                                    MyApplication.getPlayListFromNet(rootView.getContext());
+                                    // 构建一个playlist,直接添加,然后notified data set changed
+                                    PlayList playList = new PlayList();
+                                    playList.setName(input);
+                                    playList.setId(jsonObject.get("data").getAsInt());
+                                    PlayListViewPagerAdapter adapter = (PlayListViewPagerAdapter) viewPager2.getAdapter();
+                                    handler.post(()->{
+                                        if (UserPageFragment.getInstance().isAdded()) {
+                                            adapter.addPlayList(playList);
+                                            Log.e(TAG, "update adapter");
+                                        }
+                                    });
+                                    ToastUtils.makeShortText(rootView.getContext(), rootView.getResources().getString(R.string.insert_playlist_success));
+                                } else {
+                                    Log.e(TAG, jsonObject.get("message").toString());
+                                }
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                ToastUtils.makeShortText(rootView.getContext(), rootView.getResources().getString(R.string.insert_playlist_fail));
+                                Log.e(TAG, e.getMessage());
+                            }
+
+                            @Override
+                            public void onFinish() {
+
+                            }
+                        }, LoginSP.getToken(rootView.getContext()), input);
+                    }
+                }, null);
+            }
+        });
     }
 
     private void initUserAvatar() {
@@ -227,58 +296,6 @@ public class UserPageFragment extends Fragment {
     }
 
 
-    // 发送网络请求获取用户所有PlayList
-    private void getPlayList() {
-        GetAllPlayListRequest.getAllPlayList(new RequestListener() {
-            @Override
-            public Object onPrepare(Object object) {
-                return null;
-            }
-
-            @Override
-            public void onRequest() {
-
-            }
-
-            @Override
-            public void onReceive() {
-
-            }
-
-            @Override
-            public void onSuccess(JsonElement element) throws Exception {
-                JsonObject jsonObject = element.getAsJsonObject();
-                JsonElement element1 = jsonObject.get("code");
-                if (element1 != null && element1.getAsInt() == 200) {
-                    JsonElement list = jsonObject.get("data");
-                    List<PlayList> playListList = JsonUtils.getJsonParser().fromJson(list, new TypeToken<List<PlayList>>() {}.getType());
-                    // 存入数据库
-                    PlayListDB.insertList(rootView.getContext(), playListList);
-                    // 刷新视图
-                    PlayListViewPagerAdapter adapter = (PlayListViewPagerAdapter) viewPager2.getAdapter();
-                    handler.post(()->{
-                        if (UserPageFragment.getInstance().isAdded()) {
-                            adapter.updateData(PlayListDB.getPlayListListList(getContext()));
-                        }
-                    });
-                    ToastUtils.makeShortText(rootView.getContext(), rootView.getResources().getString(R.string.play_list_request_success));
-                    return;
-                }
-                ToastUtils.makeShortText(rootView.getContext(), rootView.getResources().getString(R.string.play_list_request_fail));
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-            }
-
-            @Override
-            public void onFinish() {
-
-            }
-
-        }, LoginSP.getToken(rootView.getContext()));
-    }
 
 
 

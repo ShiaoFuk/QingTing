@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +21,6 @@ import com.example.qingting.MyApplication;
 import com.example.qingting.R;
 import com.example.qingting.Utils.ToastUtils;
 import com.example.qingting.data.SP.LoginSP;
-import com.example.qingting.net.cyper.AESUtils;
 import com.example.qingting.net.request.LoginRequest;
 import com.example.qingting.net.request.RegisterRequest;
 import com.example.qingting.net.request.RequestListener;
@@ -241,7 +239,7 @@ public class LoginActivity extends AppCompatActivity {
                         String token = obj.get("data").getAsString();
                         LoginSP.setToken(context, token);
                         // 获取歌单
-                        MyApplication.getPlayList(context);
+                        MyApplication.getPlayListFromNet(context);
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

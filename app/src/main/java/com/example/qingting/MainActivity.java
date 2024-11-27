@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void init() {
-        MyApplication.getPlayList(context);
+        MyApplication.getPlayListFromNet(context);
         TimeCostTest.test(new TimeCostTest.Task() {
             @Override
             public void doSomeThing() {

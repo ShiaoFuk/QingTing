@@ -48,6 +48,13 @@ public class PlayListViewPagerAdapter extends RecyclerView.Adapter<PlayListViewP
         notifyDataSetChanged();
     }
 
+    public void addPlayList(PlayList playList) {
+        for (int i = 0; i < this.playListListList.size(); ++i) {
+            playListListList.get(i).add(0, playList);
+        }
+        notifyDataSetChanged();
+    }
+
 
     @Override
     public int getItemCount() {

@@ -7,7 +7,7 @@ public class PlayList {
     Integer id;
     Integer userId;
     String name;
-    Integer likes;
-    Integer playTimes;
+    Integer likes = 0;
+    Integer playTimes = 0;
     String url;  // 图片url
 }

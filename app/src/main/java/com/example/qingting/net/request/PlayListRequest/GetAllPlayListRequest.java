@@ -26,6 +26,9 @@ public class GetAllPlayListRequest {
      * @param token
      */
     public static void getAllPlayList(RequestListener listener, String token) {
+        if (token == null) {
+            return;
+        }
         listener.onRequest();
         Thread thread = new Thread(()->{
             try {

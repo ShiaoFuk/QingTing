@@ -4,13 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.qingting.Adapter.PlayListViewPagerAdapter;
-import com.example.qingting.Bean.Music;
 import com.example.qingting.Bean.PlayList;
-import com.example.qingting.UserPage.UserPageFragment;
 import com.example.qingting.Utils.JsonUtils;
-import com.example.qingting.Utils.Play.AudioPlayUtils;
-import com.example.qingting.Utils.Play.OnAudioPlayerListener;
 import com.example.qingting.Utils.ToastUtils;
 import com.example.qingting.data.DB.MusicDBHelper;
 import com.example.qingting.data.DB.PlayListDB;
@@ -22,14 +17,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Predicate;
-
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * App对象，维护一个播放队列
@@ -84,7 +72,7 @@ public class MyApplication extends Application {
      * 网络读取歌单到本地数据库，同时设置全局列表
      * 进入App的时候更新一次歌单，登录成功也要更新一次，避免之前进入app没登陆导致没有歌单
      */
-    public static void getPlayList(Context context) {
+    public static void getPlayListFromNet(Context context) {
         GetAllPlayListRequest.getAllPlayList(new RequestListener() {
             @Override
             public Object onPrepare(Object object) {
@@ -149,8 +137,8 @@ public class MyApplication extends Application {
             return false;
         }
         boolean res = true;
-        for (List<PlayList> tempList: getPlayListListList()) {
-            res &= tempList.removeIf(tempPlayList -> tempPlayList.getId() == playList.getId());
+        for (int i = 0; i < getPlayListListList().size(); ++i) {
+            res &= getPlayListListList().get(i).removeIf(tempPlayList -> tempPlayList.getId() == playList.getId());
         }
         return res;
     }

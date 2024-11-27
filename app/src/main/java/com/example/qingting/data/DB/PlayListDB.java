@@ -26,7 +26,7 @@ public class PlayListDB {
     static String tableName = "playlist";
     static String urlName = "url";
     static String createSQL = "create table if not exists " + tableName + "(" +
-            "id integer primary key," +
+            "id integer primary key unique," +
             "user_id integer," +
             "name text," +
             "likes integer," +
@@ -38,13 +38,14 @@ public class PlayListDB {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getWritableDatabase();
         db.beginTransaction();
         ContentValues contentValues = new ContentValues();
+        contentValues.put(idName, list.getId());
         contentValues.put(userIdName, list.getUserId());
         contentValues.put(nameName, list.getName());
         contentValues.put(likesName, list.getLikes());
         contentValues.put(playTimesName, list.getPlayTimes());
         contentValues.put(urlName, list.getUrl());
         try {
-            db.insertOrThrow(tableName, null, contentValues);
+            db.insertWithOnConflict(tableName, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
             db.setTransactionSuccessful();
         } catch (SQLException e) {
             Log.e(tableName, e.getMessage());
@@ -65,24 +66,25 @@ public class PlayListDB {
         db.beginTransaction();
         for (PlayList list: list1) {
             ContentValues contentValues = new ContentValues();
+            contentValues.put(idName, list.getId());
             contentValues.put(userIdName, list.getUserId());
             contentValues.put(nameName, list.getName());
             contentValues.put(likesName, list.getLikes());
             contentValues.put(playTimesName, list.getPlayTimes());
             contentValues.put(urlName, list.getUrl());
             try {
-                if (db.insertOrThrow(tableName, null, contentValues) >= 0) {
+                if (db.insertWithOnConflict(tableName, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE) >= 0) {
                     affectedNum++;
                 }
             } catch (SQLException e) {
                 Log.e(tableName, e.getMessage());
-                affectedNum += db.update(tableName, contentValues, null, null);  // 主键冲突
             }
         }
         if (affectedNum > 0) {
             db.setTransactionSuccessful();
         }
         db.endTransaction();
+        Log.e("fjkldsaklfdjka;sklfkl;as", String.format("why always insert ????? %d", affectedNum));
         return affectedNum;
     }
 
