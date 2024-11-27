@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.qingting.AOP.TimeCostTest;
 import com.example.qingting.Bean.Music;
 import com.example.qingting.ChatPage.ChatPageFragment;
 import com.example.qingting.HomePage.HomePageFragment;
@@ -24,7 +25,6 @@ import com.example.qingting.PlayPage.PlayFragment;
 import com.example.qingting.UserPage.UserPageFragment;
 import com.example.qingting.Utils.FragmentUtils;
 import com.example.qingting.Utils.Play.OnAudioPlayerListener;
-import com.example.qingting.Utils.TimeUtils;
 import com.example.qingting.Utils.TintUtils;
 import com.king.view.circleprogressview.CircleProgressView;
 
@@ -56,14 +56,41 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void init() {
-        initPlayBar();
-        initNavigation();
-        initPlayBtn();
-        initPlayBarTitle();
-        initSeekBar();
+        MyApplication.getPlayList(context);
+        TimeCostTest.test(new TimeCostTest.Task() {
+            @Override
+            public void doSomeThing() {
+                initPlayBar();
+            }
+        }, "initPlayBar");
+        TimeCostTest.test(new TimeCostTest.Task() {
+            @Override
+            public void doSomeThing() {
+                initNavigation();
+            }
+        }, "initNavigation");
+        TimeCostTest.test(new TimeCostTest.Task() {
+            @Override
+            public void doSomeThing() {
+                initPlayBtn();
+            }
+        }, "initPlayBtn");
+        TimeCostTest.test(new TimeCostTest.Task() {
+            @Override
+            public void doSomeThing() {
+                initPlayBarTitle();
+            }
+        }, "initPlayBarTitle");
+        TimeCostTest.test(new TimeCostTest.Task() {
+            @Override
+            public void doSomeThing() {
+                initSeekBar();
+            }
+        }, "initSeekBar");
     }
 
 
+    
     private void initPlayBar() {
         View playBarIcon = findViewById(R.id.play_bar_icon);
         View playBar = findViewById(R.id.play_bar);
@@ -81,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    
     private void initPlayBarTitle() {
         TextView titleView = findViewById(R.id.play_bar_title);
         TextView genreView = findViewById(R.id.play_bar_genre);
@@ -120,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
     }
 
-
+    
     private void initPlayBtn() {
         ConstraintLayout playGroup = findViewById(R.id.play_group);
         ImageView imageView = findViewById(R.id.main_play_btn);
@@ -193,10 +221,10 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 初始化底部导航栏
      */
+    
     private void initNavigation() {
         NavigationProvider.initNavigation(rootView, frameLayout);
     }
-
 
     private void initSeekBar() {
         seekBarThread = new Thread(new Runnable() {

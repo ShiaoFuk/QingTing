@@ -36,4 +36,6 @@
     <string name="nullptr_token">当前未登录</string>
     <string name="play_list_request_fail">获取歌单数据失败</string>
     <string name="play_list_request_success">更新歌单数据成功</string>
+    <string name="operate_playlist_fail">操作歌单失败</string>
+    <string name="operate_playlist_success">操作歌单成功</string>
 </resources>

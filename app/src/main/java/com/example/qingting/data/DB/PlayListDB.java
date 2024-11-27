@@ -144,4 +144,21 @@ public class PlayListDB {
         playListListList.add(playListsOrderByName);
         return playListListList;
     }
+
+
+    /**
+     * 从数据库删除一个歌单
+     * @param context
+     * @param playList
+     * @return 成功返回>0的数
+     */
+    public static int deletePlayList(Context context, PlayList playList) {
+        if (playList == null || playList.getId() == null) {
+            return 0;
+        }
+        SQLiteDatabase db = MusicDBHelper.getInstance(context).getReadableDatabase();
+        String where = String.format("%s = ?", idName);
+        String[] args = new String[]{playList.getId().toString()};
+        return db.delete(tableName, where, args);
+    }
 }

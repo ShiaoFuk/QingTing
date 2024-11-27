@@ -241,7 +241,7 @@ public class LoginActivity extends AppCompatActivity {
                         String token = obj.get("data").getAsString();
                         LoginSP.setToken(context, token);
                         // 获取歌单
-                        MyApplication.getInstance();
+                        MyApplication.getPlayList(context);
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

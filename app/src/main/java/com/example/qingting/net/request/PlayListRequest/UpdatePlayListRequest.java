@@ -40,7 +40,7 @@ public class UpdatePlayListRequest {
         MediaType mediaType = MediaType.parse("text/plain");
         RequestBody body = RequestBody.create(mediaType, "");
         Request request = new Request.Builder()
-                .url("http://localhost/playList/update?token=" + token + "&playListId=" + playListId + "&name=" + name)
+                .url("http://suansun.top/playList/update?token=" + token + "&playListId=" + playListId + "&name=" + name)
                 .method("PUT", body)
                 .build();
         Response response = client.newCall(request).execute();

@@ -1,6 +1,8 @@
 package com.example.qingting;
 
 import android.app.Application;
+import android.content.Context;
+import android.util.Log;
 
 import com.example.qingting.Adapter.PlayListViewPagerAdapter;
 import com.example.qingting.Bean.Music;
@@ -22,6 +24,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -32,6 +35,7 @@ import lombok.Setter;
  * App对象，维护一个播放队列
  */
 public class MyApplication extends Application {
+    final static String TAG = MyApplication.class.getName();
     static MyApplication application;
     boolean isPlayListModified = true;  // 第一次设为true
     List<List<PlayList>> playListListList;
@@ -40,7 +44,6 @@ public class MyApplication extends Application {
         super.onCreate();
         application = this;
         MusicDBHelper.getInstance(getApplicationContext());
-        getPlayList();
         playListListList = PlayListDB.getPlayListListList(getApplicationContext());
     }
 
@@ -57,19 +60,31 @@ public class MyApplication extends Application {
         application.isPlayListModified = false;
     }
 
+
+    /**
+     * 用于让ui读取数据
+     * @return
+     */
     public static List<List<PlayList>> getPlayListListList() {
         return application.playListListList;
     }
 
+
+    /**
+     * 获取全部歌单信息后用这个设置歌单，仅限于写入数据库后读取到内存
+     * @param list
+     */
     public static void setPlayListListList(List<List<PlayList>> list) {
         application.playListListList = list;
         application.isPlayListModified = true;
+        Log.e(TAG, "set Play list");
     }
 
     /**
-     * 网络读取歌单
+     * 网络读取歌单到本地数据库，同时设置全局列表
+     * 进入App的时候更新一次歌单，登录成功也要更新一次，避免之前进入app没登陆导致没有歌单
      */
-    public static void getPlayList() {
+    public static void getPlayList(Context context) {
         GetAllPlayListRequest.getAllPlayList(new RequestListener() {
             @Override
             public Object onPrepare(Object object) {
@@ -94,18 +109,19 @@ public class MyApplication extends Application {
                     JsonElement list = jsonObject.get("data");
                     List<PlayList> playListList = JsonUtils.getJsonParser().fromJson(list, new TypeToken<List<PlayList>>() {}.getType());
                     // 存入数据库，后刷新
-                    PlayListDB.insertList(application.getApplicationContext(), playListList);
-                    List<PlayList> playListListDefault = PlayListDB.selectAll(application.getApplicationContext());
-                    List<PlayList> playListListOrderByName = PlayListDB.selectAllOrderByName(application.getApplicationContext());
+                    PlayListDB.insertList(context, playListList);
+                    List<PlayList> playListListDefault = PlayListDB.selectAll(context);
+                    List<PlayList> playListListOrderByName = PlayListDB.selectAllOrderByName(context);
                     List<List<PlayList>> playListListList = new ArrayList<>();
                     playListListList.add(playListListDefault);
                     playListListList.add(playListListOrderByName);
                     setPlayListListList(playListListList);
+                    setPlayListNoModified();
                     // 刷新视图
-                    ToastUtils.makeShortText(application.getApplicationContext(), application.getResources().getString(R.string.play_list_request_success));
+                    ToastUtils.makeShortText(context, context.getResources().getString(R.string.play_list_request_success));
                     return;
                 }
-                ToastUtils.makeShortText(application.getApplicationContext(), application.getResources().getString(R.string.play_list_request_fail));
+                ToastUtils.makeShortText(context, context.getResources().getString(R.string.play_list_request_fail));
             }
 
             @Override
@@ -118,7 +134,25 @@ public class MyApplication extends Application {
 
             }
 
-        }, LoginSP.getToken(application.getApplicationContext()));
+        }, LoginSP.getToken(context));
+    }
+
+
+    /**
+     * 从当前维护的列表删除对应id的playList
+     * @param playList 要删除的playlist
+     * @return true 删除成功； false删除失败
+     */
+    public static boolean deletePlayList(PlayList playList) {
+        // 删除
+        if (playList == null || playList.getId() == null) {
+            return false;
+        }
+        boolean res = true;
+        for (List<PlayList> tempList: getPlayListListList()) {
+            res &= tempList.removeIf(tempPlayList -> tempPlayList.getId() == playList.getId());
+        }
+        return res;
     }
 
 }

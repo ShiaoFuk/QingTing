@@ -46,7 +46,7 @@ public class InsertPlayListRequest {
         MediaType mediaType = MediaType.parse("text/plain");
         RequestBody body = RequestBody.create(mediaType, "");
         Request request = new Request.Builder()
-                .url("http://localhost/playList/add?token=" + token + "&name=" + name)
+                .url("http://suansun.top/playList/add?token=" + token + "&name=" + name)
                 .method("PUT", body)
                 .build();
         Response response = client.newCall(request).execute();

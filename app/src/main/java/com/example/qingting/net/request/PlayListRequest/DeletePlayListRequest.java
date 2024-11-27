@@ -22,6 +22,13 @@ public class DeletePlayListRequest {
     // 2. 第一行处理后的转换参数
     // 3. 调用的请求函数
 
+
+    /**
+     * 删除一个歌单
+      * @param listener 没有对数据做的，不需要实现onRequest
+     * @param token
+     * @param playListId 歌单的id
+     */
     public static void deletePlayList(RequestListener listener, String token, Integer playListId) {
         listener.onRequest();
         Thread thread = new Thread(()->{
@@ -45,7 +52,7 @@ public class DeletePlayListRequest {
         MediaType mediaType = MediaType.parse("text/plain");
         RequestBody body = RequestBody.create(mediaType, "");
         Request request = new Request.Builder()
-                .url("http://localhost/playList/delete?token=" + token + "&playListId=" + playListId)
+                .url("http://suansun.top/playList/delete?token=" + token + "&playListId=" + playListId)
                 .method("DELETE", body)
                 .build();
         Response response = client.newCall(request).execute();
