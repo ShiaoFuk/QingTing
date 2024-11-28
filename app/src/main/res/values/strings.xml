@@ -57,4 +57,8 @@
 
     <string name="sure_message">确定</string>
     <string name="get_music_fail">获取本地歌单失败</string>
+
+    <string name="get_playlist_music_fail">获取音乐失败</string>
+    <string name="get_playlist_music_success">获取音乐成功</string>
+    <string name="play_all_in_playlist">播放全部</string>
 </resources>

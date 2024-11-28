@@ -71,6 +71,11 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultViewHo
         return musicList.size();
     }
 
+    public void updateData(final List<Music> musicList) {
+        this.musicList = musicList;
+        notifyDataSetChanged();
+    }
+
 
 }
 

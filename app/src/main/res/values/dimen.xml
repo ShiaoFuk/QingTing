@@ -4,7 +4,7 @@
     <dimen name="layout_padding">10dp</dimen>
     <dimen name="toast_icon_length">30dp</dimen>
     <dimen name="img_padding">1dp</dimen>
-    <dimen name="padding_top">30dp</dimen>
+    <dimen name="padding_top">50dp</dimen>
     <!-- navigation_icon_height =  play_bar_bottom_margin - 2 * navigation_icon_padding_bottom-->
     <dimen name="navigation_layout_height">45dp</dimen>
     <dimen name="navigation_text_size">12dp</dimen>
@@ -37,7 +37,7 @@
     <dimen name="search_height">50dp</dimen>
     <dimen name="search_padding">10dp</dimen>
     <dimen name="search_horizontal_margin">20dp</dimen>
-    <dimen name="top_bar_height">50dp</dimen>
+    <dimen name="top_bar_height">@dimen/padding_top</dimen>
     <dimen name="frame_padding">20dp</dimen>
 
     <!--    SearchResultFragment-->
@@ -104,5 +104,10 @@
     <dimen name="play_list_item_del_btn_height">40dp</dimen>
     <dimen name="play_list_item_btn_group_padding">10dp</dimen>
     <dimen name="play_list_item_btn_margin">10dp</dimen>
+
+
+<!--    play_list_music_activity-->
+    <dimen name="play_list_play_all_image_padding">8dp</dimen>
+    <dimen name="play_list_play_all_text_size">20dp</dimen>
 
 </resources>

@@ -26,12 +26,12 @@ public class PlayListDB {
     static String tableName = "playlist";
     static String urlName = "url";
     static String createSQL = "create table if not exists " + tableName + "(" +
-            "id integer primary key unique," +
-            "user_id integer," +
-            "name text," +
-            "likes integer," +
-            "play_times integer," +
-            "url text" +
+            String.format("%s integer primary key,", idName) +
+            String.format("%s integer,", userIdName) +
+            String.format("%s text,", nameName) +
+            String.format("%s integer,", likesName) +
+            String.format("%s integer,", playTimesName) +
+            String.format("%s text", urlName) +
             ");";
 
     public static void insert(Context context, PlayList list) {
@@ -84,7 +84,6 @@ public class PlayListDB {
             db.setTransactionSuccessful();
         }
         db.endTransaction();
-        Log.e("fjkldsaklfdjka;sklfkl;as", String.format("why always insert ????? %d", affectedNum));
         return affectedNum;
     }
 
@@ -110,6 +109,7 @@ public class PlayListDB {
                 }
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return res;
     }
 
@@ -134,6 +134,7 @@ public class PlayListDB {
                 }
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return res;
     }
 

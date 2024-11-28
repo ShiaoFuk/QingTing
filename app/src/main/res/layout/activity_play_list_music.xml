@@ -7,12 +7,32 @@
     android:layout_height="match_parent"
     tools:context=".UserPage.PlayListMusicActivity"
     >
-    <View
+    <LinearLayout
+        android:layout_marginTop="@dimen/padding_top"
+        android:orientation="horizontal"
         android:id="@+id/top_bar"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="@dimen/top_bar_height"
-        />
+        android:gravity="center_vertical"
+        >
+        <ImageView
+            app:tint="@color/green"
+            android:src="@drawable/play_list_play_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:padding="@dimen/play_list_play_all_image_padding"
+            />
+        <TextView
+            android:text="@string/play_all_in_playlist"
+            android:textSize="@dimen/play_list_play_all_text_size"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/play_list_music"
         app:layout_constraintTop_toBottomOf="@id/top_bar"

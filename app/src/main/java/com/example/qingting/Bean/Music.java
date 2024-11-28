@@ -10,10 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class Music {
     Integer id;
-    String name;
-    String path;
+    String name;  // 歌名
+    String path;  // url
     String genre;  // 曲风
     String tempo;  // 速度
-    Date createdTime;
-    Date updatedTime;
 }

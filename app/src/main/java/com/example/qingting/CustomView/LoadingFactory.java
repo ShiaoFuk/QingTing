@@ -29,8 +29,8 @@ public class LoadingFactory {
 
         public LoadingViewParent(View loadingView) {
             this.controller = new LoadingViewController(loadingView);
-            this.controller.setText(context.getString(R.string.loading));
             context = loadingView.getContext();
+            this.controller.setText(context.getString(R.string.loading));
         }
 
         @Override
