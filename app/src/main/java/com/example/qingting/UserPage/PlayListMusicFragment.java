@@ -1,25 +1,27 @@
 package com.example.qingting.UserPage;
 
-
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.example.qingting.Adapter.SearchResultAdapter;
 import com.example.qingting.Bean.Music;
-import com.example.qingting.Bean.PlayList;
 import com.example.qingting.CustomView.LoadingFactory;
+import com.example.qingting.MainActivity;
 import com.example.qingting.R;
 import com.example.qingting.Utils.JsonUtils;
+import com.example.qingting.Utils.Play.AudioPlayUtils;
 import com.example.qingting.Utils.ToastUtils;
-import com.example.qingting.data.DB.MusicDB;
 import com.example.qingting.data.DB.PlayListMusicDB;
 import com.example.qingting.data.SP.LoginSP;
 import com.example.qingting.net.CheckSuccess;
@@ -30,40 +32,69 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
 
-public class PlayListMusicActivity extends AppCompatActivity {
-    static final String TAG = PlayListMusicActivity.class.getName();
+
+public class PlayListMusicFragment extends Fragment {
+    static final String TAG = PlayListMusicFragment.class.getName();
     RecyclerView playListMusicView;
     Integer playListId;
     List<Music> musicList;
     Context context;
-    public final static String ID_INTENT_KEY = "play_list_id";
-
     static boolean isEnd;  // 判断activity是否结束，以避免空指针操作
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_play_list_music);
-        isEnd = false;
-        playListMusicView = findViewById(R.id.play_list_music);
-        context = this;
-        init();
+    static PlayListMusicFragment fragment;
+
+    View rootView;
+    private PlayListMusicFragment() {
+
+    }
+
+    /**
+     * 获取单例化的实例，仅第一次获取初始化，传入音乐列表的id
+     * @param playListId 如果playListId为null则不会修改原来的playListId
+     * @return fragment instance
+     */
+    public static PlayListMusicFragment getInstance(Integer playListId) {
+        if (fragment == null) {
+            fragment = new PlayListMusicFragment();
+        }
+        if (playListId != null) {
+            fragment.playListId = playListId;
+        }
+        return fragment;
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_play_list_music, container, false);
+        isEnd = false;
+        playListMusicView = rootView.findViewById(R.id.play_list_music);
+        context = rootView.getContext();
+        init();
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
         isEnd = true;
     }
 
     private void init() {
-        LoadingFactory.loading(new LoadingFactory.LoadingViewParent(findViewById(R.id.loading_layout)) {
+        LoadingFactory.loading(new LoadingFactory.LoadingViewParent(rootView.findViewById(R.id.loading_layout)) {
             @Override
             public boolean doSth() {
                 if (initPlayListId()) {
+                    // 初始化要做的事情
                     initPlayList();
                     initRecyclerView();
+                    initTopBar();
                     return true;
                 }
                 ToastUtils.makeShortText(context, getString(R.string.get_music_fail));
@@ -78,7 +109,6 @@ public class PlayListMusicActivity extends AppCompatActivity {
      * @return true初始化成功，false初始化失败
      */
     private boolean initPlayListId() {
-        playListId = getIntent().getIntExtra(ID_INTENT_KEY, -1);
         if (playListId == null || playListId == -1) {
             return false;
         }
@@ -155,5 +185,11 @@ public class PlayListMusicActivity extends AppCompatActivity {
         playListMusicView.setLayoutManager(new LinearLayoutManager(context));
     }
 
+    private void initTopBar() {
+        View view = rootView.findViewById(R.id.top_bar);
+        view.setOnClickListener((v)->{
+            // 当前歌单添加到播放列表
+            AudioPlayUtils.playMusicList(musicList);
+        });
+    }
 }
-

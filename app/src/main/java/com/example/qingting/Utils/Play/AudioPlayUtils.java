@@ -205,7 +205,11 @@ public class AudioPlayUtils {
     }
 
 
-    // 加入下一首
+    /**
+     * 添加到下一首播放
+     * @param music 要播放的音乐
+     * @param onAudioPlayerListener
+     */
     public static void addMusicToNext(Music music, OnAudioPlayerListener onAudioPlayerListener) {
         if (currentMusic == null) {
             playMusic(music, onAudioPlayerListener);
@@ -215,6 +219,23 @@ public class AudioPlayUtils {
             AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
         }
         nextMusicList.addFirst(music);
+    }
+
+
+    /**
+     * 清空列表，并且马上开始播放新的列表
+     * @param musicList2add 要播放的列表，注意size为0会直接返回
+     */
+    public static void playMusicList(List<Music> musicList2add) {
+        if (musicList2add.size() == 0) {
+            return;
+        }
+        // 清空音乐
+        nextMusicList.clear();
+        playedMusicList.clear();
+        // 添加到下一首
+        nextMusicList.addAll(musicList2add);
+        playMusic(nextMusicList.pollFirst(), null);
     }
 
 

@@ -1,6 +1,5 @@
 package com.example.qingting.Adapter;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -13,15 +12,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.qingting.Bean.Music;
 import com.example.qingting.Bean.PlayList;
 import com.example.qingting.MainActivity;
 import com.example.qingting.MyApplication;
 import com.example.qingting.R;
-import com.example.qingting.UserPage.PlayListMusicActivity;
+import com.example.qingting.UserPage.PlayListMusicFragment;
 import com.example.qingting.Utils.DialogUtils;
 import com.example.qingting.Utils.ImageLoadUtils;
+import com.example.qingting.Utils.Play.AudioPlayUtils;
 import com.example.qingting.Utils.ToastUtils;
 import com.example.qingting.data.DB.PlayListDB;
+import com.example.qingting.data.DB.PlayListMusicDB;
 import com.example.qingting.data.SP.LoginSP;
 import com.example.qingting.net.request.PlayListRequest.DeletePlayListRequest;
 import com.example.qingting.net.request.PlayListRequest.UpdatePlayListRequest;
@@ -52,9 +54,9 @@ public class PlayListRecyclerViewAdapter extends RecyclerView.Adapter<PlayListRe
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), PlayListMusicActivity.class);
-                intent.putExtra(PlayListMusicActivity.ID_INTENT_KEY, playList.getId());
-                v.getContext().startActivity(intent);
+                // 添加fragment，同时设置navigation_bar不可见
+                MainActivity.addFragment(PlayListMusicFragment.getInstance(playList.getId()));
+                MainActivity.setNavigationBarVisibility(View.GONE);
             }
         });
         holder.view.setOnLongClickListener(new View.OnLongClickListener() {
@@ -128,7 +130,8 @@ public class PlayListRecyclerViewAdapter extends RecyclerView.Adapter<PlayListRe
         holder.playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: 获取歌单里面的所有歌并加入播放列表
+                List<Music> musicList = PlayListMusicDB.getMusicListDefault(v.getContext(), playList.getId());
+                AudioPlayUtils.playMusicList(musicList);
             }
         });
 

@@ -5,17 +5,22 @@
     android:layout_height="wrap_content"
     >
     <TextView
+        style="@style/hot_list_item"
         android:id="@+id/rank"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxLength="2"
+        android:minWidth="@dimen/hot_list_min_width"
         android:ellipsize="none"
         android:layout_weight="0"
         />
     <TextView
+        style="@style/hot_list_item"
         android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:maxLines="1"
+        android:ellipsize="marquee"
         />
 </LinearLayout>

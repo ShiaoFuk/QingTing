@@ -40,6 +40,13 @@
     <dimen name="top_bar_height">@dimen/padding_top</dimen>
     <dimen name="frame_padding">20dp</dimen>
 
+<!--    hot list-->
+    <dimen name="hot_list_padding_horizonal">20dp</dimen>
+    <dimen name="hot_list_text_size">32dp</dimen>
+    <dimen name="hot_list_min_width">40dp</dimen>
+    <dimen name="hot_list_vertical_margin">6dp</dimen>
+
+
     <!--    SearchResultFragment-->
     <dimen name="result_padding">10dp</dimen>
     <dimen name="result_item_height">70dp</dimen>

@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.example.qingting.MainActivity;
 import com.example.qingting.R;
 import com.example.qingting.Utils.FragmentUtils;
 
@@ -49,10 +50,17 @@ public class HomePageFragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_home_page, container, false);
         frameLayout = rootView.findViewById(R.id.page_frame);
-        searchHistoryFragment = SearchHistoryFragment.getInstance();
+        topBar = rootView.findViewById(R.id.top_bar);
+        search = rootView.findViewById(R.id.search);
+        searchHistoryFragment = SearchHistoryFragment.getInstance(search);
         searchResultFragment = SearchResultFragment.getInstance();
         init();
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 
     private void init() {
@@ -61,8 +69,6 @@ public class HomePageFragment extends Fragment {
     }
 
     private void initSearch() {
-        topBar = rootView.findViewById(R.id.top_bar);
-        search = rootView.findViewById(R.id.search);
         search.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         search.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -91,6 +97,7 @@ public class HomePageFragment extends Fragment {
                     bundle.putString(SearchResultFragment.CONTENT_KEY, content);
                     searchResultFragment.setArguments(bundle);
                     FragmentUtils.replaceFragmentToFragment(fragment, frameLayout, searchResultFragment);
+                    MainActivity.setNavigationBarVisibility(View.GONE);  // 避免通过导航栏跳转到其他地方之后被杀掉，只能返回
                     clearSearchFocus();
                 }
                 return false;

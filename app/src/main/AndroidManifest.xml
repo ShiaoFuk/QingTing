@@ -17,9 +17,6 @@
         android:theme="@style/Theme.QingTing"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".UserPage.PlayListMusicActivity"
-            android:exported="true" />
-        <activity
             android:name=".Setting.SettingActivity"
             android:exported="true" />
         <activity

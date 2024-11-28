@@ -9,12 +9,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.example.qingting.Adapter.HotListAdapter;
+import com.example.qingting.Bean.Music;
 import com.example.qingting.R;
+import com.example.qingting.data.DB.MusicDB;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class SearchHistoryFragment extends Fragment {
@@ -23,7 +27,16 @@ public class SearchHistoryFragment extends Fragment {
 
     }
 
+    private EditText search;
+
     // 要确保这个fragment被添加到fragment上而不是activity上
+    static SearchHistoryFragment getInstance(EditText editText) {
+        if (fragment == null)
+            fragment = new SearchHistoryFragment();
+        fragment.search = editText;
+        return fragment;
+    }
+
     static SearchHistoryFragment getInstance() {
         if (fragment == null)
             fragment = new SearchHistoryFragment();
@@ -50,14 +63,11 @@ public class SearchHistoryFragment extends Fragment {
 
     private void initHotList() {
         RecyclerView recyclerView = rootView.findViewById(R.id.hot_list);
-        List<String> arrayList = new ArrayList<>();
-        arrayList.add("test");
-        arrayList.add("test1");
-        arrayList.add("test2");
-        arrayList.add("test3");
-        arrayList.add("test4");
         // 发起网络请求获取热门歌曲列表后用于初始化contentList
-        HotListAdapter hostListAdapter = new HotListAdapter(arrayList);
+        // TODO:设置为音乐列表，用于测试搜索，暂时还没做音乐推荐模块
+        List<Music> musicList = MusicDB.getMusicListDefault(rootView.getContext());
+        List<String> strList = musicList.stream().map((music)->music.getName()).collect(Collectors.toList());
+        HotListAdapter hostListAdapter = new HotListAdapter(search, strList);
         recyclerView.setAdapter(hostListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
     }

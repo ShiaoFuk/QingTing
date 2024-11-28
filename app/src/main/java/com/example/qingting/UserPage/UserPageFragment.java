@@ -69,7 +69,6 @@ public class UserPageFragment extends Fragment {
         super.onResume();
         if (firstIn) {
             firstIn = false;
-            return;
         } else {
             init();
         }

@@ -20,6 +20,7 @@ import com.example.qingting.AOP.TimeCostTest;
 import com.example.qingting.Bean.Music;
 import com.example.qingting.ChatPage.ChatPageFragment;
 import com.example.qingting.HomePage.HomePageFragment;
+import com.example.qingting.UserPage.PlayListMusicFragment;
 import com.example.qingting.Utils.Play.AudioPlayUtils;
 import com.example.qingting.PlayPage.PlayFragment;
 import com.example.qingting.UserPage.UserPageFragment;
@@ -35,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getName();
     Context context;
     LinearLayout navigationView;
-    FrameLayout frameLayout;
+    static FrameLayout frameLayout;
+    static LinearLayout navigationBar;
     View rootView;
     List<OnAudioPlayerListener> onAudioPlayerListenerList = new ArrayList<>();
     Thread seekBarThread;
@@ -51,7 +53,16 @@ public class MainActivity extends AppCompatActivity {
         frameLayout = findViewById(R.id.page_frame);
         rootView = getWindow().getDecorView();
         circleProgressView = findViewById(R.id.progress_view);
+        navigationBar = findViewById(R.id.navigation_bar);
         init();
+    }
+
+    public static void addFragment(Fragment fragment) {
+        FragmentUtils.addFragmentToActivity(frameLayout, fragment);
+    }
+
+    public static void setNavigationBarVisibility(int visibility) {
+        navigationBar.setVisibility(visibility);
     }
 
 
@@ -208,6 +219,9 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, e.getMessage());
         }
         AudioPlayUtils.stopAndRelease();
+        // static对象清空
+        frameLayout = null;
+        navigationBar = null;
         super.onDestroy();
     }
 
@@ -254,14 +268,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        // 第一优先级：播放页面
         if (PlayFragment.getInstance().isAdded() && PlayFragment.getInstance().isExpandBottomSheet()) {
             PlayFragment.getInstance().collapseBottomSheet();
             return;
         }
+        // 第二优先级：任何依附于navigation_bar 以外 的fragment
         if (HomePageFragment.getInstance().isAdded() && HomePageFragment.getInstance().removeChildFragments()) {
+            setNavigationBarVisibility(View.VISIBLE);
             return;
         }
-
+        if (UserPageFragment.getInstance().isAdded() && PlayListMusicFragment.getInstance(null).isAdded()) {
+            FragmentUtils.removeFragmentFromActivity(frameLayout, PlayListMusicFragment.getInstance(null));
+            setNavigationBarVisibility(View.VISIBLE);
+            return;
+        }
         super.onBackPressed();
     }
 
@@ -338,6 +359,7 @@ class NavigationProvider {
         setCurrentColor(currentView, view);
         currentView = view;
         if (fragment.isAdded()) return;
+        // TODO:切换界面的时候需要保留原来的界面
         FragmentUtils.replaceFragmentToActivity(frameLayout, fragment);
     }
 

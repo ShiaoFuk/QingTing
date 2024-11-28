@@ -105,7 +105,7 @@ public class SearchResultFragment extends Fragment {
                     Type personListType = new TypeToken<List<Music>>(){}.getType();
                     List<Music> musicList = JsonUtils.getJsonParser().fromJson(jsonArray, personListType);
                     handler.post(()->{
-                        SearchResultAdapter adapter = (SearchResultAdapter)recyclerView.getAdapter();
+                        SearchResultAdapter adapter = (SearchResultAdapter) recyclerView.getAdapter();
                         adapter.setMusicList(musicList);
                         adapter.notifyDataSetChanged();
                     });
