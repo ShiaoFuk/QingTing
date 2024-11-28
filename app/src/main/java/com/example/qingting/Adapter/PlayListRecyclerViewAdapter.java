@@ -1,5 +1,6 @@
 package com.example.qingting.Adapter;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -16,6 +17,7 @@ import com.example.qingting.Bean.PlayList;
 import com.example.qingting.MainActivity;
 import com.example.qingting.MyApplication;
 import com.example.qingting.R;
+import com.example.qingting.UserPage.PlayListMusicActivity;
 import com.example.qingting.Utils.DialogUtils;
 import com.example.qingting.Utils.ImageLoadUtils;
 import com.example.qingting.Utils.ToastUtils;
@@ -47,6 +49,14 @@ public class PlayListRecyclerViewAdapter extends RecyclerView.Adapter<PlayListRe
     @Override
     public void onBindViewHolder(@NonNull PlayListRecyclerViewViewHolder holder, int position) {
         final PlayList playList = playListList.get(position);
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), PlayListMusicActivity.class);
+                intent.putExtra(PlayListMusicActivity.ID_INTENT_KEY, playList.getId());
+                v.getContext().startActivity(intent);
+            }
+        });
         holder.view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

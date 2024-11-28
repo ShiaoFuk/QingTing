@@ -9,7 +9,7 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="loading">加载中...</string>
     <string name="no_result">没有结果</string>
-    <string name="load_error">搜索失败，请检查网络</string>
+    <string name="load_error">加载失败，请检查网络</string>
     <string name="no_music_playing">当前没有音乐在播放</string>
     <string name="no_next_music">当前是最后一首音乐</string>
     <string name="no_last_music">当前是第一首音乐</string>
@@ -30,7 +30,7 @@
     <string name="pwd_invalid">密码需要不小于6位且不大于20位,同时包含字母和数字</string>
     <string name="login_fail">登录失败</string>
     <string name="login_error">登录错误</string>
-<!--    tab name-->
+    <!--    tab name-->
     <string name="tab_name_default">默认排序</string>
     <string name="tab_name_order_by_name">名称排序</string>
     <string name="nullptr_token">当前未登录</string>
@@ -56,4 +56,5 @@
     <string name="delete_playlist_message">确认要删除这个歌单吗？</string>
 
     <string name="sure_message">确定</string>
+    <string name="get_music_fail">获取本地歌单失败</string>
 </resources>
