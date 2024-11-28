@@ -359,7 +359,6 @@ class NavigationProvider {
         setCurrentColor(currentView, view);
         currentView = view;
         if (fragment.isAdded()) return;
-        // TODO:切换界面的时候需要保留原来的界面
         FragmentUtils.replaceFragmentToActivity(frameLayout, fragment);
     }
 
