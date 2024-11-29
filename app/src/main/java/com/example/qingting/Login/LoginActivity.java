@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -230,6 +231,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onSuccess(JsonElement element) throws Exception {
+                    Log.e(TAG, element.toString());
                     JsonObject obj = element.getAsJsonObject();
                     JsonElement code = obj.get("code");
                     if (code == null) {

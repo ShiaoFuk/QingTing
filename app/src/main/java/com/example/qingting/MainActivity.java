@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         EdgeToEdge.enable(this);
+        AudioPlayUtils.init();
         context = this;
         navigationView = findViewById(R.id.navigation_bar);
         frameLayout = findViewById(R.id.page_frame);

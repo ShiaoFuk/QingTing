@@ -21,14 +21,14 @@ public class AudioPlayUtils {
     private static boolean hasDataSource;
     // 下面这两个List关系     playedMusicList  musicList
     //               last3 last2 last1 currentMusic next1 next2 next3
-    final private static LinkedList<Music> nextMusicList;  // 未被播放的音乐
-    final private static LinkedList<Music> playedMusicList;  // 被播放过的音乐
+    private static LinkedList<Music> nextMusicList;  // 未被播放的音乐
+    private static LinkedList<Music> playedMusicList;  // 被播放过的音乐
     @Getter
     private static Music currentMusic;
 
-    final private static List<OnAudioPlayerListener> onAudioPlayerListenerList;
+    private static List<OnAudioPlayerListener> onAudioPlayerListenerList;
 
-    static {
+    public static void init() {
         nextMusicList = new LinkedList<>();
         playedMusicList = new LinkedList<>();
         onAudioPlayerListenerList = new ArrayList<>();
