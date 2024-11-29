@@ -28,7 +28,7 @@ public class GetMusicRequest {
      * @param token
      * @param playListId 歌单id
      */
-    public static void getAllPlayList(RequestListener listener, String token, Integer playListId) {
+    public static void getAllMusic(RequestListener listener, String token, Integer playListId) {
         if (token == null) {
             return;
         }

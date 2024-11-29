@@ -34,11 +34,14 @@ import com.google.gson.JsonObject;
 import java.util.List;
 
 public class PlayListRecyclerViewAdapter extends RecyclerView.Adapter<PlayListRecyclerViewViewHolder> {
-    final static String TAG = PlayListRecyclerViewAdapter.class.getName();
+    final static String TAG = PlayListSelectAdapter.class.getName();
     List<PlayList> playListList;
+    PlayListViewPagerAdapter parentAdapter;
 
-    public PlayListRecyclerViewAdapter(List<PlayList> playListList) {
+    public PlayListRecyclerViewAdapter(PlayListViewPagerAdapter parentAdapter, List<PlayList> playListList) {
         this.playListList = playListList;
+        this.parentAdapter = parentAdapter;
+
     }
 
     @NonNull
@@ -66,7 +69,7 @@ public class PlayListRecyclerViewAdapter extends RecyclerView.Adapter<PlayListRe
                         holder.view.getResources().getString(R.string.update_playlist_title),
                         holder.view.getResources().getString(R.string.update_playlist_message),
                         holder.view.getResources().getString(R.string.sure_message),
-                        new DialogUtils.DialogCallback() {
+                        new DialogUtils.InputDialogCallback() {
                             @Override
                             public void doSth(View view, String input) {
                                 UpdatePlayListRequest.deletePlayList(new RequestListener() {
@@ -144,7 +147,7 @@ public class PlayListRecyclerViewAdapter extends RecyclerView.Adapter<PlayListRe
                         holder.deleteBtn.getContext().getString(R.string.sure_message),
                         new DialogUtils.DialogCallback() {
                             @Override
-                            public void doSth(View view, String input) {
+                            public void doSth(View view) {
                                 DeletePlayListRequest.deletePlayList(new RequestListener() {
                                     @Override
                                     public Object onPrepare(Object object) {
@@ -171,6 +174,8 @@ public class PlayListRecyclerViewAdapter extends RecyclerView.Adapter<PlayListRe
                                             final Handler handler = new android.os.Handler(Looper.getMainLooper());
                                             handler.post(() -> {
                                                 notifyDataSetChanged();
+//                                                parentAdapter.notifyDataSetChanged();
+                                                parentAdapter.updataData(playList.getId());
                                             });
                                         }
                                     }

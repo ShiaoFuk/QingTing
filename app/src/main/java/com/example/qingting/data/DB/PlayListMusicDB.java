@@ -1,5 +1,6 @@
 package com.example.qingting.data.DB;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -41,6 +42,9 @@ public class PlayListMusicDB {
      */
     public static void insert(Context context, Integer playListId, Music music) {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getWritableDatabase();
+        if (db == null) {
+            return;
+        }
         db.beginTransaction();
         ContentValues contentValues = new ContentValues();
         contentValues.put(playListIdName, playListId);
@@ -65,6 +69,9 @@ public class PlayListMusicDB {
      */
     public static Integer insertList(Context context, Integer playListId, List<Music> musicList) {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getWritableDatabase();
+        if (db == null) {
+            return 0;
+        }
         int affectedNum = 0;
         db.beginTransaction();
         for (Music music: musicList) {
@@ -95,6 +102,9 @@ public class PlayListMusicDB {
      */
     private static List<Music> selectAll(Context context, Integer playListId) {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getReadableDatabase();
+        if (db == null) {
+            return new ArrayList<>();
+        }
         String query = String.format("select %s.* from %s, %s where %s.%s = %s.%s and %s.%s = %s",
                 MusicDB.tableName, tableName, MusicDB.tableName, tableName, musicIdName, MusicDB.tableName, MusicDB.idName, tableName, playListIdName, playListId);
         Cursor cursor = db.rawQuery(query, null);
@@ -120,6 +130,9 @@ public class PlayListMusicDB {
 
     private static List<Music> selectAllWithOrder(Context context, Integer playListId, String orderColumn) {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getReadableDatabase();
+        if (db == null) {
+            return new ArrayList<>();
+        }
         String selection = String.format("%s.%s = ?", tableName, playListIdName);
         String query = String.format("select %s.* from %s join %s on %s.%s = %s.%s where %s order by %s ",
                 MusicDB.tableName, tableName, MusicDB.tableName, tableName, playListIdName, MusicDB.tableName, MusicDB.idName, selection, orderColumn);
@@ -173,25 +186,6 @@ public class PlayListMusicDB {
 
 
     /**
-     * 从歌单数据库删除一首歌
-     * @param context
-     * @param playListId 歌单的id
-     * @param music 要删除的音乐
-     * @return 成功返回>0的数
-     */
-    public static int deleteMusicFromPlayList(Context context, Integer playListId, Music music) {
-        if (music == null || music.getId() == null) {
-            return 0;
-        }
-        SQLiteDatabase db = MusicDBHelper.getInstance(context).getReadableDatabase();
-        String where = String.format("%s = ?", idName);
-        String[] args = new String[]{music.getId().toString()};
-        MusicDB.deleteMusic(context, music);
-        return db.delete(tableName, where, args);
-    }
-
-
-    /**
      * 从歌单数据库删除多首歌
      * @param context
      * @param playListId 歌单的id
@@ -215,12 +209,13 @@ public class PlayListMusicDB {
         }
 
         // 使用 ? 来动态构造 IN 子句的占位符
-        String where = String.format("%s = %s and %s IN (%s)", playListIdName, playListId.toString(), musicIdName, TextUtils.join(",", Collections.nCopies(ids.size(), "?")));
+        @SuppressLint("DefaultLocale") String where = String.format("%s = %d and %s IN (%s)", playListIdName, playListId, musicIdName, TextUtils.join(",", Collections.nCopies(ids.size(), "?")));
         String[] args = ids.toArray(new String[0]);
 
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getWritableDatabase();
-        db.delete(tableName, where, args);
-        MusicDB.deleteMusicList(context, musicList);
+        if (db == null) {
+            return 0;
+        }
         return db.delete(tableName, where, args);
     }
 }

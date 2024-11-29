@@ -140,6 +140,7 @@ public class MyApplication extends Application {
         for (int i = 0; i < getPlayListListList().size(); ++i) {
             res &= getPlayListListList().get(i).removeIf(tempPlayList -> tempPlayList.getId() == playList.getId());
         }
+        Log.e("fjkdklafjaksla", "删除成功" + res);
         return res;
     }
 

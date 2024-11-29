@@ -34,6 +34,9 @@ public class MusicDB {
     
     public static void insert(Context context, Music music) {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getWritableDatabase();
+        if (db == null) {
+            return;
+        }
         db.beginTransaction();
         ContentValues contentValues = new ContentValues();
         contentValues.put(idName, music.getId());
@@ -59,6 +62,9 @@ public class MusicDB {
      */
     public static Integer insertList(Context context, List<Music> list1) {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getWritableDatabase();
+        if (db == null) {
+            return 0;
+        }
         int affectedNum = 0;
         db.beginTransaction();
         for (Music music: list1) {
@@ -86,6 +92,9 @@ public class MusicDB {
 
     private static List<Music> selectAll(Context context) {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getReadableDatabase();
+        if (db == null) {
+            new ArrayList<Music>();
+        }
         String[] columns = new String[]{idName, nameName, pathName, genreName, tempoName};
         Cursor cursor = db.query(tableName, columns, null, null, null, null, null);
         List<Music> res = new ArrayList<>();
@@ -110,6 +119,9 @@ public class MusicDB {
 
     private static List<Music> selectAllOrderByName(Context context) {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getReadableDatabase();
+        if (db == null) {
+            return new ArrayList<>();
+        }
         String[] columns = new String[]{idName, nameName, pathName, genreName, tempoName};
         Cursor cursor = db.query(tableName, columns, null, null, null, null, nameName);
         List<Music> res = new ArrayList<>();
@@ -156,6 +168,9 @@ public class MusicDB {
             return 0;
         }
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getReadableDatabase();
+        if (db == null) {
+            return 0;
+        }
         String where = String.format("%s = ?", idName);
         String[] args = new String[]{music.getId().toString()};
         return db.delete(tableName, where, args);
@@ -191,6 +206,9 @@ public class MusicDB {
         String[] args = ids.toArray(new String[0]);
 
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getWritableDatabase();
+        if (db == null) {
+            return 0;
+        }
         return db.delete(tableName, where, args);
     }
 

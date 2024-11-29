@@ -41,7 +41,7 @@ public class SearchResultFragment extends Fragment {
     }
 
 
-    static SearchResultFragment getInstance() {
+    public static SearchResultFragment getInstance() {
         if (fragment == null)
             fragment = new SearchResultFragment();
         return fragment;
@@ -71,7 +71,7 @@ public class SearchResultFragment extends Fragment {
         String content = bundle.getString(CONTENT_KEY);
         RecyclerView recyclerView = rootView.findViewById(R.id.music_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
-        recyclerView.setAdapter(new SearchResultAdapter());
+        recyclerView.setAdapter(new SearchResultAdapter(false));
         MusicRequest.getMusic(new RequestListener() {
             @Override
             public Object onPrepare(Object object) {
@@ -106,8 +106,7 @@ public class SearchResultFragment extends Fragment {
                     List<Music> musicList = JsonUtils.getJsonParser().fromJson(jsonArray, personListType);
                     handler.post(()->{
                         SearchResultAdapter adapter = (SearchResultAdapter) recyclerView.getAdapter();
-                        adapter.setMusicList(musicList);
-                        adapter.notifyDataSetChanged();
+                        adapter.updateData(musicList);
                     });
                 }
             }

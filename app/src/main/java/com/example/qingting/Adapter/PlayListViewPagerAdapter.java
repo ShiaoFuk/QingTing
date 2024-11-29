@@ -32,7 +32,7 @@ public class PlayListViewPagerAdapter extends RecyclerView.Adapter<PlayListViewP
     public void onBindViewHolder(@NonNull PlayListViewPagerViewHolder holder, int position) {
         if (holder.recyclerView.getAdapter() == null) {
             // 首次进来设置adapter
-            holder.recyclerView.setAdapter(new PlayListRecyclerViewAdapter(playListListList.get(position)));
+            holder.recyclerView.setAdapter(new PlayListRecyclerViewAdapter(this, playListListList.get(position)));
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(holder.recyclerView.getContext());
             linearLayoutManager.setInitialPrefetchItemCount(7);
             holder.recyclerView.setLayoutManager(linearLayoutManager);
@@ -42,6 +42,13 @@ public class PlayListViewPagerAdapter extends RecyclerView.Adapter<PlayListViewP
         }
     }
 
+
+    public void updataData(Integer playListId) {
+        for (int i = 0;  i < playListListList.size(); ++i) {
+            playListListList.get(i).removeIf(v->v.getId() == playListId);
+        }
+        notifyDataSetChanged();
+    }
 
     public void updateData(List<List<PlayList>> playListListList) {
         this.playListListList = playListListList;

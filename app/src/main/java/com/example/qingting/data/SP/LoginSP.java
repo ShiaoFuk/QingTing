@@ -20,6 +20,12 @@ public class LoginSP {
         editor.putString(TOKEN, token);
         editor.commit();
     }
+
+    public static void clearToken(Context context) {
+        SharedPreferences.Editor editor = SP.getEditor(context, SPName);
+        editor.remove(TOKEN);
+        editor.commit();
+    }
 }
 
 

@@ -21,6 +21,7 @@ import com.example.qingting.Bean.Music;
 import com.example.qingting.ChatPage.ChatPageFragment;
 import com.example.qingting.HomePage.HomePageFragment;
 import com.example.qingting.UserPage.PlayListMusicFragment;
+import com.example.qingting.Utils.DialogUtils;
 import com.example.qingting.Utils.Play.AudioPlayUtils;
 import com.example.qingting.PlayPage.PlayFragment;
 import com.example.qingting.UserPage.UserPageFragment;
@@ -68,36 +69,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         MyApplication.getPlayListFromNet(context);
-        TimeCostTest.test(new TimeCostTest.Task() {
-            @Override
-            public void doSomeThing() {
-                initPlayBar();
-            }
-        }, "initPlayBar");
-        TimeCostTest.test(new TimeCostTest.Task() {
-            @Override
-            public void doSomeThing() {
-                initNavigation();
-            }
-        }, "initNavigation");
-        TimeCostTest.test(new TimeCostTest.Task() {
-            @Override
-            public void doSomeThing() {
-                initPlayBtn();
-            }
-        }, "initPlayBtn");
-        TimeCostTest.test(new TimeCostTest.Task() {
-            @Override
-            public void doSomeThing() {
-                initPlayBarTitle();
-            }
-        }, "initPlayBarTitle");
-        TimeCostTest.test(new TimeCostTest.Task() {
-            @Override
-            public void doSomeThing() {
-                initSeekBar();
-            }
-        }, "initSeekBar");
+        initPlayBar();
+        initNavigation();
+        initPlayBtn();
+        initPlayBarTitle();
+        initSeekBar();
+        initPlayingList();
     }
 
 
@@ -264,6 +241,15 @@ public class MainActivity extends AppCompatActivity {
         seekBarThread.start();
     }
 
+    private void initPlayingList() {
+        ImageView btn = findViewById(R.id.play_list);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogUtils.showPlayingListDialog(v.getContext());
+            }
+        });
+    }
 
 
     @Override

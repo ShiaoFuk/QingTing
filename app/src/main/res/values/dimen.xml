@@ -57,6 +57,8 @@
     <dimen name="result_item_text_length">240dp</dimen>
     <dimen name="result_item_loading_margin">300dp</dimen>
     <dimen name="result_item_loading_text_size">32dp</dimen>
+    <dimen name="result_item_btn_height">48dp</dimen>
+
 
     <!--    PlayFragment-->
     <dimen name="play_fragment_padding">20dp</dimen>
@@ -117,4 +119,14 @@
     <dimen name="play_list_play_all_image_padding">8dp</dimen>
     <dimen name="play_list_play_all_text_size">20dp</dimen>
 
+
+<!--    select play list bottomSheet dialog-->
+    <dimen name="play_list_bottom_sheet_title_text_size">20dp</dimen>
+    <dimen name="play_list_bottom_sheet_radius">32dp</dimen>
+
+
+<!--    setting-->
+    <dimen name="setting_item_text">24dp</dimen>
+    <dimen name="setting_title_margin">20dp</dimen>
+    <dimen name="setting_padding">20dp</dimen>
 </resources>

@@ -57,7 +57,8 @@ public class DeleteMusicRequest {
         List<String> musicIdList = musicList.stream()
                 .map(music -> music.getId().toString())  // 提取 Music 的 id
                 .collect(Collectors.toList());
-        String musicIds = String.join(",", musicIdList);
+        String musicIds;
+        musicIds = String.join(",", musicIdList);
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         HttpUrl url = HttpUrl.parse("http://suansun.top/playList/song/deleteMany")
@@ -70,7 +71,7 @@ public class DeleteMusicRequest {
         RequestBody body = RequestBody.create(mediaType, "");
         Request request = new Request.Builder()
                 .url(url)
-                .method("PUT", body)
+                .method("DELETE", body)
                 .build();
         Response response = client.newCall(request).execute();
         return doWithResponse(response);

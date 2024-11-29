@@ -80,6 +80,8 @@ public class UserPageFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_user_page, container, false);
         viewPager2 = rootView.findViewById(R.id.play_list_viewpager);
         tabLayout = rootView.findViewById(R.id.play_list_tabs);
+        firstIn = true;
+        loginExpireTime = null;
         init();
         return rootView;
     }
@@ -87,8 +89,10 @@ public class UserPageFragment extends Fragment {
     private void init() {
         initLoginInfo();
         initUserInfo();
-        initPlayList();
-        initAddPlayListBtn();
+        if (loginExpireTime != null) {
+            initPlayList();
+            initAddPlayListBtn();
+        }
     }
 
 
@@ -107,6 +111,10 @@ public class UserPageFragment extends Fragment {
     private void initLoginInfo() {
         // 初始化过期时间
         String token = LoginSP.getToken(rootView.getContext());
+        if (token == null) {
+            return;
+        } else {
+        }
         try {
             loginExpireTime = JwtUtil.getExpireTime(token);
         } catch (JwtException e) {
@@ -160,7 +168,7 @@ public class UserPageFragment extends Fragment {
                         rootView.getResources().getString(R.string.add_playlist_title),
                         rootView.getResources().getString(R.string.add_playlist_message),
                         rootView.getResources().getString(R.string.sure_message),
-                        new DialogUtils.DialogCallback() {
+                        new DialogUtils.InputDialogCallback() {
                             @Override
                             public void doSth(View view, String input) {
                                 // 添加歌单
@@ -230,7 +238,9 @@ public class UserPageFragment extends Fragment {
         TextView textView = rootView.findViewById(R.id.user_name);
         if (loginExpireTime != null) {
             textView.setText(rootView.getResources().getString(R.string.default_username));
+            return;
         }
+        textView.setText(rootView.getContext().getString(R.string.no_login_username));
         textView.setOnClickListener(this::loginListenEvent);
         // 发起请求获取用户名
     }

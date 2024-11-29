@@ -36,6 +36,10 @@ public class AudioPlayUtils {
     }
 
 
+    public static List<Music> getPlayList() {
+        return nextMusicList;
+    }
+
     // 播放网络音频
     public static void playFromUrl(String url) {
         try {

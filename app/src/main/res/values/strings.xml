@@ -61,4 +61,31 @@
     <string name="get_playlist_music_fail">获取音乐失败</string>
     <string name="get_playlist_music_success">获取音乐成功</string>
     <string name="play_all_in_playlist">播放全部</string>
+    <string name="no_net">当前没有网络</string>
+
+<!--    menu-->
+    <string name="update_name">更改名称</string>
+    <string name="add_to_playlist">添加到歌单</string>
+    <string name="add_to_playlist_duplicate">重复添加</string>
+    <string name="delete_from_playlist">从歌单删除</string>
+    <string name="delete_from_playlist_title">删除音乐</string>
+    <string name="delete_from_playlist_success">删除成功</string>
+    <string name="delete_from_playlist_fail">删除失败</string>
+    <string name="delete_from_playlist_msg">确定要从歌单删除这首歌吗？</string>
+
+    <string name="title_add_to_playlist">添加到歌单</string>
+    <string name="add_to_playlist_success">添加成功</string>
+    <string name="add_to_playlist_fail">添加失败</string>
+    <string name="add">添加失败</string>
+
+<!--    setting-->
+    <string name="setting">设置</string>
+    <string name="setting_logout">退出登录</string>
+    <string name="setting_logout_success">退出登录成功</string>
+    <string name="setting_logout_title">退出登录</string>
+    <string name="setting_logout_msg">确定要退出登录吗？</string>
+
+
+<!--    播放列表-->
+    <string name="playing_list_title">播放列表</string>
 </resources>

@@ -36,6 +36,9 @@ public class PlayListDB {
 
     public static void insert(Context context, PlayList list) {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getWritableDatabase();
+        if (db == null) {
+            return;
+        }
         db.beginTransaction();
         ContentValues contentValues = new ContentValues();
         contentValues.put(idName, list.getId());
@@ -62,6 +65,9 @@ public class PlayListDB {
      */
     public static Integer insertList(Context context, List<PlayList> list1) {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getWritableDatabase();
+        if (db == null) {
+            return 0;
+        }
         int affectedNum = 0;
         db.beginTransaction();
         for (PlayList list: list1) {
@@ -90,6 +96,9 @@ public class PlayListDB {
 
     public static List<PlayList> selectAll(Context context) {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getReadableDatabase();
+        if (db == null) {
+            return new ArrayList<>();
+        }
         String[] columns = new String[]{idName, userIdName, nameName, likesName, playTimesName, urlName};
         Cursor cursor = db.query(tableName, columns, null, null, null, null, null);
         List<PlayList> res = new ArrayList<>();
@@ -115,6 +124,9 @@ public class PlayListDB {
 
     public static List<PlayList> selectAllOrderByName(Context context) {
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getReadableDatabase();
+        if (db == null) {
+            return new ArrayList<>();
+        }
         String[] columns = new String[]{idName, userIdName, nameName, likesName, playTimesName, urlName};
         Cursor cursor = db.query(tableName, columns, null, null, null, null, nameName);
         List<PlayList> res = new ArrayList<>();
@@ -160,6 +172,9 @@ public class PlayListDB {
             return 0;
         }
         SQLiteDatabase db = MusicDBHelper.getInstance(context).getReadableDatabase();
+        if (db == null) {
+            return 0;
+        }
         String where = String.format("%s = ?", idName);
         String[] args = new String[]{playList.getId().toString()};
         return db.delete(tableName, where, args);

@@ -21,10 +21,16 @@ public abstract class CheckSuccess {
     public abstract void doWithFailure() throws Exception;
 
 
+    /**
+     * 判断响应是否成功，data可能为空
+     * @param element
+     * @throws Exception
+     */
     public void checkIfSuccess(JsonElement element) throws Exception {
         JsonObject jsonObject = element.getAsJsonObject();
+        Log.e("fsdklasl", jsonObject.toString());
         if (jsonObject.get("code") != null && jsonObject.get("code").getAsInt() == 200) {
-            doWithSuccess(jsonObject.get("data"));
+            doWithSuccess(jsonObject);
         } else {
             doWithFailure();
         }

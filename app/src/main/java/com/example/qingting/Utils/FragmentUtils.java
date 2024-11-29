@@ -20,7 +20,7 @@ public class FragmentUtils {
      * @param fragment will be added to frameLayout(ignore if will be added to backstack)
      */
     public static void addFragmentToActivity(FrameLayout frameLayout, Fragment fragment) {
-        if (fragment == null) return;
+        if (fragment == null || fragment.isAdded()) return;
         FragmentManager fragmentManager = getFragmentManagerByActivity(frameLayout);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(frameLayout.getId(), fragment);
@@ -28,7 +28,7 @@ public class FragmentUtils {
     }
 
     public static void addFragmentToFragment(Fragment parentFragment, FrameLayout frameLayout, Fragment fragment) {
-        if (fragment == null) return;
+        if (fragment == null || fragment.isAdded()) return;
         FragmentManager fragmentManager = getFragmentManagerByFragment(parentFragment);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(frameLayout.getId(), fragment);
@@ -42,7 +42,7 @@ public class FragmentUtils {
      * @return if successfully add fragment to backstack return true, else false
      */
     public static boolean addFragmentToBackStackToActivity(FrameLayout frameLayout, Fragment fragment) {
-        if (fragment == null) return false;
+        if (fragment == null || fragment.isAdded()) return false;
         FragmentManager fragmentManager = getFragmentManagerByActivity(frameLayout);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(frameLayout.getId(), fragment);
@@ -57,7 +57,7 @@ public class FragmentUtils {
 
 
     public static boolean addFragmentToBackStackToFragment(Fragment parentFragment, FrameLayout frameLayout, Fragment fragment) {
-        if (fragment == null) return false;
+        if (fragment == null || fragment.isAdded()) return false;
         FragmentManager fragmentManager = getFragmentManagerByFragment(parentFragment);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(frameLayout.getId(), fragment);
@@ -84,7 +84,7 @@ public class FragmentUtils {
         transaction.commit();
     }
 
-    public static void removeFragmentFromFragment(Fragment parentFragment, FrameLayout frameLayout, Fragment fragment) {
+    public static void removeFragmentFromFragment(Fragment parentFragment, Fragment fragment) {
         if (fragment == null) return;
         FragmentManager fragmentManager = getFragmentManagerByFragment(parentFragment);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -104,10 +104,10 @@ public class FragmentUtils {
         }
     }
 
-    public static void removeFragmentsFromFragment(Fragment parentFragment, FrameLayout frameLayout, Fragment[] fragmentList) {
+    public static void removeFragmentsFromFragment(Fragment parentFragment, Fragment[] fragmentList) {
         if (fragmentList == null) return;
         for (Fragment fragment: fragmentList) {
-            removeFragmentFromFragment(parentFragment, frameLayout, fragment);
+            removeFragmentFromFragment(parentFragment, fragment);
         }
     }
 
@@ -117,7 +117,7 @@ public class FragmentUtils {
      * @param fragment will be added to frameLayout(ignore if will be added to backstack)
      */
     public static void replaceFragmentToActivity(FrameLayout frameLayout, Fragment fragment) {
-        if (fragment == null) return;
+        if (fragment == null || fragment.isAdded()) return;
         FragmentManager fragmentManager = getFragmentManagerByActivity(frameLayout);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(frameLayout.getId(), fragment);
@@ -126,7 +126,7 @@ public class FragmentUtils {
 
 
     public static void replaceFragmentToFragment(Fragment parentFragment, FrameLayout frameLayout, Fragment fragment) {
-        if (fragment == null) return;
+        if (fragment == null || fragment.isAdded()) return;
         FragmentManager fragmentManager = getFragmentManagerByFragment(parentFragment);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(frameLayout.getId(), fragment);

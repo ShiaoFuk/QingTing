@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import com.example.qingting.Adapter.SearchResultAdapter;
 import com.example.qingting.Bean.Music;
 import com.example.qingting.CustomView.LoadingFactory;
-import com.example.qingting.MainActivity;
 import com.example.qingting.R;
 import com.example.qingting.Utils.JsonUtils;
 import com.example.qingting.Utils.Play.AudioPlayUtils;
@@ -66,7 +65,6 @@ public class PlayListMusicFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -118,7 +116,7 @@ public class PlayListMusicFragment extends Fragment {
 
     private void initPlayList() {
         if (playListId == null) return;
-        GetMusicRequest.getAllPlayList(new RequestListener() {
+        GetMusicRequest.getAllMusic(new RequestListener() {
             @Override
             public Object onPrepare(Object object) {
                 return null;
@@ -139,18 +137,22 @@ public class PlayListMusicFragment extends Fragment {
                 CheckSuccess checkSuccess = new CheckSuccess() {
                     @Override
                     public void doWithSuccess(JsonElement data) {
+                        data = data.getAsJsonObject().get("data");
                         List<Music> musicList1 = JsonUtils.getJsonParser().fromJson(data, new TypeToken<List<Music>>() {}.getType());
                         // 插入数据库
                         PlayListMusicDB.insertList(context, playListId, musicList1);
                         final Handler handler = new Handler(Looper.getMainLooper());
                         handler.post(new Runnable() {
-                            final SearchResultAdapter adapter = (SearchResultAdapter) playListMusicView.getAdapter();
+                            SearchResultAdapter adapter = (SearchResultAdapter) playListMusicView.getAdapter();
                             @Override
                             public void run() {
                                 // 避免子线程进行中activity已经结束的情况
                                 if (!isEnd) {
                                     // 更新视图
                                     musicList = musicList1;
+                                    if (adapter == null) {
+                                        adapter = (SearchResultAdapter)PlayListMusicFragment.getInstance(null).playListMusicView.getAdapter();
+                                    }
                                     adapter.updateData(musicList);
                                     ToastUtils.makeShortText(playListMusicView.getContext(), playListMusicView.getContext().getString(R.string.get_playlist_music_success));
                                 }
@@ -181,7 +183,7 @@ public class PlayListMusicFragment extends Fragment {
 
     private void initRecyclerView() {
         if (playListId == null) return;
-        playListMusicView.setAdapter(new SearchResultAdapter(musicList));
+        playListMusicView.setAdapter(new SearchResultAdapter(playListId, musicList));
         playListMusicView.setLayoutManager(new LinearLayoutManager(context));
     }
 

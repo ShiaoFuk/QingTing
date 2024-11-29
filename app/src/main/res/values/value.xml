@@ -3,4 +3,5 @@
     <fraction name="login_editext_width_percent">0.85</fraction>
     <fraction name="login_editext_height_percent">0.06</fraction>
     <fraction name="play_list_img_height">0.8</fraction>
+    <fraction name="setting_logout_btn_width">0.6</fraction>
 </resources>

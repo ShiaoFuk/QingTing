@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="setting_item_text" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/setting_item_text</item>
+        <item name="android:layout_marginVertical">@dimen/hot_list_vertical_margin</item>
+    </style>
     <style name="hot_list_item" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">@dimen/hot_list_text_size</item>
         <item name="android:layout_marginVertical">@dimen/hot_list_vertical_margin</item>
@@ -34,7 +38,7 @@
     <style name="search_result_item_text" parent="Widget.AppCompat.TextView">
         <item name="android:ellipsize">marquee</item>
         <item name="android:maxLines">1</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:maxWidth">@dimen/result_item_text_length</item>
         <item name="android:gravity">left</item>

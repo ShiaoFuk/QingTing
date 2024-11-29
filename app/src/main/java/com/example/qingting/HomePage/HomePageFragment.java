@@ -77,7 +77,7 @@ public class HomePageFragment extends Fragment {
                     // 如果当前在搜索历史页面才这样
                     if (searchHistoryFragment.isAdded()) {
                         topBar.setVisibility(View.INVISIBLE);
-                        FragmentUtils.removeFragmentFromFragment(fragment, frameLayout, searchHistoryFragment);
+                        FragmentUtils.removeFragmentFromFragment(fragment, searchHistoryFragment);
                     }
                     return;
                 }
@@ -129,12 +129,12 @@ public class HomePageFragment extends Fragment {
     public boolean removeChildFragments() {
         boolean flag = false;
         if (SearchHistoryFragment.getInstance().isAdded()) {
-            FragmentUtils.removeFragmentFromFragment(this, (FrameLayout) this.getView().findViewById(R.id.page_frame), SearchHistoryFragment.getInstance());
+            FragmentUtils.removeFragmentFromFragment(this, SearchHistoryFragment.getInstance());
             this.clearSearchFocus();
             flag = true;
         }
         if (SearchResultFragment.getInstance().isAdded()) {
-            FragmentUtils.removeFragmentFromFragment(this, (FrameLayout) this.getView().findViewById(R.id.page_frame), SearchResultFragment.getInstance());
+            FragmentUtils.removeFragmentFromFragment(this, SearchResultFragment.getInstance());
             this.clearSearchFocus();
             flag = true;
         }
