@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
         // 添加播放页面的fragment
         FrameLayout rootFrame = findViewById(R.id.main);
         if (!PlayFragment.getInstance().isAdded())
-            FragmentUtils.addFragmentToBackStackToActivity(rootFrame, PlayFragment.getInstance());
+            FragmentUtils.addFragmentToActivity(rootFrame, PlayFragment.getInstance());
     }
 
     /**
@@ -257,8 +257,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // 第一优先级：播放页面
-        if (PlayFragment.getInstance().isAdded() && PlayFragment.getInstance().isExpandBottomSheet()) {
-            PlayFragment.getInstance().collapseBottomSheet();
+        if (PlayFragment.getInstance().isAdded()) {
+            FragmentUtils.removeFragmentFromActivity(frameLayout, PlayFragment.getInstance());
             return;
         }
         // 第二优先级：任何依附于navigation_bar 以外 的fragment

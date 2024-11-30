@@ -28,7 +28,6 @@ public class FragmentUtils {
             transaction.commit();
             return;
         }
-        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -41,7 +40,6 @@ public class FragmentUtils {
             transaction.commit();
             return;
         }
-        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -135,7 +133,7 @@ public class FragmentUtils {
             transaction.commit();
             return;
         }
-        transaction.addToBackStack(null);
+//        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -149,7 +147,7 @@ public class FragmentUtils {
             transaction.commit();
             return;
         }
-        transaction.addToBackStack(null);
+//        transaction.addToBackStack(null);
         transaction.commit();
     }
 
