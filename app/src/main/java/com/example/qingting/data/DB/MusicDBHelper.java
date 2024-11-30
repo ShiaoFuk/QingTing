@@ -61,6 +61,15 @@ public class MusicDBHelper extends SQLiteOpenHelper {
     }
 
 
+    /**
+     * 清空所有数据库的所有行
+     */
+    public static void clearAllDB(Context context) {
+        MusicDB.deleteAll(context);
+        PlayListDB.deleteAll(context);
+        PlayListMusicDB.deleteAll(context);
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // would not upgrade

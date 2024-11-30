@@ -218,4 +218,10 @@ public class PlayListMusicDB {
         }
         return db.delete(tableName, where, args);
     }
+
+    public static void deleteAll(Context context) {
+        SQLiteDatabase db = MusicDBHelper.getInstance(context).getReadableDatabase();
+        String deleteSql = String.format("delete from %s ", tableName);
+        db.execSQL(deleteSql);
+    }
 }

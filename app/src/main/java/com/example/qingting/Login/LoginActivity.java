@@ -21,6 +21,7 @@ import com.example.qingting.MainActivity;
 import com.example.qingting.MyApplication;
 import com.example.qingting.R;
 import com.example.qingting.Utils.ToastUtils;
+import com.example.qingting.data.DB.MusicDBHelper;
 import com.example.qingting.data.SP.LoginSP;
 import com.example.qingting.net.request.LoginRequest;
 import com.example.qingting.net.request.RegisterRequest;
@@ -242,9 +243,11 @@ public class LoginActivity extends AppCompatActivity {
                         LoginSP.setToken(context, token);
                         // 获取歌单
                         MyApplication.getPlayListFromNet(context);
+                        MusicDBHelper.clearAllDB(context);
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
+                        // 登录成功应该清空数据库
                         return;
                     }
                     throw new Exception(context.getResources().getString(R.string.login_fail));

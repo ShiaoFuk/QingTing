@@ -16,6 +16,7 @@ import com.example.qingting.MainActivity;
 import com.example.qingting.R;
 import com.example.qingting.Utils.DialogUtils;
 import com.example.qingting.Utils.ToastUtils;
+import com.example.qingting.data.DB.MusicDBHelper;
 import com.example.qingting.data.SP.LoginSP;
 
 public class SettingActivity extends AppCompatActivity {
@@ -49,6 +50,7 @@ public class SettingActivity extends AppCompatActivity {
                         public void doSth(View view) {
                             // 清空登录信息
                             LoginSP.clearToken(view.getContext());
+                            MusicDBHelper.clearAllDB(context);
                             // 回到主页
                             ToastUtils.makeShortText(view.getContext(), view.getContext().getString(R.string.setting_logout_success));
                             Intent intent = new Intent(view.getContext(), MainActivity.class);
