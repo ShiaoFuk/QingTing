@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,7 +76,7 @@ public class HomePageFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     // 如果当前在搜索历史页面才这样
-                    if (searchHistoryFragment.isAdded()) {
+                    if (fragment.isAdded() && searchHistoryFragment.isAdded()) {
                         topBar.setVisibility(View.INVISIBLE);
                         FragmentUtils.removeFragmentFromFragment(fragment, searchHistoryFragment);
                     }
@@ -83,7 +84,7 @@ public class HomePageFragment extends Fragment {
                 }
                 // focus在搜索框的时候要替换另一个fragment
 //                topBar.setVisibility(View.GONE);
-                if (!searchHistoryFragment.isAdded()) {
+                if (fragment.isAdded() && !searchHistoryFragment.isAdded()) {
                     FragmentUtils.replaceFragmentToFragment(fragment, frameLayout, searchHistoryFragment);
                 }
             }

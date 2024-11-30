@@ -201,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
         frameLayout = null;
         navigationBar = null;
         super.onDestroy();
+        Log.e(TAG, "mainactivity destroy");
     }
 
     private void setPlayBarClickEvent(View view) {

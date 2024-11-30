@@ -24,6 +24,11 @@ public class FragmentUtils {
         FragmentManager fragmentManager = getFragmentManagerByActivity(frameLayout);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(frameLayout.getId(), fragment);
+        if (!transaction.isAddToBackStackAllowed()) {
+            transaction.commit();
+            return;
+        }
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -32,6 +37,11 @@ public class FragmentUtils {
         FragmentManager fragmentManager = getFragmentManagerByFragment(parentFragment);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(frameLayout.getId(), fragment);
+        if (!transaction.isAddToBackStackAllowed()) {
+            transaction.commit();
+            return;
+        }
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -121,6 +131,11 @@ public class FragmentUtils {
         FragmentManager fragmentManager = getFragmentManagerByActivity(frameLayout);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(frameLayout.getId(), fragment);
+        if (!transaction.isAddToBackStackAllowed()) {
+            transaction.commit();
+            return;
+        }
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -130,6 +145,11 @@ public class FragmentUtils {
         FragmentManager fragmentManager = getFragmentManagerByFragment(parentFragment);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(frameLayout.getId(), fragment);
+        if (!transaction.isAddToBackStackAllowed()) {
+            transaction.commit();
+            return;
+        }
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 

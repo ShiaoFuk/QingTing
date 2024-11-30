@@ -258,6 +258,11 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultViewHo
     }
 
 
+    /**
+     * 马上播放音乐
+     * @param music
+     * @param view
+     */
     private void playNow(Music music, View view) {
         if (NetworkUtils.isNetworkAvailable(view.getContext())) {
             AudioPlayUtils.playMusic(music, null);
