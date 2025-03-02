@@ -1,55 +1,28 @@
-package com.example.qingting.net.request.PlayListRequest;
+package com.example.qingting.net.request.PlayListRequest
 
-import static com.example.qingting.net.ReponseUtils.doWithResponse;
+import com.example.qingting.net.ReponseUtils
+import com.example.qingting.net.request.listener.RequestImpl
+import com.google.gson.JsonElement
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 
-import android.util.Log;
-
-import com.example.qingting.net.request.RequestListener;
-import com.google.gson.JsonElement;
-
-import java.io.IOException;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-public class InsertPlayListRequest {
-    final static String TAG = InsertPlayListRequest.class.getName();
-    // 模板，只需要修改:
-    // 1. 传入参数
-    // 2. 第一行处理后的转换参数
-    // 3. 调用的请求函数
-
-    public static void insertPlayList(RequestListener listener, String token, String name) {
-        listener.onRequest();
-        Thread thread = new Thread(()->{
-            try {
-                JsonElement element = insertPlayList(token, name);
-                listener.onReceive();
-                listener.onSuccess(element);
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-                listener.onError(e);
-            } finally {
-                listener.onFinish();
-            }
-        });
-        thread.start();
-    }
-
-
-    private static JsonElement insertPlayList(String token, String name) throws IOException {
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-        MediaType mediaType = MediaType.parse("text/plain");
-        RequestBody body = RequestBody.create(mediaType, "");
-        Request request = new Request.Builder()
-                .url("http://suansun.top/playList/add?token=" + token + "&name=" + name)
+abstract class InsertPlayListRequest: RequestImpl() {
+    override fun httpRequest(input: Any?): JsonElement? {
+        if (input is Array<*> && input.size == 2 && input[0] is String && input[1] is String) {
+            val client = OkHttpClient().newBuilder()
+                .build()
+            val mediaType: MediaType = "text/plain".toMediaType()
+            val body = RequestBody.create(mediaType, "")
+            val request: Request = Request.Builder()
+                .url("http://suansun.top/playList/add?token=${input[0]}&name=${input[1]}")
                 .method("PUT", body)
-                .build();
-        Response response = client.newCall(request).execute();
-        return doWithResponse(response);
+                .build()
+            val response = client.newCall(request).execute()
+            return ReponseUtils.doWithResponse(response)
+        }
+        return null
     }
 }

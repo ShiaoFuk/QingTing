@@ -14,20 +14,27 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.qingting.Bean.User;
 import com.example.qingting.MainActivity;
 import com.example.qingting.MyApplication;
 import com.example.qingting.R;
+import com.example.qingting.Utils.CoroutineAdapter;
 import com.example.qingting.Utils.ToastUtils;
 import com.example.qingting.data.DB.MusicDBHelper;
 import com.example.qingting.data.SP.LoginSP;
+import com.example.qingting.net.CheckSuccess;
 import com.example.qingting.net.request.LoginRequest;
 import com.example.qingting.net.request.RegisterRequest;
-import com.example.qingting.net.request.RequestListener;
+import com.example.qingting.net.request.listener.RequestImpl;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
 
 public class LoginActivity extends AppCompatActivity {
     private final static String TAG = LoginActivity.class.getName();
@@ -205,7 +212,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             loginBtn.setClickable(false);
             loginBtn.setEnabled(false);
-            RequestListener requestListener = new RequestListener() {
+            RequestImpl loginRequest = new LoginRequest() {
                 @Override
                 public Object onPrepare(Object object) {
                     if (!(object instanceof User)) return null;
@@ -221,36 +228,25 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onRequest() {
-
-                }
-
-                @Override
-                public void onReceive() {
-
-                }
-
-                @Override
                 public void onSuccess(JsonElement element) throws Exception {
-                    Log.e(TAG, element.toString());
-                    JsonObject obj = element.getAsJsonObject();
-                    JsonElement code = obj.get("code");
-                    if (code == null) {
-                        throw new Exception(context.getResources().getString(R.string.login_error));
-                    }
-                    if (code.getAsInt() == 200) {
-                        String token = obj.get("data").getAsString();
-                        LoginSP.setToken(context, token);
-                        // 获取歌单
-                        MyApplication.getPlayListFromNet(context);
-                        MusicDBHelper.clearAllDB(context);
-                        Intent intent = new Intent(context, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        // 登录成功应该清空数据库
-                        return;
-                    }
-                    throw new Exception(context.getResources().getString(R.string.login_fail));
+                    new CheckSuccess() {
+                        @Override
+                        public void doWithSuccess(JsonElement data) throws Exception {
+                            String token = data.getAsString();
+                            LoginSP.setToken(context, token);
+                            // 获取歌单
+                            MyApplication.getPlayListFromNet(context);
+                            MusicDBHelper.clearAllDB(context);
+                            Intent intent = new Intent(context, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void doWithFailure() throws Exception {
+                            throw new Exception(context.getResources().getString(R.string.login_fail));
+                        }
+                    }.checkIfSuccess(element);
                 }
 
                 @Override
@@ -266,13 +262,37 @@ public class LoginActivity extends AppCompatActivity {
                     });
                 }
             };
+            RequestImpl registerRequest = new RegisterRequest() {
+                final RequestImpl request = loginRequest;
+                @Override
+                public void onSuccess(JsonElement element) throws Exception {
+                    request.onSuccess(element);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    request.onError(e);
+                }
+            };
             User user = new User(usernameTextView.getText().toString(), pwdTextView.getText().toString());
             if (mode == Mode.LOGIN_MODE) {
-                LoginRequest.login(requestListener, user);
+                new CoroutineAdapter() {
+                    @Nullable
+                    @Override
+                    public Object runInCoroutineScope(@NonNull Continuation<? super Unit> $completion) {
+                        return loginRequest.request(user, $completion);
+                    }
+                }.runInBlocking();
                 return;
             }
             if (mode == Mode.REGISTER_MODE) {
-                RegisterRequest.register(requestListener, user);
+                new CoroutineAdapter() {
+                    @Nullable
+                    @Override
+                    public Object runInCoroutineScope(@NonNull Continuation<? super Unit> $completion) {
+                        return registerRequest.request(user, $completion);
+                    }
+                }.runInBlocking();
                 return;
             }
         });

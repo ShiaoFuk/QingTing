@@ -1,8 +1,5 @@
 package com.example.qingting.Adapter;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,25 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.qingting.Bean.Music;
 import com.example.qingting.Bean.PlayList;
-import com.example.qingting.MainActivity;
-import com.example.qingting.MyApplication;
 import com.example.qingting.R;
-import com.example.qingting.UserPage.PlayListMusicFragment;
 import com.example.qingting.Utils.DialogUtils;
 import com.example.qingting.Utils.ImageLoadUtils;
-import com.example.qingting.Utils.Play.AudioPlayUtils;
-import com.example.qingting.Utils.ToastUtils;
-import com.example.qingting.data.DB.PlayListDB;
-import com.example.qingting.data.DB.PlayListMusicDB;
-import com.example.qingting.data.SP.LoginSP;
-import com.example.qingting.net.request.PlayListRequest.DeletePlayListRequest;
-import com.example.qingting.net.request.PlayListRequest.UpdatePlayListRequest;
-import com.example.qingting.net.request.RequestListener;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.util.List;
 

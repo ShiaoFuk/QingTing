@@ -1,4 +1,4 @@
-package com.example.qingting.net.request;
+package com.example.qingting.net.request.listener;
 
 import com.google.gson.JsonElement;
 
@@ -11,6 +11,4 @@ public interface RequestListener {
     void onSuccess(JsonElement element) throws Exception;  // 响应成功
     void onError(Exception e);  // 响应失败
     void onFinish();  // 结束
-
-
 }

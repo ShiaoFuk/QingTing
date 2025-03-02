@@ -42,6 +42,8 @@
     <string name="insert_playlist_fail">添加歌单失败</string>
     <string name="insert_playlist_success">添加歌单成功</string>
 
+    <string name="request_fail">网络请求失败</string>
+
 
     <string name="update_playlist_fail">更新歌单失败</string>
     <string name="update_playlist_success">更新歌单成功</string>

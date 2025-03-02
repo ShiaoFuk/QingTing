@@ -1,63 +1,36 @@
-package com.example.qingting.net.request;
+package com.example.qingting.net.request
 
-import static com.example.qingting.net.ReponseUtils.doWithResponse;
+import com.example.qingting.net.ReponseUtils
+import com.example.qingting.net.ServerConf
+import com.example.qingting.net.request.listener.RequestImpl
+import com.google.gson.JsonElement
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
 
-import android.util.Log;
-
-import com.example.qingting.net.ServerConf;
-import com.google.gson.JsonElement;
-
-import java.io.IOException;
-
-import okhttp3.HttpUrl;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
-public class MusicRequest {
-    private final static String TAG = MusicRequest.class.getName();
-
-    // 模板，只需要修改:
-    // 1. 传入参数
-    // 2. 第一行处理后的转换参数
-    // 3. 调用的请求函数
-    public static void getMusic(RequestListener listener, String search) {
-        String object = (String) listener.onPrepare(search);
-        listener.onRequest();
-        Thread thread = new Thread(()->{
-            try {
-                JsonElement element = getMusicRequest(search);
-                listener.onReceive();
-                listener.onSuccess(element);
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-                listener.onError(e);
-            } finally {
-                listener.onFinish();
-            }
-        });
-        thread.start();
-
-    }
-
-
-    private static JsonElement getMusicRequest(String search) throws IOException{
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-        MediaType mediaType = MediaType.parse("text/plain");
-        // 使用 HttpUrl.Builder 来构建带有查询参数的 URL
-        HttpUrl url = HttpUrl.parse(ServerConf.ADDRESS + "/music")
+/**
+ * 获取音乐
+ */
+abstract class MusicRequest: RequestImpl() {
+    override fun httpRequest(input: Any?): JsonElement? {
+        if (input != null && input is String) {
+            val client = OkHttpClient().newBuilder()
+                .build()
+            val mediaType: MediaType? = "text/plain".toMediaTypeOrNull()
+            // 使用 HttpUrl.Builder 来构建带有查询参数的 URL
+            val url = (ServerConf.ADDRESS + "/music").toHttpUrl()
                 .newBuilder()
-                .addQueryParameter("name", search) // 添加第一个参数
-                .build();
-        Request request = new Request.Builder()
+                .addQueryParameter("name", input) // 添加第一个参数
+                .build()
+            val request: Request = Request.Builder()
                 .url(url)
                 .method("GET", null)
-                .build();
-        Response response = client.newCall(request).execute();
-        return doWithResponse(response);
+                .build()
+            val response = client.newCall(request).execute()
+            return ReponseUtils.doWithResponse(response)
+        }
+        return null
     }
-
-
 }

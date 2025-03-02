@@ -1,11 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
     namespace 'com.example.qingting'
-    compileSdk 34
-
+    compileSdk 35
     defaultConfig {
         applicationId "com.example.qingting"
         minSdk 34
@@ -35,10 +35,14 @@ android {
     buildFeatures {
         viewBinding true
     }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 }
 
 dependencies {
     implementation 'com.github.bumptech.glide:glide:4.16.0'
+    implementation libs.core.ktx
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'

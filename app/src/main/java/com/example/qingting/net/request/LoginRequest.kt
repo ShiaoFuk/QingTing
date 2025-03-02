@@ -1,58 +1,34 @@
-package com.example.qingting.net.request;
+package com.example.qingting.net.request
 
-import static com.example.qingting.net.ReponseUtils.doWithResponse;
+import com.example.qingting.Bean.User
+import com.example.qingting.Utils.JsonUtils
+import com.example.qingting.net.ReponseUtils
+import com.example.qingting.net.request.listener.RequestImpl
+import com.google.gson.JsonElement
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 
-import android.util.Log;
-
-import com.example.qingting.Bean.User;
-import com.example.qingting.Utils.JsonUtils;
-import com.google.gson.JsonElement;
-
-import java.io.IOException;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-public class LoginRequest {
-    private final static String TAG = LoginRequest.class.getName();
-
-    // 模板，只需要修改:
-    // 1. 传入参数
-    // 2. 第一行处理后的转换参数
-    // 3. 调用的请求函数
-    public static void login(RequestListener listener, User user) {
-        User object = (User) listener.onPrepare(user);
-        listener.onRequest();
-        Thread thread = new Thread(()->{
-            try {
-                JsonElement element = loginRequest(user);
-                listener.onReceive();
-                listener.onSuccess(element);
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-                listener.onError(e);
-            } finally {
-                listener.onFinish();
-            }
-        });
-        thread.start();
+abstract class LoginRequest : RequestImpl() {
+    companion object {
+        const val TAG = "LoginRequest"
     }
 
-
-    private static JsonElement loginRequest(User user) throws IOException {
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-        MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, JsonUtils.toJson(user));
-        Request request = new Request.Builder()
+    override fun httpRequest(user: Any?): JsonElement? {
+        if (user != null && user is User) {
+            val client = OkHttpClient().newBuilder()
+                .build()
+            val mediaType = "application/json".toMediaTypeOrNull()
+            val body = RequestBody.create(mediaType, JsonUtils.toJson(user))
+            val request = Request.Builder()
                 .url("http://suansun.top/login")
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
-                .build();
-        Response response = client.newCall(request).execute();
-        return doWithResponse(response);
+                .build()
+            val response = client.newCall(request).execute()
+            return ReponseUtils.doWithResponse(response)
+        }
+        return null
     }
 }

@@ -12,5 +12,13 @@
         android:padding="@dimen/frame_padding"
         />
     <include layout="@layout/loading_layout"/>
-
+    <TextView
+        android:id="@+id/search_result_hint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="查询没有结果"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:visibility="gone"
+        />
 </FrameLayout>

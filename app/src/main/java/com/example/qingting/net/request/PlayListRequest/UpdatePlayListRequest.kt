@@ -1,49 +1,28 @@
-package com.example.qingting.net.request.PlayListRequest;
+package com.example.qingting.net.request.PlayListRequest
 
-import static com.example.qingting.net.ReponseUtils.doWithResponse;
+import com.example.qingting.net.ReponseUtils
+import com.example.qingting.net.request.listener.RequestImpl
+import com.google.gson.JsonElement
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 
-import android.util.Log;
-
-import com.example.qingting.net.request.RequestListener;
-import com.google.gson.JsonElement;
-
-import java.io.IOException;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-public class UpdatePlayListRequest {
-    final static String TAG = DeletePlayListRequest.class.getName();
-    public static void deletePlayList(RequestListener listener, String token, Integer playListId, String name) {
-        listener.onRequest();
-        Thread thread = new Thread(()->{
-            try {
-                JsonElement element = deletePlayListRequest(token, playListId, name);
-                listener.onReceive();
-                listener.onSuccess(element);
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-                listener.onError(e);
-            } finally {
-                listener.onFinish();
-            }
-        });
-        thread.start();
-    }
-
-    private static JsonElement deletePlayListRequest(String token, Integer playListId, String name) throws IOException {
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-        MediaType mediaType = MediaType.parse("text/plain");
-        RequestBody body = RequestBody.create(mediaType, "");
-        Request request = new Request.Builder()
-                .url("http://suansun.top/playList/update?token=" + token + "&playListId=" + playListId + "&name=" + name)
+abstract class UpdatePlayListRequest : RequestImpl() {
+    override fun httpRequest(input: Any?): JsonElement? {
+        if (input is Array<*> && input.size == 3 && input[0] is String && input[1] is Int && input[2] is String) {
+            val client = OkHttpClient().newBuilder()
+                .build()
+            val mediaType: MediaType = "text/plain".toMediaType()
+            val body = RequestBody.create(mediaType, "")
+            val request: Request = Request.Builder()
+                .url("http://suansun.top/playList/update?token=${input[0]}&playListId=${input[1]}&name=${input[2]}")
                 .method("PUT", body)
-                .build();
-        Response response = client.newCall(request).execute();
-        return doWithResponse(response);
+                .build()
+            val response = client.newCall(request).execute()
+            return ReponseUtils.doWithResponse(response)
+        }
+        return null
     }
 }

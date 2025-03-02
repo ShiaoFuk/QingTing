@@ -12,6 +12,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qingting.Bean.Music;
@@ -19,6 +20,7 @@ import com.example.qingting.Bean.PlayList;
 import com.example.qingting.HomePage.SearchResultFragment;
 import com.example.qingting.R;
 import com.example.qingting.UserPage.PlayListMusicFragment;
+import com.example.qingting.Utils.CoroutineAdapter;
 import com.example.qingting.Utils.DialogUtils;
 import com.example.qingting.Utils.NetworkUtils;
 import com.example.qingting.Utils.Play.AudioPlayUtils;
@@ -28,12 +30,15 @@ import com.example.qingting.data.SP.LoginSP;
 import com.example.qingting.net.CheckSuccess;
 import com.example.qingting.net.request.PlayListMusicRequest.AddMusicRequest;
 import com.example.qingting.net.request.PlayListMusicRequest.DeleteMusicRequest;
-import com.example.qingting.net.request.RequestListener;
+import com.example.qingting.net.request.listener.RequestImpl;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
 import lombok.Setter;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultViewHolder> {
@@ -102,61 +107,47 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultViewHo
                                 view.getContext().getString(R.string.delete_from_playlist_title),
                                 view.getContext().getString(R.string.delete_from_playlist_msg),
                                 view.getContext().getString(R.string.sure_message),
-                                new DialogUtils.DialogCallback() {
-                                    @Override
-                                    public void doSth(View view) {
-                                        List<Music> musicList1 = new ArrayList<>();
-                                        musicList1.add(music);
-                                        DeleteMusicRequest.deleteMusicFromPlayList(new RequestListener() {
-                                            @Override
-                                            public Object onPrepare(Object object) {
-                                                return null;
-                                            }
-
-                                            @Override
-                                            public void onRequest() {
-
-                                            }
-
-                                            @Override
-                                            public void onReceive() {
-
-                                            }
-
-                                            @Override
-                                            public void onSuccess(JsonElement element) throws Exception {
-                                                new CheckSuccess() {
-                                                    @Override
-                                                    public void doWithSuccess(JsonElement data) throws Exception {
-                                                        if (PlayListMusicDB.deleteMusicsFromPlayList(view.getContext(), playListId, musicList1) > 0) {
-                                                            int index = musicList.indexOf(music);
-                                                            musicList.remove(index);
-                                                            final Handler handler = new android.os.Handler(Looper.getMainLooper());
-                                                            handler.post(()->notifyItemRemoved(index));
-                                                            ToastUtils.makeShortText(view.getContext(), view.getContext().getString(R.string.delete_from_playlist_success));
-                                                        } else {
-                                                            ToastUtils.makeShortText(view.getContext(), view.getContext().getString(R.string.delete_from_playlist_fail));
-                                                        }
+                                view1 -> {
+                                    List<Music> musicList1 = new ArrayList<>();
+                                    musicList1.add(music);
+                                    RequestImpl deleteMusicRequest = new DeleteMusicRequest() {
+                                        @Override
+                                        public void onSuccess(JsonElement element) throws Exception {
+                                            new CheckSuccess() {
+                                                @Override
+                                                public void doWithSuccess(JsonElement data) {
+                                                    if (PlayListMusicDB.deleteMusicsFromPlayList(view1.getContext(), playListId, musicList1) > 0) {
+                                                        int index = musicList.indexOf(music);
+                                                        musicList.remove(index);
+                                                        final Handler handler = new Handler(Looper.getMainLooper());
+                                                        handler.post(()->notifyItemRemoved(index));
+                                                        ToastUtils.makeShortText(view1.getContext(), view1.getContext().getString(R.string.delete_from_playlist_success));
+                                                    } else {
+                                                        ToastUtils.makeShortText(view1.getContext(), view1.getContext().getString(R.string.delete_from_playlist_fail));
                                                     }
+                                                }
 
-                                                    @Override
-                                                    public void doWithFailure() throws Exception {
+                                                @Override
+                                                public void doWithFailure() throws Exception {
 
-                                                    }
-                                                }.checkIfSuccess(element);
-                                            }
-                                            @Override
-                                            public void onError(Exception e) {
-                                                Log.e(TAG, e.getMessage());
-                                                ToastUtils.makeShortText(view.getContext(), view.getContext().getString(R.string.delete_from_playlist_fail));
-                                            }
+                                                }
+                                            }.checkIfSuccess(element);
+                                        }
 
-                                            @Override
-                                            public void onFinish() {
+                                        @Override
+                                        public void onError(Exception e) {
+                                            Log.e(TAG, e.getMessage());
+                                            ToastUtils.makeShortText(view1.getContext(), view1.getContext().getString(R.string.delete_from_playlist_fail));
+                                        }
+                                    };
+                                    new CoroutineAdapter() {
 
-                                            }
-                                        }, LoginSP.getToken(view.getContext()), playListId, musicList1);
-                                    }
+                                        @Nullable
+                                        @Override
+                                        public Object runInCoroutineScope(@NonNull Continuation<? super Unit> $completion) {
+                                            return deleteMusicRequest.request(new Object[]{LoginSP.getToken(view1.getContext()), playListId, musicList1}, $completion);
+                                        }
+                                    }.runInBlocking();
                                 },
                                 view
                         );
@@ -174,26 +165,11 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultViewHo
         DialogUtils.showSelectPlayListDialog(view.getContext(), new DialogUtils.MyOnCancelListener() {
             @Override
             public void cancel(PlayList playlist) {
-                if (playListId != null && playlist.getId() == playListId) {
+                if (playListId != null && Objects.equals(playlist.getId(), playListId)) {
                     ToastUtils.makeShortText(view.getContext(), view.getContext().getString(R.string.add_to_playlist_duplicate));
                     return;
                 }
-                AddMusicRequest.addMusicToPlayListRequest(new RequestListener() {
-                    @Override
-                    public Object onPrepare(Object object) {
-                        return null;
-                    }
-
-                    @Override
-                    public void onRequest() {
-
-                    }
-
-                    @Override
-                    public void onReceive() {
-
-                    }
-
+                RequestImpl addMusicRequest = new AddMusicRequest() {
                     @Override
                     public void onSuccess(JsonElement element) throws Exception {
                         CheckSuccess checkSuccess = new CheckSuccess() {
@@ -215,12 +191,14 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultViewHo
                     public void onError(Exception e) {
                         Log.e(TAG, e.getMessage());
                     }
-
+                };
+                new CoroutineAdapter() {
+                    @Nullable
                     @Override
-                    public void onFinish() {
-
+                    public Object runInCoroutineScope(@NonNull Continuation<? super Unit> $completion) {
+                        return addMusicRequest.request(new Object[]{LoginSP.getToken(view.getContext()), playlist.getId(), musicList1}, $completion);
                     }
-                }, LoginSP.getToken(view.getContext()), playlist.getId(), musicList1);
+                }.runInBlocking();
             }
         });
     }

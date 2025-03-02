@@ -4,14 +4,19 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.example.qingting.Bean.PlayList;
+import com.example.qingting.Utils.CoroutineAdapter;
 import com.example.qingting.Utils.JsonUtils;
 import com.example.qingting.Utils.ToastUtils;
 import com.example.qingting.data.DB.MusicDBHelper;
 import com.example.qingting.data.DB.PlayListDB;
 import com.example.qingting.data.SP.LoginSP;
+import com.example.qingting.net.CheckSuccess;
 import com.example.qingting.net.request.PlayListRequest.GetAllPlayListRequest;
-import com.example.qingting.net.request.RequestListener;
+import com.example.qingting.net.request.listener.RequestImpl;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -19,13 +24,16 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
 
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
+
 /**
  * App对象，维护一个播放队列
  */
 public class MyApplication extends Application {
     final static String TAG = MyApplication.class.getName();
     static MyApplication application;
-    boolean isPlayListModified = true;  // 第一次设为true
+    boolean isPlayListModified = true;  // 第一次设为true，作为冷修改标志，只有第一次进入和有修改才重新请求
     List<List<PlayList>> playListListList;
     @Override
     public void onCreate() {
@@ -73,56 +81,48 @@ public class MyApplication extends Application {
      * 进入App的时候更新一次歌单，登录成功也要更新一次，避免之前进入app没登陆导致没有歌单
      */
     public static void getPlayListFromNet(Context context) {
-        GetAllPlayListRequest.getAllPlayList(new RequestListener() {
-            @Override
-            public Object onPrepare(Object object) {
-                return null;
-            }
-
-            @Override
-            public void onRequest() {
-
-            }
-
-            @Override
-            public void onReceive() {
-
-            }
-
+        RequestImpl getAllPlayListRequest = new GetAllPlayListRequest() {
             @Override
             public void onSuccess(JsonElement element) throws Exception {
-                JsonObject jsonObject = element.getAsJsonObject();
-                JsonElement element1 = jsonObject.get("code");
-                if (element1 != null && element1.getAsInt() == 200) {
-                    JsonElement list = jsonObject.get("data");
-                    List<PlayList> playListList = JsonUtils.getJsonParser().fromJson(list, new TypeToken<List<PlayList>>() {}.getType());
-                    // 存入数据库，后刷新
-                    PlayListDB.insertList(context, playListList);
-                    List<PlayList> playListListDefault = PlayListDB.selectAll(context);
-                    List<PlayList> playListListOrderByName = PlayListDB.selectAllOrderByName(context);
-                    List<List<PlayList>> playListListList = new ArrayList<>();
-                    playListListList.add(playListListDefault);
-                    playListListList.add(playListListOrderByName);
-                    setPlayListListList(playListListList);
-                    setPlayListNoModified();
-                    // 刷新视图
-                    ToastUtils.makeShortText(context, context.getResources().getString(R.string.play_list_request_success));
-                    return;
-                }
-                ToastUtils.makeShortText(context, context.getResources().getString(R.string.play_list_request_fail));
+                new CheckSuccess() {
+                    @Override
+                    public void doWithSuccess(JsonElement data) throws Exception {
+                        List<PlayList> playListList = JsonUtils.getJsonParser().fromJson(data, new TypeToken<List<PlayList>>() {}.getType());
+                        // 存入数据库，后刷新
+                        PlayListDB.insertList(context, playListList);
+                        List<PlayList> playListListDefault = PlayListDB.selectAll(context);
+                        List<PlayList> playListListOrderByName = PlayListDB.selectAllOrderByName(context);
+                        List<List<PlayList>> playListListList = new ArrayList<>();
+                        playListListList.add(playListListDefault);
+                        playListListList.add(playListListOrderByName);
+                        setPlayListListList(playListListList);
+                        setPlayListNoModified();
+                        // 刷新视图
+                        ToastUtils.makeShortText(context, context.getString(R.string.play_list_request_success));
+                        Log.e(MyApplication.TAG, "request success");
+                    }
+
+                    @Override
+                    public void doWithFailure() {
+                        ToastUtils.makeShortText(context, context.getResources().getString(R.string.play_list_request_fail));
+                        Log.e(MyApplication.TAG, "request fail");
+                    }
+                }.checkIfSuccess(element);
             }
 
             @Override
             public void onError(Exception e) {
-
+                ToastUtils.makeShortText(application, context.getString(R.string.request_fail));
+                Log.e(TAG, e.getMessage());
             }
-
+        };
+        new CoroutineAdapter() {
+            @Nullable
             @Override
-            public void onFinish() {
-
+            public Object runInCoroutineScope(@NonNull Continuation<? super Unit> $completion) {
+                return getAllPlayListRequest.request(LoginSP.getToken(context), $completion);
             }
-
-        }, LoginSP.getToken(context));
+        }.runInBlocking();
     }
 
 

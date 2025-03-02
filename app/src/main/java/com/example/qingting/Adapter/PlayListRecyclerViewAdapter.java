@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.qingting.Bean.Music;
@@ -18,6 +19,7 @@ import com.example.qingting.MainActivity;
 import com.example.qingting.MyApplication;
 import com.example.qingting.R;
 import com.example.qingting.UserPage.PlayListMusicFragment;
+import com.example.qingting.Utils.CoroutineAdapter;
 import com.example.qingting.Utils.DialogUtils;
 import com.example.qingting.Utils.ImageLoadUtils;
 import com.example.qingting.Utils.Play.AudioPlayUtils;
@@ -27,11 +29,14 @@ import com.example.qingting.data.DB.PlayListMusicDB;
 import com.example.qingting.data.SP.LoginSP;
 import com.example.qingting.net.request.PlayListRequest.DeletePlayListRequest;
 import com.example.qingting.net.request.PlayListRequest.UpdatePlayListRequest;
-import com.example.qingting.net.request.RequestListener;
+import com.example.qingting.net.request.listener.RequestImpl;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.List;
+
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
 
 public class PlayListRecyclerViewAdapter extends RecyclerView.Adapter<PlayListRecyclerViewViewHolder> {
     final static String TAG = PlayListSelectAdapter.class.getName();
@@ -69,51 +74,35 @@ public class PlayListRecyclerViewAdapter extends RecyclerView.Adapter<PlayListRe
                         holder.view.getResources().getString(R.string.update_playlist_title),
                         holder.view.getResources().getString(R.string.update_playlist_message),
                         holder.view.getResources().getString(R.string.sure_message),
-                        new DialogUtils.InputDialogCallback() {
-                            @Override
-                            public void doSth(View view, String input) {
-                                UpdatePlayListRequest.deletePlayList(new RequestListener() {
-                                    @Override
-                                    public Object onPrepare(Object object) {
-                                        return null;
+                        (view, input) -> {
+                            RequestImpl updatePlayListRequest = new UpdatePlayListRequest() {
+                                @Override
+                                public void onSuccess(JsonElement element) throws Exception {
+                                    if (element.getAsJsonObject().get("code").getAsInt() == 200) {
+                                        final Handler handler = new Handler(Looper.getMainLooper());
+                                        MyApplication.getPlayListFromNet(holder.view.getContext());
+                                        handler.post(()->{
+                                            // 更新成功
+                                            playListList.get(holder.getAdapterPosition()).setName(input);
+                                            notifyItemChanged(holder.getAdapterPosition());
+                                            ToastUtils.makeShortText(holder.view.getContext(), holder.view.getResources().getString(R.string.update_playlist_success));
+                                        });
                                     }
+                                }
 
-                                    @Override
-                                    public void onRequest() {
-
-                                    }
-
-                                    @Override
-                                    public void onReceive() {
-
-                                    }
-
-                                    @Override
-                                    public void onSuccess(JsonElement element) throws Exception {
-                                        if (element.getAsJsonObject().get("code").getAsInt() == 200) {
-                                            final Handler handler = new Handler(Looper.getMainLooper());
-                                            MyApplication.getPlayListFromNet(holder.view.getContext());
-                                            handler.post(()->{
-                                                // 更新成功
-                                                playListList.get(holder.getAdapterPosition()).setName(input);
-                                                notifyItemChanged(holder.getAdapterPosition());
-                                                ToastUtils.makeShortText(holder.view.getContext(), holder.view.getResources().getString(R.string.update_playlist_success));
-                                            });
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(Exception e) {
-                                        ToastUtils.makeShortText(holder.view.getContext(), holder.view.getResources().getString(R.string.update_playlist_fail));
-                                        Log.e(TAG, e.getMessage());
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-
-                                    }
-                                }, LoginSP.getToken(holder.view.getContext()), playList.getId(), input);
-                            }
+                                @Override
+                                public void onError(Exception e) {
+                                    ToastUtils.makeShortText(holder.view.getContext(), holder.view.getResources().getString(R.string.update_playlist_fail));
+                                    Log.e(TAG, e.getMessage());
+                                }
+                            };
+                            new CoroutineAdapter() {
+                                @Nullable
+                                @Override
+                                public Object runInCoroutineScope(@NonNull Continuation<? super Unit> $completion) {
+                                    return updatePlayListRequest.request(new Object[]{LoginSP.getToken(holder.view.getContext()), playList.getId(), input}, $completion);
+                                }
+                            }.runInBlocking();
                         }, holder.view
                 );
                 return false;
@@ -148,22 +137,7 @@ public class PlayListRecyclerViewAdapter extends RecyclerView.Adapter<PlayListRe
                         new DialogUtils.DialogCallback() {
                             @Override
                             public void doSth(View view) {
-                                DeletePlayListRequest.deletePlayList(new RequestListener() {
-                                    @Override
-                                    public Object onPrepare(Object object) {
-                                        return null;
-                                    }
-
-                                    @Override
-                                    public void onRequest() {
-
-                                    }
-
-                                    @Override
-                                    public void onReceive() {
-
-                                    }
-
+                                RequestImpl deletePlaylistRequest = new DeletePlayListRequest() {
                                     @Override
                                     public void onSuccess(JsonElement element) throws Exception {
                                         JsonObject jsonObject = element.getAsJsonObject();
@@ -184,12 +158,14 @@ public class PlayListRecyclerViewAdapter extends RecyclerView.Adapter<PlayListRe
                                     public void onError(Exception e) {
                                         ToastUtils.makeShortText(v.getContext(), v.getResources().getString(R.string.operate_playlist_fail));
                                     }
-
+                                };
+                                new CoroutineAdapter() {
+                                    @Nullable
                                     @Override
-                                    public void onFinish() {
-
+                                    public Object runInCoroutineScope(@NonNull Continuation<? super Unit> $completion) {
+                                        return deletePlaylistRequest.request(new Object[] {LoginSP.getToken(v.getContext()), playList.getId()}, $completion);
                                     }
-                                }, LoginSP.getToken(v.getContext()), playList.getId());
+                                }.runInBlocking();
                             }
                         }, null);
             }

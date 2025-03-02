@@ -2,6 +2,8 @@ package com.example.qingting.HomePage;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,15 +19,20 @@ import android.widget.TextView;
 import com.example.qingting.Adapter.SearchResultAdapter;
 import com.example.qingting.Bean.Music;
 import com.example.qingting.R;
+import com.example.qingting.Utils.CoroutineAdapter;
 import com.example.qingting.Utils.JsonUtils;
+import com.example.qingting.Utils.ToastUtils;
+import com.example.qingting.net.CheckSuccess;
 import com.example.qingting.net.request.MusicRequest;
-import com.example.qingting.net.request.RequestListener;
+import com.example.qingting.net.request.listener.RequestImpl;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.List;
+
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
 
 
 public class SearchResultFragment extends Fragment {
@@ -35,6 +42,7 @@ public class SearchResultFragment extends Fragment {
     View rootView;
     View loadingView;
     TextView loadingText;
+    TextView searchResultHint;
     private Handler handler = new Handler(Looper.getMainLooper());
     private SearchResultFragment() {
 
@@ -58,6 +66,7 @@ public class SearchResultFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_search_result, container, false);
         loadingView = rootView.findViewById(R.id.loading_view);
         loadingText = rootView.findViewById(R.id.loading_text);
+        searchResultHint = rootView.findViewById(R.id.search_result_hint);
         init();
         return rootView;
     }
@@ -72,12 +81,7 @@ public class SearchResultFragment extends Fragment {
         RecyclerView recyclerView = rootView.findViewById(R.id.music_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         recyclerView.setAdapter(new SearchResultAdapter(false));
-        MusicRequest.getMusic(new RequestListener() {
-            @Override
-            public Object onPrepare(Object object) {
-                return object;
-            }
-
+        RequestImpl musicRequest = new MusicRequest() {
             @Override
             public void onRequest() {
                 // 添加loading
@@ -99,16 +103,32 @@ public class SearchResultFragment extends Fragment {
 
             @Override
             public void onSuccess(JsonElement element) throws Exception {
-                JsonObject jsonObject = element.getAsJsonObject();
-                if (jsonObject.get("code").getAsInt() == 200) {
-                    String jsonArray = jsonObject.get("data").toString();
-                    Type personListType = new TypeToken<List<Music>>(){}.getType();
-                    List<Music> musicList = JsonUtils.getJsonParser().fromJson(jsonArray, personListType);
-                    handler.post(()->{
-                        SearchResultAdapter adapter = (SearchResultAdapter) recyclerView.getAdapter();
-                        adapter.updateData(musicList);
-                    });
-                }
+                new CheckSuccess() {
+                    @Override
+                    public void doWithSuccess(JsonElement data) throws Exception {
+                        String jsonArray =data.toString();
+                        Type personListType = new TypeToken<List<Music>>(){}.getType();
+                        List<Music> musicList = JsonUtils.getJsonParser().fromJson(jsonArray, personListType);
+                        if (musicList.isEmpty()) {
+                            // 搜索没有结果
+                            handler.post(()->{
+                                searchResultHint.setVisibility(View.VISIBLE);
+                            });
+                        } else {
+                            handler.post(() -> {
+                                searchResultHint.setVisibility(View.INVISIBLE);
+                                SearchResultAdapter adapter = (SearchResultAdapter) recyclerView.getAdapter();
+                                adapter.updateData(musicList);
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void doWithFailure() {
+                        ToastUtils.makeShortText(getContext(), getContext().getString(R.string.request_fail));
+                        Log.e(SearchResultFragment.TAG, getContext().getString(R.string.request_fail));
+                    }
+                }.checkIfSuccess(element);
             }
 
             @Override
@@ -121,11 +141,14 @@ public class SearchResultFragment extends Fragment {
                     loadingText.setVisibility(View.VISIBLE);
                 });
             }
-
+        };
+        new CoroutineAdapter() {
+            @Nullable
             @Override
-            public void onFinish() {
+            public Object runInCoroutineScope(@NonNull Continuation<? super Unit> $completion) {
+                return musicRequest.request(content, $completion);
             }
-        }, content);
+        }.runInBlocking();
     }
 
 }

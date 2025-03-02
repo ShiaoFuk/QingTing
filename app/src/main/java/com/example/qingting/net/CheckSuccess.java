@@ -30,7 +30,7 @@ public abstract class CheckSuccess {
         JsonObject jsonObject = element.getAsJsonObject();
         Log.e("fsdklasl", jsonObject.toString());
         if (jsonObject.get("code") != null && jsonObject.get("code").getAsInt() == 200) {
-            doWithSuccess(jsonObject);
+            doWithSuccess(jsonObject.get("data"));
         } else {
             doWithFailure();
         }

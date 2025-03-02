@@ -3,6 +3,8 @@ package com.example.qingting.UserPage;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +20,7 @@ import com.example.qingting.Adapter.SearchResultAdapter;
 import com.example.qingting.Bean.Music;
 import com.example.qingting.CustomView.LoadingFactory;
 import com.example.qingting.R;
+import com.example.qingting.Utils.CoroutineAdapter;
 import com.example.qingting.Utils.JsonUtils;
 import com.example.qingting.Utils.Play.AudioPlayUtils;
 import com.example.qingting.Utils.ToastUtils;
@@ -25,11 +28,14 @@ import com.example.qingting.data.DB.PlayListMusicDB;
 import com.example.qingting.data.SP.LoginSP;
 import com.example.qingting.net.CheckSuccess;
 import com.example.qingting.net.request.PlayListMusicRequest.GetMusicRequest;
-import com.example.qingting.net.request.RequestListener;
+import com.example.qingting.net.request.listener.RequestImpl;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
+
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
 
 
 public class PlayListMusicFragment extends Fragment {
@@ -116,28 +122,12 @@ public class PlayListMusicFragment extends Fragment {
 
     private void initPlayList() {
         if (playListId == null) return;
-        GetMusicRequest.getAllMusic(new RequestListener() {
-            @Override
-            public Object onPrepare(Object object) {
-                return null;
-            }
-
-            @Override
-            public void onRequest() {
-
-            }
-
-            @Override
-            public void onReceive() {
-
-            }
-
+        RequestImpl getMusicRequest = new GetMusicRequest() {
             @Override
             public void onSuccess(JsonElement element) throws Exception {
                 CheckSuccess checkSuccess = new CheckSuccess() {
                     @Override
                     public void doWithSuccess(JsonElement data) {
-                        data = data.getAsJsonObject().get("data");
                         List<Music> musicList1 = JsonUtils.getJsonParser().fromJson(data, new TypeToken<List<Music>>() {}.getType());
                         // 插入数据库
                         PlayListMusicDB.insertList(context, playListId, musicList1);
@@ -171,12 +161,14 @@ public class PlayListMusicFragment extends Fragment {
                 ToastUtils.makeShortText(context, context.getString(R.string.get_playlist_music_fail));
                 Log.e(TAG, e.getMessage());
             }
-
+        };
+        new CoroutineAdapter() {
+            @Nullable
             @Override
-            public void onFinish() {
-
+            public Object runInCoroutineScope(@NonNull Continuation<? super Unit> $completion) {
+                return getMusicRequest.request(new Object[]{LoginSP.getToken(context), playListId}, $completion);
             }
-        }, LoginSP.getToken(context), playListId);
+        }.runInBlocking();
         musicList = PlayListMusicDB.getMusicListDefault(context, playListId);
     }
 
