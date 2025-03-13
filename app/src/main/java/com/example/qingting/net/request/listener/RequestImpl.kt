@@ -16,7 +16,9 @@ import java.io.IOException
 abstract class RequestImpl: RequestListener {
     companion object {
         const val TAG = "RequestImpl"
+        var DEBUG = true  // debug flag, if true will print log
     }
+
 
     /**
      * 请求的整体流程
@@ -27,7 +29,13 @@ abstract class RequestImpl: RequestListener {
             val processDefer = async {
                 // 预处理，可能是耗时的
                 val processedObj = onPrepare(obj)
+                if (DEBUG) {
+                    Log.d(TAG, "ready: on request")
+                }
                 onRequest()
+                if (DEBUG) {
+                    Log.d(TAG, "end: on request")
+                }
                 processedObj
             }
             val processRes = processDefer.await()
@@ -44,25 +52,63 @@ abstract class RequestImpl: RequestListener {
                 is JsonElement -> {
                     // 请求成功
                     withContext(Dispatchers.Default) {
+                        if (DEBUG) {
+                            Log.d(TAG, "ready: on receive")
+                        }
                         onReceive()
+                        if (DEBUG) {
+                            Log.d(TAG, "end: on receive")
+                        }
                         try {
+                            if (DEBUG) {
+                                Log.d(TAG, "ready: on success")
+                            }
                             onSuccess(requestRes)
+                            if (DEBUG) {
+                                Log.d(TAG, "end: on success")
+                            }
                         } catch (e: Exception) {
+                            if (DEBUG) {
+                                Log.d(TAG, "ready: on success error(结果解析失败)")
+                            }
                             // 解析失败，抛出错误
                             onError(e)
+                            if (DEBUG) {
+                                Log.d(TAG, "end: on success error(结果解析失败)")
+                            }
                         } finally {
+                            if (DEBUG) {
+                                Log.d(TAG, "ready: on finish")
+                            }
                             onFinish()
+                            if (DEBUG) {
+                                Log.d(TAG, "end: on finish")
+                            }
                         }
                     }
                 }
 
                 is Exception -> {
+                    if (DEBUG) {
+                        Log.d(TAG, "ready: on request error(请求失败)")
+                    }
                     // 请求失败，抛出错误
                     onError(requestRes)
+                    if (DEBUG) {
+                        Log.d(TAG, "end: on request error(请求失败)")
+                    }
+                    Unit
                 }
 
                 else -> {
+                    if (DEBUG) {
+                        Log.d(TAG, "ready: unknown error")
+                    }
                     onError(UnknownException(RequestImpl::class.java))
+                    if (DEBUG) {
+                        Log.d(TAG, "unknown error")
+                    }
+                    Unit
                 }
             }
         }
