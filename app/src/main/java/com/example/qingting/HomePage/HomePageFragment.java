@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -107,7 +106,7 @@ public class HomePageFragment extends Fragment {
     }
 
     private void initContent() {
-        FragmentUtils.addFragmentToFragment(this, frameLayout, HomePageContentFragment.getInstance());
+        FragmentUtils.addFragmentToFragment(this, frameLayout, DiscoverFragment.Companion.getInstance());
     }
 
 
@@ -140,7 +139,7 @@ public class HomePageFragment extends Fragment {
             flag = true;
         }
         if (flag) {
-            FragmentUtils.addFragmentToFragment(this, (FrameLayout) this.getView().findViewById(R.id.page_frame), HomePageContentFragment.getInstance());
+            FragmentUtils.addFragmentToFragment(this, (FrameLayout) this.getView().findViewById(R.id.page_frame), DiscoverFragment.Companion.getInstance());
         }
         return flag;
     }

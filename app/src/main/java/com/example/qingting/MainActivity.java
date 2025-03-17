@@ -329,12 +329,7 @@ class NavigationProvider {
         }
         im.setImageResource(drawableResourceId);
         tv.setText(text);
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                initNavigationClickEvent(v, pageFragment);
-            }
-        });
+        view.setOnClickListener(v -> initNavigationClickEvent(v, pageFragment));
     }
 
 

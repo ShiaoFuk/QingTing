@@ -90,4 +90,8 @@
 
 <!--    播放列表-->
     <string name="playing_list_title">播放列表</string>
+
+<!--    发现页-->
+    <string name="discover_page_loading_tip_loading">正在发现美好...</string>
+    <string name="discover_page_loading_tip_fail">加载失败，\n请再试试呢</string>
 </resources>

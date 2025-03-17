@@ -99,7 +99,7 @@ public class MyApplication extends Application {
                         setPlayListNoModified();
                         // 刷新视图
                         ToastUtils.makeShortText(context, context.getString(R.string.play_list_request_success));
-                        Log.e(MyApplication.TAG, "request success");
+                        Log.d(MyApplication.TAG, "request success");
                     }
 
                     @Override
