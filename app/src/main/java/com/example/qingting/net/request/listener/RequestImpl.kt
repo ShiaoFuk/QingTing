@@ -41,7 +41,7 @@ abstract class RequestImpl: RequestListener {
             val processRes = processDefer.await()
             val requestDefer = async(Dispatchers.IO) {
                 try {
-                    val element: JsonElement = httpRequest(processRes) ?: throw NullPointerException()
+                    val element: JsonElement = httpRequest(processRes) ?: throw NullPointerException("请求结果为空")
                     element
                 } catch (e: Exception) {
                     // 异常统一抛出处理

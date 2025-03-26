@@ -17,6 +17,7 @@ abstract class GetAllPlayListRequest : RequestImpl() {
             val response = client.newCall(request).execute()
             return ReponseUtils.doWithResponse(response)
         }
+        throw IllegalArgumentException("请检查登陆状态")
         return null
     }
 }

@@ -112,8 +112,8 @@ public class MyApplication extends Application {
 
             @Override
             public void onError(Exception e) {
-                ToastUtils.makeShortText(application, context.getString(R.string.request_fail));
-                Log.e(TAG, e.getMessage());
+                ToastUtils.makeShortText(application, e.getMessage());
+                Log.e(TAG, e.getMessage() != null ? e.getMessage() : "request fail");
             }
         };
         new CoroutineAdapter() {

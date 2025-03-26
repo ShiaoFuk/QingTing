@@ -8,7 +8,7 @@ android {
     compileSdk 35
     defaultConfig {
         applicationId "com.example.qingting"
-        minSdk 34
+        minSdk 30
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -16,7 +16,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     packagingOptions {
-        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/*'
+
+//        pickFirst 'META-INF/LGPL2.1'
+        pickFirst 'README.md'
+        pickFirst 'xsd/catalog.xml'
+//        pickFirst 'META-INF/io.netty.versions.properties'
+//        pickFirst 'META-INF/INDEX.LIST'
+//        pickFirst 'META-INF/AL2.0'
+
     }
     buildTypes {
         debug {
@@ -47,15 +55,23 @@ android {
     }
 }
 
+configurations.configureEach {
+    resolutionStrategy {
+        force 'jakarta.activation:jakarta.activation-api:1.2.1'
+    }
+}
+
 dependencies {
     implementation libs.lifecycle.runtime.ktx
-    implementation libs.gradle
+    implementation (libs.gradle) {
+        exclude group: 'com.sun.activation', module: 'javax.activation'
+    }
     implementation libs.glide
     implementation libs.core.ktx
     annotationProcessor libs.compiler
-    implementation libs.jjwt.api
-    implementation libs.jjwt.impl
-    implementation libs.jjwt.jackson
+    implementation (libs.jjwt.api)
+    implementation (libs.jjwt.impl)
+    implementation (libs.jjwt.jackson)
     implementation libs.circleprogressview
     implementation libs.lombok
     annotationProcessor libs.lombok
