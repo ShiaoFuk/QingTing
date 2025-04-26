@@ -32,7 +32,7 @@ class FragmentDiscoverViewModel: ViewModel() {
                     Log.d(TAG, "开始加载数据")
                 }
                 is FragmentDiscoverIntent.loadingSuccess -> {
-                    _state.value = _state.value.copy(loadingState = DataLoading.LOADING_SUCCESS)
+                    _state.value = _state.value.copy(loadingState = DataLoading.LOADING_SUCCESS, albumListList = intent.albumList)
                     Log.d(TAG, "加载数据成功")
                 }
                 is FragmentDiscoverIntent.loadingFailed -> {

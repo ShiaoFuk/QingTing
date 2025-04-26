@@ -5,6 +5,31 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".HomePage.DiscoverFragment">
+<!--    <LinearLayout-->
+<!--        android:id="@+id/test_layout"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        >-->
+<!--        <Button-->
+<!--            android:id="@+id/test_btn_start_loading"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="开始加载"-->
+<!--            />-->
+<!--        <Button-->
+<!--            android:id="@+id/test_btn_load_success"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="加载成功"-->
+<!--            />-->
+<!--        <Button-->
+<!--            android:id="@+id/test_btn_load_fail"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="加载失败"-->
+<!--            />-->
+<!--    </LinearLayout>-->
 
     <TextView
         android:id="@+id/bg_loading_tip"
