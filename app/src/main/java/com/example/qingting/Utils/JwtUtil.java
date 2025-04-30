@@ -9,7 +9,7 @@ import java.security.Key;
 import java.util.Date;
 
 public class JwtUtil {
-    private final static String JWT_KEY = "dc36eb68d08d3dafc853e4bae50d4ad94a4a2093da8d639ada833826177e83ce";
+    private final static String JWT_KEY = "";
     /**
      * 解析token，获取过期时间
      * @param token
