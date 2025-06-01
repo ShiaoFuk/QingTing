@@ -2,14 +2,27 @@ package com.example.qingting.Utils;
 
 
 
+
+import com.example.qingting.MyApplication;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 
-import java.security.Key;
 import java.util.Date;
 
 public class JwtUtil {
-    private final static String JWT_KEY = "";
+    private static String JWT_KEY = null;
+    private final static Object lock = new Object();
+    static String getJwtKey() {
+        if (JWT_KEY == null) {
+            synchronized (lock) {
+                if (JWT_KEY == null)
+                    JWT_KEY = ProfileReader.getProperty(MyApplication.getInstance().getApplicationContext(), "jwt.key");
+            }
+        }
+        return JWT_KEY;
+    }
+
     /**
      * 解析token，获取过期时间
      * @param token
@@ -21,7 +34,7 @@ public class JwtUtil {
             throw new NullPointerException();
         }
         Jws<Claims> jwt = Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(JWT_KEY.getBytes()))
+                .verifyWith(Keys.hmacShaKeyFor(getJwtKey().getBytes()))
                 .build()
                 .parseSignedClaims(token);
         Claims claims = jwt.getPayload();
