@@ -10,8 +10,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.qingting.Bean.Music;
-import com.example.qingting.Bean.PlayList;
-import com.example.qingting.Bean.PlayListMusic;
 
 import java.util.ArrayList;
 import java.util.Collections;

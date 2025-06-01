@@ -26,6 +26,7 @@ import com.example.qingting.mvi.viewmodel.FragmentDiscoverViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class DiscoverFragment private constructor() : Fragment() {
     private lateinit var binding: FragmentDiscoverBinding
@@ -43,6 +44,7 @@ class DiscoverFragment private constructor() : Fragment() {
     ): View {
         binding = FragmentDiscoverBinding.inflate(inflater, null, false)
         viewModel = ViewModelProvider(this).get(FragmentDiscoverViewModel::class.java)
+        initRecyclerView()
         viewLifecycleOwner.lifecycleScope.launch {
             launch {
                 // 发起网络请求
@@ -53,7 +55,7 @@ class DiscoverFragment private constructor() : Fragment() {
                 for (i in 0 until 3) {
                     val virtualAlbumListData = ArrayList<Album>()
                     for (j in 0 until 10) {
-                        virtualAlbumListData.add(Album(ArrayList()))
+                        virtualAlbumListData.add(Album(ArrayList()).apply { this.id = Random.nextInt() })
                     }
                     virtualAlbumListListData.add(virtualAlbumListData)
                 }
@@ -64,12 +66,12 @@ class DiscoverFragment private constructor() : Fragment() {
                 viewModel.fragmentState.collectLatest { state -> render(state) }
             }
         }
-        initRecyclerView()
         initTestView()
         return binding.getRoot()
     }
 
     private fun render(state: FragmentDiscoverState) {
+        Log.d(TAG, "当前的歌单加载状态: ${state.loadingState}")
         binding.apply {
             this.bgLoadingTip.visibility = when (state.loadingState) {
                 DataLoading.BEFORE_LOADING -> View.VISIBLE
@@ -82,11 +84,14 @@ class DiscoverFragment private constructor() : Fragment() {
                 else -> getString(R.string.discover_page_loading_tip_loading)
             }
             if (state.loadingState == DataLoading.LOADING_SUCCESS) {
+                this.albumRecyclerview.visibility = View.VISIBLE
                 this.albumRecyclerview.adapter.apply {
                     if (this is AlbumAdapter) {
                         this.updateData(state.albumListList)
                     }
                 }
+            } else {
+                this.albumRecyclerview.visibility = View.GONE
             }
         }
     }

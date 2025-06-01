@@ -9,4 +9,5 @@ data class FragmentDiscoverState(
 
 enum class DataLoading {
     BEFORE_LOADING, LOADING, LOADING_SUCCESS, LOADING_FAILED
+
 }

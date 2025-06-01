@@ -18,7 +18,6 @@ import com.example.qingting.net.CheckSuccess;
 import com.example.qingting.net.request.PlayListRequest.GetAllPlayListRequest;
 import com.example.qingting.net.request.listener.RequestImpl;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;

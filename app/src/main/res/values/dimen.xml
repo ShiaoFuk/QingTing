@@ -136,4 +136,5 @@
     <dimen name="album_list_height_style1">100dp</dimen>
     <dimen name="album_list_height_style2">200dp</dimen>
     <dimen name="album_list_height_style3">300dp</dimen>
+    <dimen name="album_width">100dp</dimen>
 </resources>

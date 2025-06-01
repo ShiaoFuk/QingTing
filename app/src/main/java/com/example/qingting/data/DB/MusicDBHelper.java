@@ -4,10 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.qingting.Bean.PlayList;
-import com.example.qingting.Bean.PlayListMusic;
-import com.example.qingting.data.SP.LoginSP;
-
 public class MusicDBHelper extends SQLiteOpenHelper {
     // 数据库名称和版本
     private static final String DATABASE_NAME = "QingTing.db";

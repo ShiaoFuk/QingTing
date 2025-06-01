@@ -2,7 +2,6 @@ package com.example.qingting.data.DB;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,10 +11,6 @@ import com.example.qingting.Bean.PlayList;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 public class PlayListDB {
     static String idName = "id";

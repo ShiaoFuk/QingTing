@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="album_list_layout">
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="album_layout">
+        <item name="android:orientation">vertical</item>
+    </style>
     <style name="setting_item_text" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">@dimen/setting_item_text</item>
         <item name="android:layout_marginVertical">@dimen/hot_list_vertical_margin</item>
