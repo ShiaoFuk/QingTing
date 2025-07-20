@@ -17,7 +17,7 @@ public class JwtUtil {
         if (JWT_KEY == null) {
             synchronized (lock) {
                 if (JWT_KEY == null)
-                    JWT_KEY = ProfileReader.getProperty(MyApplication.getInstance().getApplicationContext(), "jwt.key");
+                    JWT_KEY = ProfileReader.getProperty(MyApplication.getInstance().getApplicationContext(), "JWT_KEY");
             }
         }
         return JWT_KEY;

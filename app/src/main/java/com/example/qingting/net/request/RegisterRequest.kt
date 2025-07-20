@@ -2,7 +2,7 @@ package com.example.qingting.net.request
 
 import com.example.qingting.Bean.User
 import com.example.qingting.Utils.JsonUtils
-import com.example.qingting.net.ReponseUtils
+import com.example.qingting.net.ResponseUtils
 import com.example.qingting.net.request.listener.RequestImpl
 import com.google.gson.JsonElement
 import okhttp3.MediaType
@@ -24,7 +24,7 @@ abstract class RegisterRequest: RequestImpl() {
                 .addHeader("Content-Type", "application/json")
                 .build()
             val response = client.newCall(request).execute()
-            return ReponseUtils.doWithResponse(response)
+            return ResponseUtils.doWithResponse(response)
         }
         return null
     }

@@ -2,6 +2,15 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
 }
+// 读取 local.properties 文件
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
+
+// 读取属性
+def jwtKey = "\"${localProperties.getProperty("JWT_KEY", "")}\""
 
 android {
     namespace 'com.example.qingting'
@@ -14,7 +23,9 @@ android {
         versionName "1.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "jwtKey", jwtKey
     }
+
     packagingOptions {
         exclude 'META-INF/*'
 
@@ -43,6 +54,7 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
     buildFeatures {
+        buildConfig true
         viewBinding true
     }
 

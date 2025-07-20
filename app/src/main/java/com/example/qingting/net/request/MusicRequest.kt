@@ -1,6 +1,6 @@
 package com.example.qingting.net.request
 
-import com.example.qingting.net.ReponseUtils
+import com.example.qingting.net.ResponseUtils
 import com.example.qingting.net.ServerConf
 import com.example.qingting.net.request.listener.RequestImpl
 import com.google.gson.JsonElement
@@ -29,7 +29,7 @@ abstract class MusicRequest: RequestImpl() {
                 .method("GET", null)
                 .build()
             val response = client.newCall(request).execute()
-            return ReponseUtils.doWithResponse(response)
+            return ResponseUtils.doWithResponse(response)
         }
         return null
     }

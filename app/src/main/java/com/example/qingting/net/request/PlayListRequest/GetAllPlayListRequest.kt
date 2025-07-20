@@ -1,6 +1,6 @@
 package com.example.qingting.net.request.PlayListRequest
 
-import com.example.qingting.net.ReponseUtils
+import com.example.qingting.net.ResponseUtils
 import com.example.qingting.net.request.listener.RequestImpl
 import com.google.gson.JsonElement
 import okhttp3.OkHttpClient
@@ -15,7 +15,7 @@ abstract class GetAllPlayListRequest : RequestImpl() {
                 .url("http://suansun.top/playList/get?token=$input")
                 .build()
             val response = client.newCall(request).execute()
-            return ReponseUtils.doWithResponse(response)
+            return ResponseUtils.doWithResponse(response)
         }
         throw IllegalArgumentException("请检查登陆状态")
         return null

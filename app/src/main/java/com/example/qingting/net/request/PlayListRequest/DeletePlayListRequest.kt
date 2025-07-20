@@ -1,6 +1,6 @@
 package com.example.qingting.net.request.PlayListRequest
 
-import com.example.qingting.net.ReponseUtils
+import com.example.qingting.net.ResponseUtils
 import com.example.qingting.net.request.listener.RequestImpl
 import com.google.gson.JsonElement
 import okhttp3.MediaType
@@ -23,7 +23,7 @@ abstract class DeletePlayListRequest: RequestImpl() {
                 .method("DELETE", body)
                 .build()
             val response = client.newCall(request).execute()
-            return ReponseUtils.doWithResponse(response)
+            return ResponseUtils.doWithResponse(response)
         }
         return null
     }

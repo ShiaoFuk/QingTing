@@ -1,7 +1,6 @@
 package com.example.qingting.net.request.PlayListMusicRequest
 
-import com.example.qingting.Bean.Music
-import com.example.qingting.net.ReponseUtils
+import com.example.qingting.net.ResponseUtils
 import com.example.qingting.net.request.listener.RequestImpl
 import com.google.gson.JsonElement
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -43,7 +42,7 @@ abstract class DeleteMusicRequest: RequestImpl() {
                 .method("DELETE", body)
                 .build()
             val response = client.newCall(request).execute()
-            return ReponseUtils.doWithResponse(response)
+            return ResponseUtils.doWithResponse(response)
 
 
         }

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class Music {
     Integer id;
+    Integer duration;
     String name;  // 歌名
     String path;  // url
     String genre;  // 曲风

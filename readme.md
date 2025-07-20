@@ -17,4 +17,4 @@
 4. 上架AppStore：或许半年内有望上架常见应用商店
 
 
-
+local.properties需要配置jwtkey，请联系mashufu@outlook.com
