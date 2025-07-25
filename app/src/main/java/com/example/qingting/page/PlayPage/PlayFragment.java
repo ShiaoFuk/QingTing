@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.example.qingting.bean.Music;
 import com.example.qingting.R;
+import com.example.qingting.utils.DialogUtils;
 import com.example.qingting.utils.Play.AudioPlayUtils;
 import com.example.qingting.utils.FragmentUtils;
 import com.example.qingting.utils.Play.OnAudioPlayerListener;
@@ -42,6 +43,7 @@ public class PlayFragment extends BottomSheetDialogFragment {
     View rootView;
     BottomSheetBehavior<ConstraintLayout> bottomSheetBehavior;
     SeekBar seekBar;
+
     private PlayFragment() {
     }
 
@@ -56,6 +58,7 @@ public class PlayFragment extends BottomSheetDialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        handler = new Handler(Looper.getMainLooper());
     }
 
 
@@ -73,7 +76,10 @@ public class PlayFragment extends BottomSheetDialogFragment {
     ImageView lastSongBtn;
     TextView titleTextView;
     TextView genreTextView;
+    ImageView playModeBtn;
+    ImageView playListBtn;
     List<OnAudioPlayerListener> onAudioPlayerListenerList = new ArrayList<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -88,6 +94,8 @@ public class PlayFragment extends BottomSheetDialogFragment {
         lastSongBtn = rootView.findViewById(R.id.last_song);
         titleTextView = rootView.findViewById(R.id.title);
         genreTextView = rootView.findViewById(R.id.genre);
+        playModeBtn = rootView.findViewById(R.id.play_mode);
+        playListBtn = rootView.findViewById(R.id.play_list);
         init();
         return rootView;
     }
@@ -172,9 +180,11 @@ public class PlayFragment extends BottomSheetDialogFragment {
 
     boolean isEnd;
     Thread seekBarThread;
+
     void initSeekbar() {
         seekBarThread = new Thread(new Runnable() {
             final Handler handler = new Handler(Looper.getMainLooper());
+
             @Override
             public void run() {
                 isEnd = false;
@@ -183,7 +193,7 @@ public class PlayFragment extends BottomSheetDialogFragment {
                         handler.post(() -> {
                             int currentTime = AudioPlayUtils.getCurrentPosition();
                             seekBar.setProgress(currentTime);
-                            seekBar.setSecondaryProgress((int)(seekBar.getMax() * (AudioPlayUtils.getCacheProcess() / 100f)));
+                            seekBar.setSecondaryProgress((int) (seekBar.getMax() * (AudioPlayUtils.getCacheProcess() / 100f)));
                             songLengthLeftTextView.setText(TimeUtils.milliSecs2MMss(currentTime));
                         });
                         try {
@@ -313,12 +323,39 @@ public class PlayFragment extends BottomSheetDialogFragment {
         songLengthTextView.setText(rootView.getResources().getString(R.string.song_initial_length));
     }
 
+    int playMode = 0;  // 默认顺序
+    Handler handler;
+
     private void initPlayGroup() {
         if (AudioPlayUtils.isPlaying()) {
             playBtn.setImageResource(R.drawable.pause_icon);
         } else {
             playBtn.setImageResource(R.drawable.play_icon);
         }
+        playModeBtn.setOnClickListener(v -> {
+            playMode = ++playMode % 4;  // 4种播放模式
+            if (playMode == 0) {
+                handler.post(() -> {
+                    playModeBtn.setImageResource(R.drawable.shunxubofang);  // 顺序播放
+                });
+            } else if (playMode == 1) {
+                handler.post(() -> {
+                    playModeBtn.setImageResource(R.drawable.suijibofang);  // 随机播放
+                });
+            } else if (playMode == 2) {
+                handler.post(() -> {
+                    playModeBtn.setImageResource(R.drawable.liebiaoxunhuan);  // 列表循环
+                });
+            } else if (playMode == 3) {
+                handler.post(() -> {
+                    playModeBtn.setImageResource(R.drawable.danquxunhuan);  // 单曲循环
+                });
+            }
+            AudioPlayUtils.changePlayListMode(playMode);
+        });
+        playListBtn.setOnClickListener(v -> {
+            DialogUtils.showPlayingListDialog(getContext());
+        });
         playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -329,12 +366,12 @@ public class PlayFragment extends BottomSheetDialogFragment {
                 }
             }
         });
-        nextSongBtn.setOnClickListener((v)->{
+        nextSongBtn.setOnClickListener((v) -> {
             if (!AudioPlayUtils.playNextMusic()) {
                 ToastUtils.makeShortText(v.getContext(), v.getResources().getString(R.string.no_next_music));
             }
         });
-        lastSongBtn.setOnClickListener((v)->{
+        lastSongBtn.setOnClickListener((v) -> {
             if (!AudioPlayUtils.playLastMusic()) {
                 ToastUtils.makeShortText(v.getContext(), v.getResources().getString(R.string.no_last_music));
             }
@@ -370,7 +407,6 @@ public class PlayFragment extends BottomSheetDialogFragment {
     }
 
 
-
     public void expandBottomSheet() {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
@@ -386,10 +422,9 @@ public class PlayFragment extends BottomSheetDialogFragment {
     }
 
 
-
     @Override
     public void onDestroyView() {
-        for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+        for (OnAudioPlayerListener onAudioPlayerListener : onAudioPlayerListenerList) {
             if (onAudioPlayerListener != null) {
                 AudioPlayUtils.removeOnAudioPlayerListener(onAudioPlayerListener);
             }

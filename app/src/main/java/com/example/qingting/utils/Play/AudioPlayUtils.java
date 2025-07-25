@@ -33,9 +33,19 @@ public class AudioPlayUtils {
         mediaPlayer = getMediaPlayer();
     }
 
+    private static Object getPlayListLock = new Object();
+    private static int mode = 0;  // 默认=0——0:顺序播放，1:随机播放，2:列表循环，3:单曲循环
 
     public static List<Music> getPlayList() {
         return nextMusicList;
+    }
+
+    /**
+     * 切换播放模式，0:顺序播放，1:随机播放，2:列表循环，3:单曲循环
+     * 本质上是维护多个列表
+     */
+    public static void changePlayListMode(int inMode) {
+        mode = inMode;
     }
 
     // 播放网络音频
@@ -51,7 +61,7 @@ public class AudioPlayUtils {
             // 播放准备完成后
             mediaPlayer.setOnPreparedListener(mp -> {
                 mediaPlayer.start();
-                for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+                for (OnAudioPlayerListener onAudioPlayerListener : onAudioPlayerListenerList) {
                     onAudioPlayerListener.onStarted();
                 }
             });
@@ -76,7 +86,7 @@ public class AudioPlayUtils {
             // 播放准备完成后
             mediaPlayer.setOnPreparedListener(mp -> {
                 mediaPlayer.start();
-                for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+                for (OnAudioPlayerListener onAudioPlayerListener : onAudioPlayerListenerList) {
                     onAudioPlayerListener.onStarted();
                 }
             });
@@ -89,7 +99,7 @@ public class AudioPlayUtils {
 
     private static void doWithFetchResourceError(IOException e) {
         Log.e(TAG, "Error setting data source for file", e);
-        for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+        for (OnAudioPlayerListener onAudioPlayerListener : onAudioPlayerListenerList) {
             onAudioPlayerListener.onPaused();
             onAudioPlayerListener.onError("无法加载音频");
         }
@@ -97,7 +107,7 @@ public class AudioPlayUtils {
 
     private static boolean doWithPlayError(MediaPlayer mediaPlayerOnError, int what, int extra) {
         Log.e(TAG, "Error occurred: " + what);
-        for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+        for (OnAudioPlayerListener onAudioPlayerListener : onAudioPlayerListenerList) {
             onAudioPlayerListener.onPaused();
             onAudioPlayerListener.onError("播放出错");
         }
@@ -115,7 +125,7 @@ public class AudioPlayUtils {
     public static void pause() {
         if (hasDataSource && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
-            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+            for (OnAudioPlayerListener onAudioPlayerListener : onAudioPlayerListenerList) {
                 onAudioPlayerListener.onPaused();
             }
         }
@@ -125,7 +135,7 @@ public class AudioPlayUtils {
     public static void resume() {
         if (hasDataSource && !mediaPlayer.isPlaying()) {
             mediaPlayer.start();
-            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+            for (OnAudioPlayerListener onAudioPlayerListener : onAudioPlayerListenerList) {
                 onAudioPlayerListener.onStarted();
             }
         }
@@ -137,7 +147,7 @@ public class AudioPlayUtils {
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
-            for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+            for (OnAudioPlayerListener onAudioPlayerListener : onAudioPlayerListenerList) {
                 onAudioPlayerListener.onPaused();
                 onAudioPlayerListener.onStopped();
             }
@@ -209,7 +219,8 @@ public class AudioPlayUtils {
 
     /**
      * 添加到下一首播放
-     * @param music 要播放的音乐
+     *
+     * @param music                 要播放的音乐
      * @param onAudioPlayerListener
      */
     public static void addMusicToNext(Music music, OnAudioPlayerListener onAudioPlayerListener) {
@@ -226,6 +237,7 @@ public class AudioPlayUtils {
 
     /**
      * 清空列表，并且马上开始播放新的列表
+     *
      * @param musicList2add 要播放的列表，注意size为0会直接返回
      */
     public static void playMusicList(List<Music> musicList2add) {
@@ -290,7 +302,7 @@ public class AudioPlayUtils {
         mediaPlayer1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                for (OnAudioPlayerListener onAudioPlayerListener: onAudioPlayerListenerList) {
+                for (OnAudioPlayerListener onAudioPlayerListener : onAudioPlayerListenerList) {
                     onAudioPlayerListener.onPaused();
                     onAudioPlayerListener.onComplete();
                 }
@@ -330,7 +342,6 @@ public class AudioPlayUtils {
         });
         return mediaPlayer1;
     }
-
 
 
     public static boolean hasNext() {

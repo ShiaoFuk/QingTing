@@ -131,6 +131,16 @@
                     app:tint="@color/control_btn_color"
                     />
             </LinearLayout>
+            <ImageView
+                android:id="@+id/play_list"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/control_btn_playmode_length"
+                android:adjustViewBounds="true"
+                android:src="@drawable/play_list_icon"
+                app:tint="@color/control_btn_color"
+                android:layout_toRightOf="@id/play_group"
+                android:layout_centerVertical="true"
+                />
         </RelativeLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
