@@ -269,9 +269,10 @@ public class AudioPlayUtils {
             AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
         }
         if (isRandomMode()) {
+            randomNextMusicList.addFirst(music);
             nextMusicList.addFirst(music);
         } else {
-            randomNextMusicList.addFirst(music);
+            nextMusicList.addFirst(music);
         }
     }
 
