@@ -3,10 +3,13 @@ package com.example.qingting.utils.Play;
 import android.media.MediaPlayer;
 import android.util.Log;
 
+import com.android.tools.r8.internal.Mu;
 import com.example.qingting.bean.Music;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,8 +22,11 @@ public class AudioPlayUtils {
     private static boolean hasDataSource;
     // 下面这两个List关系     playedMusicList  musicList
     //               last3 last2 last1 currentMusic next1 next2 next3
+    // 顺序播放
     private static LinkedList<Music> nextMusicList;  // 未被播放的音乐
     private static LinkedList<Music> playedMusicList;  // 被播放过的音乐
+    // 随机播放
+    private static LinkedList<Music> randomNextMusicList;  // 随机播放 未播放的列表
     @Getter
     private static Music currentMusic;
 
@@ -29,6 +35,7 @@ public class AudioPlayUtils {
     public static void init() {
         nextMusicList = new LinkedList<>();
         playedMusicList = new LinkedList<>();
+        randomNextMusicList = new LinkedList<>();
         onAudioPlayerListenerList = new ArrayList<>();
         mediaPlayer = getMediaPlayer();
     }
@@ -37,7 +44,28 @@ public class AudioPlayUtils {
     private static int mode = 0;  // 默认=0——0:顺序播放，1:随机播放，2:列表循环，3:单曲循环
 
     public static List<Music> getPlayList() {
-        return nextMusicList;
+        if (isRandomMode()) {
+            synchronized (getPlayListLock) {
+                return randomNextMusicList;
+            }
+        } else {
+            return nextMusicList;
+        }
+    }
+
+    private static boolean isRandomMode() {
+        return mode == 1;
+    }
+
+
+    // 把nextMusicList打乱
+    private static void shuffle() {
+        Music[] array = nextMusicList.toArray(new Music[]{});
+        Collections.shuffle(Arrays.asList(array));
+        synchronized (getPlayListLock) {
+            randomNextMusicList.clear();
+            Collections.addAll(randomNextMusicList, array);
+        }
     }
 
     /**
@@ -46,6 +74,9 @@ public class AudioPlayUtils {
      */
     public static void changePlayListMode(int inMode) {
         mode = inMode;
+        if (isRandomMode()) {
+            shuffle();
+        }
     }
 
     // 播放网络音频
@@ -208,13 +239,6 @@ public class AudioPlayUtils {
         }
     }
 
-    // 列表最后加上音乐
-    public static void addMusicToEnd(Music music, OnAudioPlayerListener onAudioPlayerListener) {
-        if (onAudioPlayerListener != null) {
-            AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
-        }
-        nextMusicList.addLast(music);
-    }
 
 
     /**
@@ -231,7 +255,11 @@ public class AudioPlayUtils {
         if (onAudioPlayerListener != null) {
             AudioPlayUtils.addOnAudioPlayerListener(onAudioPlayerListener);
         }
-        nextMusicList.addFirst(music);
+        if (isRandomMode()) {
+            nextMusicList.addFirst(music);
+        } else {
+            randomNextMusicList.addFirst(music);
+        }
     }
 
 
@@ -246,10 +274,14 @@ public class AudioPlayUtils {
         }
         // 清空音乐
         nextMusicList.clear();
-        playedMusicList.clear();
         // 添加到下一首
         nextMusicList.addAll(musicList2add);
-        playMusic(nextMusicList.pollFirst(), null);
+        if (isRandomMode()) {
+            shuffle();  // 初始化随机
+            playMusic(randomNextMusicList.pollFirst(), null);
+        } else {
+            playMusic(nextMusicList.pollFirst(), null);
+        }
     }
 
 
@@ -265,13 +297,20 @@ public class AudioPlayUtils {
 
     // 播放下一首音乐
     public static boolean playNextMusic() {
-        if (nextMusicList.isEmpty()) {
+        if (isRandomMode()) {
+            return !randomNextMusicList.isEmpty();
+        } else if (nextMusicList.isEmpty()) {
             return false;
         }
         if (currentMusic != null) {
             playedMusicList.addLast(currentMusic);
         }
-        Music music = nextMusicList.pollFirst();
+        Music music;
+        if (isRandomMode()) {
+            music = randomNextMusicList.pollFirst();
+        } else {
+            music = nextMusicList.pollFirst();
+        }
         playMusic(music, null);
         return true;
     }
@@ -281,7 +320,11 @@ public class AudioPlayUtils {
             return false;
         }
         if (currentMusic != null) {
-            nextMusicList.addFirst(currentMusic);
+            if (isRandomMode()) {
+                randomNextMusicList.addFirst(currentMusic);
+            } else {
+                nextMusicList.addFirst(currentMusic);
+            }
         }
         Music music = playedMusicList.pollLast();
         playMusic(music, null);
