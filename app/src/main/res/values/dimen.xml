@@ -70,9 +70,10 @@
     <dimen name="song_length_margin_horizontal">12dp</dimen>
     <dimen name="song_length_margin_vertical">5dp</dimen>
     <dimen name="control_bottom_margin">80dp</dimen>
-    <dimen name="control_btn_other_length">40dp</dimen>
-    <dimen name="control_btn_center_length">50dp</dimen>
-    <dimen name="control_btn_margin">30dp</dimen>
+    <dimen name="control_btn_other_length">30dp</dimen>
+    <dimen name="control_btn_playmode_length">25dp</dimen>
+    <dimen name="control_btn_center_length">60dp</dimen>
+    <dimen name="control_btn_margin">20dp</dimen>
 
     <!--    UserFragment-->
     <dimen name="setting_icon_length">40dp</dimen>
