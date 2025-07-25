@@ -48,13 +48,26 @@ public class AudioPlayUtils {
             synchronized (getPlayListLock) {
                 return randomNextMusicList;
             }
+        } else if (isSingleLoopMode()) {
+            LinkedList<Music> res = new LinkedList();
+            res.addFirst(currentMusic);
+            return res;
         } else {
+            // 循环列表和顺序播放都直接返回
             return nextMusicList;
         }
     }
 
     private static boolean isRandomMode() {
         return mode == 1;
+    }
+
+    private static boolean isListLoopMode() {
+        return mode == 2;
+    }
+
+    private static boolean isSingleLoopMode() {
+        return mode == 3;
     }
 
 
@@ -308,6 +321,12 @@ public class AudioPlayUtils {
         Music music;
         if (isRandomMode()) {
             music = randomNextMusicList.pollFirst();
+        } else if (isListLoopMode()){
+            music = nextMusicList.pollFirst();
+            nextMusicList.addLast(music);
+        } else if (isSingleLoopMode()) {
+            // 不动
+            music = currentMusic;
         } else {
             music = nextMusicList.pollFirst();
         }
