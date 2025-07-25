@@ -7,10 +7,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.qingting.Bean.PlayList;
-import com.example.qingting.Utils.CoroutineAdapter;
-import com.example.qingting.Utils.JsonUtils;
-import com.example.qingting.Utils.ToastUtils;
+import com.example.qingting.bean.PlayList;
+import com.example.qingting.utils.CoroutineAdapter;
+import com.example.qingting.utils.JsonUtils;
+import com.example.qingting.utils.ToastUtils;
 import com.example.qingting.data.DB.MusicDBHelper;
 import com.example.qingting.data.DB.PlayListDB;
 import com.example.qingting.data.SP.LoginSP;

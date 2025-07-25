@@ -1,7 +1,7 @@
 package com.example.qingting.net.request
 
-import com.example.qingting.Bean.User
-import com.example.qingting.Utils.JsonUtils
+import com.example.qingting.bean.User
+import com.example.qingting.utils.JsonUtils
 import com.example.qingting.net.ResponseUtils
 import com.example.qingting.net.request.listener.RequestImpl
 import com.google.gson.JsonElement

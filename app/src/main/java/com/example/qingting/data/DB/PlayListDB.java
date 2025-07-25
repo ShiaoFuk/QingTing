@@ -7,7 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.example.qingting.Bean.PlayList;
+import com.example.qingting.bean.PlayList;
 
 import java.util.ArrayList;
 import java.util.List;

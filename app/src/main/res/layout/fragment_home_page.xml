@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomePage.HomePageFragment">
+    tools:context=".page.HomePage.HomePageFragment">
     <View
         android:id="@+id/top_bar"
         android:visibility="invisible"

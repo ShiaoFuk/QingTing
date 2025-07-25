@@ -8,8 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.example.qingting.Bean.Music;
-import com.example.qingting.Bean.Music;
+import com.example.qingting.bean.Music;
 
 import java.util.ArrayList;
 import java.util.Collections;

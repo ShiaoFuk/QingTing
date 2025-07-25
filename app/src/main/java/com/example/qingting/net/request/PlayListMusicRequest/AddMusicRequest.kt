@@ -1,6 +1,6 @@
 package com.example.qingting.net.request.PlayListMusicRequest
 
-import com.example.qingting.Bean.Music
+import com.example.qingting.bean.Music
 import com.example.qingting.net.ResponseUtils
 import com.example.qingting.net.request.listener.RequestImpl
 import com.google.gson.JsonElement
